@@ -2,8 +2,6 @@
 node_modules
 npm-debug.log
 yarn-error.log
-package-lock.json
-yarn.lock
 .pnpm-debug.log
 
 # Next.js
@@ -14,7 +12,6 @@ out
 # Testing
 coverage
 .nyc_output
-__tests__
 *.test.ts
 *.test.tsx
 *.spec.ts
@@ -50,7 +47,6 @@ jest.setup.js
 .env*.local
 
 # Documentation
-*.md
 docs
 CHANGELOG.md
 LICENSE
@@ -80,6 +76,3 @@ docker-compose*
 .eslintrc*
 eslint.config.*
 .editorconfig
-tsconfig.json
-postcss.config.js
-tailwind.config.ts
