@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import SoloLevelingProjectCard from './SoloLevelingProjectCard';
+import { useHydrated } from '@/hooks/useHydrated';
 
 interface Repo {
   id: number;
@@ -33,22 +34,20 @@ declare global {
 
 export default function ProjectsTreeVisualization({ repos = [] }: { repos?: Repo[] }) {
   const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const containerRef = useRef<HTMLDivElement>(null);
   const treeRef = useRef<any>(null);
-  const nodesRef = useRef<RepoNode[]>([]);
+  const [nodes, setNodes] = useState<RepoNode[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<Repo | null>(null);
-
-  useEffect(() => setMounted(true), []);
 
   const isDark = mounted ? theme === 'dark' : true;
   const treeColor = isDark ? '#ffffff' : '#000000';
 
   // Place repos on tree branches
-  const placeReposOnTree = (tree: any) => {
+  const placeReposOnTree = useCallback((tree: any) => {
     if (!tree || !tree.branches) return;
 
-    const nodes: RepoNode[] = [];
+    const newNodes: RepoNode[] = [];
     const shuffled = [...repos].sort(() => Math.random() - 0.5);
     let repoIdx = 0;
 
@@ -68,11 +67,11 @@ export default function ProjectsTreeVisualization({ repos = [] }: { repos?: Repo
     for (const ep of endpoints) {
       if (repoIdx >= shuffled.length) break;
       const repo = shuffled[repoIdx++];
-      nodes.push({ x: ep.x, y: ep.y, repo });
+      newNodes.push({ x: ep.x, y: ep.y, repo });
     }
 
-    nodesRef.current = nodes;
-  };
+    setNodes(newNodes);
+  }, [repos]);
 
   // Init tree
   useEffect(() => {
@@ -123,7 +122,7 @@ export default function ProjectsTreeVisualization({ repos = [] }: { repos?: Repo
     return () => {
       if (treeRef.current?.animation) cancelAnimationFrame(treeRef.current.animation);
     };
-  }, [repos, mounted, isDark, treeColor]);
+  }, [repos, mounted, isDark, treeColor, placeReposOnTree]);
 
   return (
     <div className="relative w-full">
@@ -139,7 +138,7 @@ export default function ProjectsTreeVisualization({ repos = [] }: { repos?: Repo
 
       {/* Project Cards Positioned on Tree */}
       <div className="absolute inset-0 pointer-events-none">
-        {nodesRef.current.map((node, idx) => (
+        {nodes.map((node, idx) => (
           <div
             key={node.repo.id}
             className="absolute pointer-events-auto"

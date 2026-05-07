@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface ImageSlideshowProps {
   images: string[];
@@ -26,14 +27,16 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
   return (
     <div className="relative w-full h-full">
       {images.map((img, idx) => (
-        <img
+        <Image
           key={img}
           src={img}
           alt={`${alt} ${idx + 1}`}
-          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${
+          fill
+          className={`object-contain transition-opacity duration-500 ${
             idx === current ? 'opacity-100' : 'opacity-0'
           }`}
           loading="lazy"
+          unoptimized
           onError={(e) => {
             e.currentTarget.style.display = 'none';
           }}

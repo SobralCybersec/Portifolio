@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github, Star, GitFork, RefreshCw } from 'lucide-react';
 import { AnimatedText } from './AnimatedText';
 import CityMap from './CityMap';
+import Image from 'next/image';
 
 function ImageSlideshow({ images }: { images: string[] }) {
   const [current, setCurrent] = useState(0);
@@ -19,14 +20,16 @@ function ImageSlideshow({ images }: { images: string[] }) {
   return (
     <div className="relative w-full h-full">
       {images.map((img, idx) => (
-        <img
+        <Image
           key={img}
           src={img}
           alt={`Preview ${idx + 1}`}
-          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${
+          fill
+          className={`object-contain transition-opacity duration-500 ${
             idx === current ? 'opacity-100' : 'opacity-0'
           }`}
           loading="lazy"
+          unoptimized
         />
       ))}
     </div>
@@ -80,7 +83,7 @@ export default function GitHubProjects() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRepos = async () => {
+  const fetchRepos = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -99,10 +102,30 @@ export default function GitHubProjects() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchRepos();
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await fetch('/api/github/repos');
+        
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to fetch repositories');
+        }
+
+        const data = await response.json();
+        setRepos(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   if (loading) {
@@ -199,11 +222,13 @@ export default function GitHubProjects() {
                       }
                     } catch {}
                     return (
-                      <img
+                      <Image
                         src={repo.previewImage}
                         alt={`${repo.name} preview`}
-                        className="w-full h-full object-contain"
+                        fill
+                        className="object-contain"
                         loading="lazy"
+                        unoptimized
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = `https://opengraph.githubassets.com/1/${repo.html_url.replace('https://github.com/', '')}`;

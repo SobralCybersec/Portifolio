@@ -10,16 +10,13 @@ import { useTranslations } from 'next-intl';
 import HexagonGrid from '@/components/HexagonGrid';
 import ParticleBackground from '@/components/ParticleBackground';
 import ScrollEffect from '@/components/ScrollEffect';
+import { useHydrated } from '@/hooks/useHydrated';
 
 export default function AboutPage() {
   useClickSound();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const { theme } = useTheme();
   const t = useTranslations('about');
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>

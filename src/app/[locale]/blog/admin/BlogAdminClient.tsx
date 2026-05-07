@@ -1,6 +1,7 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Save, Globe, FileText, Trash2, Edit, List, Eye, FileUp, Link as LinkIcon } from 'lucide-react';
@@ -29,18 +30,17 @@ export default function BlogAdminClient() {
   const [showPreview, setShowPreview] = useState(true);
 
   useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = async () => {
-    try {
-      const res = await fetch(`/api/blog/list?locale=${locale}`);
-      const data = await res.json();
-      setPosts(data.posts || []);
-    } catch (error) {
-      console.error('Failed to load posts:', error);
-    }
-  };
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/blog/list?locale=${locale}`);
+        const data = await res.json();
+        setPosts(data.posts || []);
+      } catch (error) {
+        console.error('Failed to load posts:', error);
+      }
+    };
+    load();
+  }, [locale]);
 
   const { getRootProps: getCoverRootProps, getInputProps: getCoverInputProps } = useDropzone({
     accept: { 'image/*': [] },

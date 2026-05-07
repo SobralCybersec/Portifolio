@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { useTheme } from 'next-themes';
+import { useHydrated } from '@/hooks/useHydrated';
 
 export default function ScrollProgress() {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useHydrated();
   const { theme } = useTheme();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -13,10 +14,6 @@ export default function ScrollProgress() {
     damping: 30,
     restDelta: 0.001,
   });
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   if (!isClient) return null;
 

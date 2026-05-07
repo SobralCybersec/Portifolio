@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useHydrated } from '@/hooks/useHydrated';
 
 interface HexagonGridProps {
   cellSize?: number;
@@ -17,15 +18,11 @@ const HexagonGrid = ({
   glowInterval = 150,
   maxSimultaneous = 6
 }: HexagonGridProps) => {
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const svgRef = useRef<SVGSVGonElement | null>(null);
   const cellsRef = useRef<SVGPolygonElement[]>([]);
   const activeCountRef = useRef(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useHydrated();
 
   useEffect(() => {
     if (!mounted) return;

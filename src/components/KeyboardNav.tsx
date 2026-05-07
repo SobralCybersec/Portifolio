@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+
+const sections = ['hero', 'skills', 'live', 'contact'];
 
 interface KeyboardNavProps {
   onMenuToggle?: () => void;
@@ -8,10 +10,9 @@ interface KeyboardNavProps {
 
 export default function KeyboardNav({ onMenuToggle }: KeyboardNavProps) {
   const [isScrolling, setIsScrolling] = useState(false);
-  const sections = ['hero', 'skills', 'live', 'contact'];
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const scrollToSection = (direction: 'up' | 'down') => {
+  const scrollToSection = useCallback((direction: 'up' | 'down') => {
     if (isScrolling) return;
     
     setIsScrolling(true);
@@ -30,7 +31,7 @@ export default function KeyboardNav({ onMenuToggle }: KeyboardNavProps) {
     }
 
     setTimeout(() => setIsScrolling(false), 800);
-  };
+  }, [isScrolling, currentIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,7 +49,7 @@ export default function KeyboardNav({ onMenuToggle }: KeyboardNavProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isScrolling, currentIndex, onMenuToggle, sections]);
+  }, [scrollToSection, onMenuToggle]);
 
   return null;
 }

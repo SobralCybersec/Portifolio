@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useHydrated } from '@/hooks/useHydrated';
 
 interface TypewriterProps {
   text: string;
@@ -18,13 +19,13 @@ export function Typewriter({
   duration = 2,
   cursor = true 
 }: TypewriterProps) {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useHydrated();
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const displayText = useTransform(rounded, (latest) => text.slice(0, latest));
 
   useEffect(() => {
-    setIsClient(true);
+    if (!isClient) return;
     const controls = animate(count, text.length, {
       type: 'tween',
       duration,
@@ -32,7 +33,7 @@ export function Typewriter({
       delay,
     });
     return controls.stop;
-  }, [count, text.length, duration, delay]);
+  }, [isClient, count, text.length, duration, delay]);
 
   if (!isClient) {
     return <span className={className}>{text}</span>;
@@ -65,20 +66,16 @@ export function TypewriterLoop({
   deletingSpeed = 50,
   pauseDuration = 2000,
 }: TypewriterLoopProps) {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useHydrated();
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   
   const currentText = texts[currentIndex];
   const displayText = useTransform(rounded, (latest) => 
     currentText.slice(0, latest)
   );
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     if (!isClient) return;

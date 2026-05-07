@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { AnimatedText } from './AnimatedText';
 import { Play, RefreshCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 export default function LivePreview() {
   const t = useTranslations('liveCoding');
@@ -13,7 +14,7 @@ export default function LivePreview() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const fetchGifUrl = async () => {
+  const fetchGifUrl = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -47,10 +48,45 @@ export default function LivePreview() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchGifUrl();
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await fetch(
+          'https://raw.githubusercontent.com/SobralCybersec/SobralCybersec/main/README.md'
+        );
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch README');
+        }
+        
+        const text = await response.text();
+        
+        const gifRegex = /<img\s+src="(https:\/\/github\.com\/SobralCybersec\/SobralCybersec\/releases\/download\/[^"]+\.gif)"/i;
+        const match = text.match(gifRegex);
+        
+        if (match && match[1]) {
+          setGifUrl(match[1]);
+          
+          const dateMatch = match[1].match(/(\d{4}-\d{2}-\d{2}\.\d{2}-\d{2}-\d{2})/);
+          if (dateMatch) {
+            const dateStr = dateMatch[1].replace(/\./g, ' ').replace(/-/g, ':');
+            setLastUpdated(dateStr);
+          }
+        } else {
+          throw new Error('GIF URL not found in README');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   return (
@@ -125,11 +161,13 @@ export default function LivePreview() {
               {!loading && !error && gifUrl && (
                 <div className="space-y-4">
                   <div className="relative rounded-lg overflow-hidden bg-black aspect-video">
-                    <img
+                    <Image
                       src={gifUrl}
                       alt="Live Coding Session"
-                      className="w-full h-full object-contain"
+                      fill
+                      className="object-contain"
                       loading="lazy"
+                      unoptimized
                     />
                     
                     <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">

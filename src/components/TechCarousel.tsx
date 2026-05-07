@@ -202,12 +202,14 @@ export default function TechCarousel() {
             )}
 
             {selectedTech.demoGif && (
-              <div className="mb-6 rounded-lg overflow-hidden border border-[var(--theme-primary)]/20">
-                <img 
+              <div className="mb-6 rounded-lg overflow-hidden border border-[var(--theme-primary)]/20 relative" style={{ aspectRatio: '16/9' }}>
+                <Image 
                   src={selectedTech.demoGif} 
                   alt={`${selectedTech.name} demo`}
-                  className="w-full h-auto"
+                  fill
+                  className="object-contain"
                   loading="lazy"
+                  unoptimized
                 />
               </div>
             )}

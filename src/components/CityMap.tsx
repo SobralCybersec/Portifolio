@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Github, ExternalLink, Star, GitFork, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useHydrated } from '@/hooks/useHydrated';
 
 interface Repo {
   id: number;
@@ -119,7 +120,7 @@ declare global {
 
 export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
   const { theme, systemTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const treeCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -139,12 +140,10 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
   const [tooltip, setTooltip] = useState({ x: 0, y: 0 });
   const [legends, setLegends] = useState<{ lang: string; color: string }[]>([]);
 
-  useEffect(() => setMounted(true), []);
-
   const isDark = mounted ? (theme === 'system' ? systemTheme === 'dark' : theme === 'dark') : true;
 
   // ── place repos on tree branches ──────────────────────────────────────────
-  const placeReposOnTree = (tree: any) => {
+  const placeReposOnTree = useCallback((tree: any) => {
     if (!tree || !tree.branches) return;
 
     const nodes: RepoNode[] = [];
@@ -187,7 +186,7 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
         seen.set(node.repo.language, node.color);
     }
     setLegends(Array.from(seen.entries()).map(([lang, color]) => ({ lang, color })));
-  };
+  }, [repos]);
 
   // ── sync tree canvas transform ───────────────────────────────────────────
   const syncTreeTransform = () => {
@@ -357,7 +356,7 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
     return () => {
       if (treeRef.current?.animation) cancelAnimationFrame(treeRef.current.animation);
     };
-  }, [repos, mounted, isDark]);
+  }, [repos, mounted, isDark, placeReposOnTree]);
 
   // ── overlay animation ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -579,6 +578,7 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
                     {selectedRepo.isVideo ? (
                       <video src={getPreviewSrc(selectedRepo)!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
                     ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={getPreviewSrc(selectedRepo)!}
                         alt={selectedRepo.name}

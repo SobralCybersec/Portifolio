@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Star, GitFork } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useState, useEffect } from 'react';
+import { useHydrated } from '@/hooks/useHydrated';
+import Image from 'next/image';
 
 interface Repo {
   id: number;
@@ -39,9 +40,7 @@ function langColor(lang: string | null): string {
 
 export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingProjectCardProps) {
   const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useHydrated();
 
   const isDark = mounted ? theme === 'dark' : true;
   const primary = isDark ? '#a855f7' : '#3b82f6';
@@ -127,10 +126,12 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
             {repo.isVideo ? (
               <video src={getPreviewSrc()!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
             ) : (
-              <img
+              <Image
                 src={getPreviewSrc()!}
                 alt={repo.name}
-                className="w-full h-full object-contain"
+                fill
+                className="object-contain"
+                unoptimized
                 onError={e => { (e.target as HTMLImageElement).src = `https://opengraph.githubassets.com/1/${repo.html_url.replace('https://github.com/', '')}`; }}
               />
             )}

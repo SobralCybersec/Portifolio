@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import { ArrowRight, Clock, Plus, X, Upload, FileUp, Link as LinkIcon, Globe, Eye } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -46,7 +47,7 @@ export default function BlogPage() {
   const [autoTranslate, setAutoTranslate] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
 
-  const loadPosts = () => {
+  const loadPosts = useCallback(() => {
     fetch(`/api/blog/list?locale=${locale}`)
       .then(res => res.json())
       .then(data => {
@@ -54,11 +55,11 @@ export default function BlogPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  };
+  }, [locale]);
 
   useEffect(() => {
     loadPosts();
-  }, [locale]);
+  }, [loadPosts]);
 
   const { getRootProps: getCoverRootProps, getInputProps: getCoverInputProps } = useDropzone({
     accept: { 'image/*': [] },

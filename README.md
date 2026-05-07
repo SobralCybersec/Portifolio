@@ -54,6 +54,7 @@ Modern Next.js portfolio with Solo Leveling theme, featuring dynamic theming, mu
 * **Markdown**: react-markdown, gray-matter, remark-gfm
 * **AI Translation**: Groq API (openai/gpt-oss-120b)
 * **Icons**: Lucide React
+* **Linting**: ESLint 9.39+ with Next.js 16 flat config
 * **Testing**: Jest + React Testing Library
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel with optimized configuration
@@ -279,8 +280,30 @@ Animated progress bar:
 ---
 
 <h1 align="center">
-  <img src="https://i.imgur.com/dwyUWDH.gif" width="30"/> Testing
+  <img src="https://i.imgur.com/dwyUWDH.gif" width="30"/> Testing & Code Quality
 </h1>
+
+### ESLint 9 Configuration
+
+**Modern flat config** (`eslint.config.mjs`):
+- Next.js 16 core-web-vitals preset
+- React 19 strict rules compliance
+- Custom ignore patterns for build artifacts
+- Zero errors, zero warnings in production
+
+**Key Rules Enforced**:
+- `react-hooks/exhaustive-deps` - Validates hook dependencies
+- `react-hooks/set-state-in-effect` - Prevents cascading renders
+- `react-hooks/purity` - Ensures component purity
+- `@next/next/no-img-element` - Enforces Next.js Image optimization
+
+```bash
+# Run linting
+npm run lint
+
+# Auto-fix issues
+npm run lint -- --fix
+```
 
 ### Test Suite
 
@@ -330,7 +353,8 @@ __tests__/
 ### GitHub Actions Workflows
 
 **Main CI Pipeline** (`.github/workflows/ci.yml`):
-- Lint and type checking
+- **Linting**: ESLint 9 with React 19 strict rules
+- **Type Checking**: TypeScript 5.5+ strict mode
 - Unit and integration tests
 - Security scanning (npm audit, Snyk, Trivy)
 - Multi-platform Docker builds (amd64, arm64)
@@ -441,6 +465,9 @@ Returns:
 * [x] Security scanning (Trivy, Snyk)
 * [x] Comprehensive test suite
 * [x] Vercel deployment optimization
+* [x] ESLint 9 migration with flat config
+* [x] React 19 strict linting compliance
+* [x] Next.js Image optimization for all components
 * [ ] Contact form with email integration
 * [ ] Analytics dashboard
 * [ ] RSS feed for blog

@@ -33,7 +33,7 @@ const LetterGlitch = ({
   >([]);
   const grid = useRef({ columns: 0, rows: 0 });
   const context = useRef<CanvasRenderingContext2D | null>(null);
-  const lastGlitchTime = useRef(Date.now());
+  const lastGlitchTime = useRef(0);
 
   const lettersAndSymbols = Array.from(characters);
 
@@ -180,27 +180,29 @@ const LetterGlitch = ({
     }
   };
 
-  const animate = () => {
-    const now = Date.now();
-    if (now - lastGlitchTime.current >= glitchSpeed) {
-      updateLetters();
-      drawLetters();
-      lastGlitchTime.current = now;
-    }
-
-    if (smooth) {
-      handleSmoothTransitions();
-    }
-
-    animationRef.current = requestAnimationFrame(animate);
-  };
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    lastGlitchTime.current = Date.now();
     context.current = canvas.getContext('2d');
     resizeCanvas();
+
+    const animate = () => {
+      const now = Date.now();
+      if (now - lastGlitchTime.current >= glitchSpeed) {
+        updateLetters();
+        drawLetters();
+        lastGlitchTime.current = now;
+      }
+
+      if (smooth) {
+        handleSmoothTransitions();
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
     animate();
 
     let resizeTimeout: ReturnType<typeof setTimeout>;
@@ -220,6 +222,7 @@ const LetterGlitch = ({
       cancelAnimationFrame(animationRef.current!);
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [glitchSpeed, smooth, JSON.stringify(glitchColors)]);
 
   const containerStyle = {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useHydrated } from '@/hooks/useHydrated';
 
 interface BackgroundMusicProps {
   autoPlay?: boolean;
@@ -11,14 +12,19 @@ export function BackgroundMusic({ autoPlay = false }: BackgroundMusicProps = {})
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const [canPlay, setCanPlay] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Check if boot animation has completed
-    const bootComplete = localStorage.getItem('bootComplete') === 'true';
-    setCanPlay(bootComplete);
+    if (!mounted) return;
+    // Check if boot animation has completed - using callback to avoid sync setState
+    const checkBootComplete = () => {
+      const bootComplete = localStorage.getItem('bootComplete') === 'true';
+      setCanPlay(bootComplete);
+    };
+    
+    // Defer setState to next tick
+    const timer = setTimeout(checkBootComplete, 0);
 
     // Listen for boot completion event
     const handleBootComplete = () => {
@@ -27,9 +33,10 @@ export function BackgroundMusic({ autoPlay = false }: BackgroundMusicProps = {})
     window.addEventListener('bootComplete', handleBootComplete);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('bootComplete', handleBootComplete);
     };
-  }, []);
+  }, [mounted]);
 
   useEffect(() => {
     if (!mounted || !canPlay) return;
