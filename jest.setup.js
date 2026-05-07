@@ -24,21 +24,6 @@ global.Response = class Response {
   }
 };
 
-// Mock NextResponse for API route tests
-jest.mock('next/server', () => ({
-  NextResponse: {
-    json: (data, init) => {
-      const status = init?.status || 200;
-      return {
-        json: async () => data,
-        status: status,
-        headers: new Map(),
-        ok: status >= 200 && status < 300,
-      };
-    },
-  },
-}));
-
 // Mock next-intl
 jest.mock('next-intl', () => ({
   useTranslations: () => (key) => key,
@@ -77,6 +62,9 @@ jest.mock('framer-motion', () => ({
     start: jest.fn(),
     stop: jest.fn(),
   }),
+  useMotionValue: (initial) => ({ get: () => initial, set: jest.fn() }),
+  useTransform: () => ({ get: () => 0, set: jest.fn() }),
+  useScroll: () => ({ scrollYProgress: { get: () => 0, set: jest.fn() } }),
 }));
 
 // Mock next-intl routing
@@ -86,6 +74,11 @@ jest.mock('@/i18n/routing', () => ({
     defaultLocale: 'en',
   },
   Link: ({ children, ...props }) => require('react').createElement('a', props, children),
+  usePathname: () => '/en',
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+  }),
 }));
 
 global.IntersectionObserver = class IntersectionObserver {

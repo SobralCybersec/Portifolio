@@ -1,0 +1,164 @@
+
+> solo-leveling-docs@1.0.0 test
+> jest --testPathPattern=Hero
+
+  console.warn
+    Image with src "/images/badges/badge.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+    Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+
+    [0m [90m 4 |[39m describe([32m'Hero'[39m[33m,[39m () [33m=>[39m {
+     [90m 5 |[39m   it([32m'renders without crashing'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 6 |[39m     [36mconst[39m { container } [33m=[39m render([33m<[39m[33mHero[39m animateSection[33m=[39m{[36mfalse[39m} [33m/[39m[33m>[39m)[33m;[39m
+     [90m   |[39m                                 [31m[1m^[22m[39m
+     [90m 7 |[39m     expect(container)[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 8 |[39m   })[33m;[39m
+     [90m 9 |[39m })[33m;[39m[0m
+
+      at warn (node_modules/next/src/shared/lib/utils/warn-once.ts:6:15)
+      at getImgProps (node_modules/next/src/shared/lib/get-img-props.ts:579:15)
+      at node_modules/next/src/client/image-component.tsx:402:64
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateForwardRef (node_modules/react-dom/cjs/react-dom-client.development.js:9724:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12117:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+
+  console.warn
+    Image with src "/images/badges/badge1.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+    Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+
+    [0m [90m 4 |[39m describe([32m'Hero'[39m[33m,[39m () [33m=>[39m {
+     [90m 5 |[39m   it([32m'renders without crashing'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 6 |[39m     [36mconst[39m { container } [33m=[39m render([33m<[39m[33mHero[39m animateSection[33m=[39m{[36mfalse[39m} [33m/[39m[33m>[39m)[33m;[39m
+     [90m   |[39m                                 [31m[1m^[22m[39m
+     [90m 7 |[39m     expect(container)[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 8 |[39m   })[33m;[39m
+     [90m 9 |[39m })[33m;[39m[0m
+
+      at warn (node_modules/next/src/shared/lib/utils/warn-once.ts:6:15)
+      at getImgProps (node_modules/next/src/shared/lib/get-img-props.ts:579:15)
+      at node_modules/next/src/client/image-component.tsx:402:64
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateForwardRef (node_modules/react-dom/cjs/react-dom-client.development.js:9724:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12117:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+
+  console.warn
+    Image with src "/images/badges/badge2.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+    Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+
+    [0m [90m 4 |[39m describe([32m'Hero'[39m[33m,[39m () [33m=>[39m {
+     [90m 5 |[39m   it([32m'renders without crashing'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 6 |[39m     [36mconst[39m { container } [33m=[39m render([33m<[39m[33mHero[39m animateSection[33m=[39m{[36mfalse[39m} [33m/[39m[33m>[39m)[33m;[39m
+     [90m   |[39m                                 [31m[1m^[22m[39m
+     [90m 7 |[39m     expect(container)[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 8 |[39m   })[33m;[39m
+     [90m 9 |[39m })[33m;[39m[0m
+
+      at warn (node_modules/next/src/shared/lib/utils/warn-once.ts:6:15)
+      at getImgProps (node_modules/next/src/shared/lib/get-img-props.ts:579:15)
+      at node_modules/next/src/client/image-component.tsx:402:64
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateForwardRef (node_modules/react-dom/cjs/react-dom-client.development.js:9724:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12117:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+
+  console.warn
+    Image with src "/images/badges/badge3.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+    Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+
+    [0m [90m 4 |[39m describe([32m'Hero'[39m[33m,[39m () [33m=>[39m {
+     [90m 5 |[39m   it([32m'renders without crashing'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 6 |[39m     [36mconst[39m { container } [33m=[39m render([33m<[39m[33mHero[39m animateSection[33m=[39m{[36mfalse[39m} [33m/[39m[33m>[39m)[33m;[39m
+     [90m   |[39m                                 [31m[1m^[22m[39m
+     [90m 7 |[39m     expect(container)[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 8 |[39m   })[33m;[39m
+     [90m 9 |[39m })[33m;[39m[0m
+
+      at warn (node_modules/next/src/shared/lib/utils/warn-once.ts:6:15)
+      at getImgProps (node_modules/next/src/shared/lib/get-img-props.ts:579:15)
+      at node_modules/next/src/client/image-component.tsx:402:64
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateForwardRef (node_modules/react-dom/cjs/react-dom-client.development.js:9724:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12117:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+
+  console.warn
+    Image with src "/images/JinWoo-render.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+    Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+
+    [0m [90m 4 |[39m describe([32m'Hero'[39m[33m,[39m () [33m=>[39m {
+     [90m 5 |[39m   it([32m'renders without crashing'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 6 |[39m     [36mconst[39m { container } [33m=[39m render([33m<[39m[33mHero[39m animateSection[33m=[39m{[36mfalse[39m} [33m/[39m[33m>[39m)[33m;[39m
+     [90m   |[39m                                 [31m[1m^[22m[39m
+     [90m 7 |[39m     expect(container)[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 8 |[39m   })[33m;[39m
+     [90m 9 |[39m })[33m;[39m[0m
+
+      at warn (node_modules/next/src/shared/lib/utils/warn-once.ts:6:15)
+      at getImgProps (node_modules/next/src/shared/lib/get-img-props.ts:579:15)
+      at node_modules/next/src/client/image-component.tsx:402:64
+      at Object.react_stack_bottom_frame (node_modules/react-dom/cjs/react-dom-client.development.js:25904:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom-client.development.js:7662:22)
+      at updateForwardRef (node_modules/react-dom/cjs/react-dom-client.development.js:9724:19)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12117:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+

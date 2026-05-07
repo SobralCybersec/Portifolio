@@ -13,6 +13,9 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   reactStrictMode: true,
   
+  // Transpile ESM packages for Jest compatibility
+  transpilePackages: ['next-intl', 'use-intl'],
+  
   // Enable standalone output for Docker
   output: 'standalone',
   
