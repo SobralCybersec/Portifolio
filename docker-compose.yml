@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        - NODE_VERSION=22-alpine3.22
         - NODE_ENV=production
     container_name: shadow-monarch-portfolio
     ports:

@@ -1,0 +1,85 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+
+# Next.js
+.next
+out
+.turbo
+
+# Testing
+coverage
+.nyc_output
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+jest.config.js
+jest.setup.js
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Documentation
+*.md
+docs
+CHANGELOG.md
+LICENSE
+
+# Temporary files
+temp_*
+*.tmp
+*.log
+
+# Build artifacts
+dist
+build
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+.prettierrc
+.eslintrc*
+eslint.config.*
+.editorconfig
+tsconfig.json
+postcss.config.js
+tailwind.config.ts
