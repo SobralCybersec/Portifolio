@@ -7,7 +7,7 @@ on:
     branches: [main, master, develop]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -27,7 +27,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm ci
 
       - name: Run ESLint
         run: npm run lint
@@ -50,7 +52,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm ci
 
       - name: Run tests with coverage
         run: npm test -- --coverage --maxWorkers=2
@@ -80,7 +84,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm ci
 
       - name: Build Next.js application
         run: npm run build
@@ -218,7 +224,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm ci
 
       - name: Build application
         run: npm run build
@@ -257,7 +265,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm ci
 
       - name: Analyze bundle
         run: npm run analyze
