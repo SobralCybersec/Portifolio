@@ -29,18 +29,19 @@ export default function BlogAdminClient() {
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch(`/api/blog/list?locale=${locale}`);
-        const data = await res.json();
-        setPosts(data.posts || []);
-      } catch (error) {
-        console.error('Failed to load posts:', error);
-      }
-    };
-    load();
+  const loadPosts = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/blog/list?locale=${locale}`);
+      const data = await res.json();
+      setPosts(data.posts || []);
+    } catch (error) {
+      console.error('Failed to load posts:', error);
+    }
   }, [locale]);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   const { getRootProps: getCoverRootProps, getInputProps: getCoverInputProps } = useDropzone({
     accept: { 'image/*': [] },

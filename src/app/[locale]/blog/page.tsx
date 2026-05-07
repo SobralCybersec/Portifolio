@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
 import HexagonGrid from '@/components/HexagonGrid';
 import ParticleBackground from '@/components/ParticleBackground';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { BlogPost } from '@/lib/blog';
 import { useDropzone } from 'react-dropzone';

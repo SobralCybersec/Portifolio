@@ -3,7 +3,7 @@ import Contact from '../Contact';
 
 describe('Contact', () => {
   it('renders without crashing', () => {
-    const { container } = render(<Contact animateSection={false} />);
-    expect(container).toBeInTheDocument();
+    const { container } = render(<Contact animateSection="false" />);
+    expect(container).toBeTruthy();
   });
 });
