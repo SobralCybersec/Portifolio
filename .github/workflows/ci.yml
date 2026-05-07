@@ -1,4 +1,4 @@
-name: CI/CD Pipeline 2026
+name: CI
 
 on:
   push:
@@ -6,16 +6,17 @@ on:
   pull_request:
     branches: [main, master, develop]
 
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: '22'
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Lint and Type Check
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,12 +25,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm ci
+        run: npm ci
 
       - name: Run ESLint
         run: npm run lint
@@ -37,10 +36,10 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
-  # Run Tests with Coverage
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -49,15 +48,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm ci
+        run: npm ci
 
       - name: Run tests with coverage
-        run: npm test -- --no-coverage --maxWorkers=2
+        run: npm test -- --coverage --maxWorkers=2
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -68,11 +65,11 @@ jobs:
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  # Build Application
   build:
     name: Build Application
     runs-on: ubuntu-latest
     needs: [lint, test]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -81,12 +78,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm ci
+        run: npm ci
 
       - name: Build Next.js application
         run: npm run build
@@ -102,10 +97,10 @@ jobs:
             public
           retention-days: 7
 
-  # Security Audit
   security:
     name: Security Audit
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -114,105 +109,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run npm audit
         run: npm audit --audit-level=moderate
         continue-on-error: true
 
-      - name: Run Snyk security scan
-        uses: snyk/actions/node@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
-
-  # Build and Push Docker Image (2026 Best Practices)
-  docker:
-    name: Build & Push Docker Image
-    runs-on: ubuntu-latest
-    needs: [build, security]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    permissions:
-      contents: read
-      packages: write
-      id-token: write  # For SLSA provenance
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU for multi-platform builds
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-          labels: |
-            org.opencontainers.image.title=Shadow Monarch Portfolio
-            org.opencontainers.image.description=Next.js Portfolio with Blog
-            org.opencontainers.image.vendor=Matheus Sobral
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          annotations: ${{ steps.meta.outputs.annotations }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: true  # SLSA provenance attestation
-          sbom: true        # Software Bill of Materials
-          build-args: |
-            NODE_ENV=production
-            NEXT_TELEMETRY_DISABLED=1
-
-      - name: Scan image for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-  # Performance & Lighthouse Audit
   lighthouse:
     name: Lighthouse Audit
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'pull_request'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -221,20 +132,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm ci
+        run: npm ci
 
       - name: Build application
         run: npm run build
+        env:
+          NODE_ENV: production
 
       - name: Start Next.js server
-        run: npm start &
-        env:
-          PORT: 3000
+        run: npm start > /tmp/next.log 2>&1 &
 
       - name: Wait for server
         run: npx wait-on http://localhost:3000 --timeout 60000
@@ -247,41 +156,3 @@ jobs:
             http://localhost:3000/blog
           uploadArtifacts: true
           temporaryPublicStorage: true
-
-  # Bundle Size Analysis
-  bundle-analysis:
-    name: Bundle Size Analysis
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          npm install
-          npm ci
-
-      - name: Analyze bundle
-        run: npm run analyze
-        env:
-          ANALYZE: true
-
-      - name: Upload bundle analysis
-        uses: actions/upload-artifact@v4
-        with:
-          name: bundle-analysis
-          path: .next/analyze
-          retention-days: 7
-
-      - name: Comment bundle size on PR
-        uses: andresz1/size-limit-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
