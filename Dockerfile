@@ -6,15 +6,15 @@
 ARG NODE_VERSION=22-alpine3.22
 
 FROM node:${NODE_VERSION} AS dependencies
+
 RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
-# Copy package files
 COPY package.json package-lock.json* ./
 
-# Install dependencies with cache mount for faster builds
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --only=production && \
+    npm ci && \
     npm cache clean --force
 
 # ============================================
