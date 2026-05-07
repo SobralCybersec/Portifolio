@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Save, Globe, FileText, Trash2, Edit, List, Eye, FileUp, Link as LinkIcon } from 'lucide-react';
@@ -29,19 +29,18 @@ export default function BlogAdminClient() {
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
 
-  const loadPosts = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/blog/list?locale=${locale}`);
-      const data = await res.json();
-      setPosts(data.posts || []);
-    } catch (error) {
-      console.error('Failed to load posts:', error);
-    }
-  }, [locale]);
-
   useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const res = await fetch(`/api/blog/list?locale=${locale}`);
+        const data = await res.json();
+        setPosts(data.posts || []);
+      } catch (error) {
+        console.error('Failed to load posts:', error);
+      }
+    };
     loadPosts();
-  }, [loadPosts]);
+  }, [locale]);
 
   const { getRootProps: getCoverRootProps, getInputProps: getCoverInputProps } = useDropzone({
     accept: { 'image/*': [] },
@@ -162,7 +161,16 @@ export default function BlogAdminClient() {
       });
 
       if (res.ok) {
-        await loadPosts();
+        const load = async () => {
+          try {
+            const res = await fetch(`/api/blog/list?locale=${locale}`);
+            const data = await res.json();
+            setPosts(data.posts || []);
+          } catch (error) {
+            console.error('Failed to load posts:', error);
+          }
+        };
+        await load();
         resetForm();
         setMode('list');
       } else {
@@ -197,7 +205,16 @@ export default function BlogAdminClient() {
       });
 
       if (res.ok) {
-        await loadPosts();
+        const load = async () => {
+          try {
+            const res = await fetch(`/api/blog/list?locale=${locale}`);
+            const data = await res.json();
+            setPosts(data.posts || []);
+          } catch (error) {
+            console.error('Failed to load posts:', error);
+          }
+        };
+        await load();
       } else {
         const error = await res.json();
         alert(`Failed to delete: ${error.error || 'Unknown error'}`);
