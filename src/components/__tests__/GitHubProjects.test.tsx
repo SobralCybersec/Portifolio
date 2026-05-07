@@ -33,8 +33,7 @@ describe('GitHubProjects', () => {
     render(<GitHubProjects />);
 
     await waitFor(() => {
-      expect(screen.getByText('GITHUB')).toBeInTheDocument();
-      expect(screen.getByText('Live Projects')).toBeInTheDocument();
+      expect(screen.getByText('My Projects')).toBeInTheDocument();
     });
   });
 
@@ -43,19 +42,14 @@ describe('GitHubProjects', () => {
 
     render(<GitHubProjects />);
 
-    expect(screen.getByText('GITHUB')).toBeInTheDocument();
-    expect(screen.getByText('Live Projects')).toBeInTheDocument();
+    expect(screen.getByText('My Projects')).toBeInTheDocument();
   });
 
   it('fetches and displays repositories', async () => {
-    (global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockRepos,
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-      });
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockRepos,
+    });
 
     render(<GitHubProjects />);
 
@@ -88,7 +82,7 @@ describe('GitHubProjects', () => {
     render(<GitHubProjects />);
 
     await waitFor(() => {
-      expect(screen.getByText(/rate limit/i)).toBeInTheDocument();
+      expect(screen.getByText(/GitHub API rate limit exceeded/i)).toBeInTheDocument();
     });
   });
 
@@ -98,9 +92,6 @@ describe('GitHubProjects', () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => mockRepos,
-      })
-      .mockResolvedValueOnce({
-        ok: false,
       });
 
     render(<GitHubProjects />);
@@ -118,14 +109,10 @@ describe('GitHubProjects', () => {
   });
 
   it('displays repository stats', async () => {
-    (global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockRepos,
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-      });
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockRepos,
+    });
 
     render(<GitHubProjects />);
 
@@ -137,14 +124,10 @@ describe('GitHubProjects', () => {
   });
 
   it('displays topics', async () => {
-    (global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockRepos,
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-      });
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockRepos,
+    });
 
     render(<GitHubProjects />);
 
@@ -155,14 +138,10 @@ describe('GitHubProjects', () => {
   });
 
   it('renders GitHub link', async () => {
-    (global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockRepos,
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-      });
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockRepos,
+    });
 
     render(<GitHubProjects />);
 
@@ -173,14 +152,10 @@ describe('GitHubProjects', () => {
   });
 
   it('renders demo link when homepage exists', async () => {
-    (global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockRepos,
-      })
-      .mockResolvedValueOnce({
-        ok: false,
-      });
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockRepos,
+    });
 
     render(<GitHubProjects />);
 
