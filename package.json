@@ -10,7 +10,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "docs": "ctx7",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "vercel-build": "next build",
+    "postinstall": "prisma generate || true"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.5",
