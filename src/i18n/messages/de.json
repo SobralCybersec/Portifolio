@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "ÜBER MICH",
+    "projects": "PROJEKTE",
+    "certifications": "ZERTIFIZIERUNGEN",
+    "blog": "BLOG",
+    "contact": "KONTAKT",
+    "github": "GITHUB"
+  },
+  "hero": {
+    "location": "Brasilien",
+    "availability": "Offen fur Praktika",
+    "title": "Full-Stack-Entwickler und Cybersicherheitsanalyst",
+    "greeting": "",
+    "description": "Full-Stack-Entwickler und Cybersicherheitsanalyst in Ausbildung mit über 2 Jahren Erfahrung in autonomen Projekten, Entwicklung von Java-Systemen mit über 1 Million Downloads in Produktion. Studiert Informatik an der UNESA und Cybersicherheit am Centro Universitario FIAP, fokussiert auf Softwarearchitektur, Leistung, Sicherheit und API-Integration.",
+    "highlights": {
+      "fullstack": "Java & Spring Boot",
+      "architecture": "Clean Code & REST APIs",
+      "tdd": "AWS & Redis",
+      "opensource": "1M+ Downloads"
+    },
+    "cta": {
+      "viewProjects": "Projekte Ansehen",
+      "readBlog": "Blog",
+      "downloadCV": "Lebenslauf Herunterladen"
+    },
+    "openToOpportunities": "Online",
+    "stats": {
+      "projects": "Projekte",
+      "experience": "Erfahrung",
+      "commits": "Commits"
+    },
+    "ticker": "KOSTENLOS • OPEN SOURCE • 24/7 VERFÜGBAR • WIEDERVERWENDBARER CODE • KEINE KOSTEN • AUTOMATISIERT • SICHER • SKALIERBAR • TÄGLICH GEWARTET • DOCKER BEREIT • CI/CD AKTIV • SCHNELLE ANTWORT"
+  },
+  "skills": {
+    "title": "FÄHIGKEITEN",
+    "frontend": {
+      "title": "Frontend"
+    },
+    "backend": {
+      "title": "Backend"
+    },
+    "architecture": {
+      "title": "Architektur"
+    },
+    "devops": {
+      "title": "DevOps"
+    }
+  },
+  "projects": {
+    "title": "Neueste Projekte",
+    "work": "ARBEIT",
+    "code": "Code",
+    "demo": "Demo",
+    "loading": "Projekte werden geladen...",
+    "techStack": "Tech Stack",
+    "noDescription": "Keine Beschreibung verfügbar"
+  },
+  "blog": {
+    "title": "Neueste Nachrichten",
+    "eyebrow": "BLOG",
+    "subtitle": "Ein taglicher Blog eines Anfangers in Cybersicherheit und Entwicklung.",
+    "readTime": "Min. Lesezeit",
+    "backToBlog": "Zurück zum Blog",
+    "createPost": "Beitrag Erstellen",
+    "newPost": "Neuer Beitrag",
+    "postTitle": "Titel",
+    "postDescription": "Beschreibung",
+    "postCategory": "Kategorie",
+    "postTags": "Tags",
+    "postContent": "Inhalt (Markdown)",
+    "postCoverImage": "Titelbild",
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
+    "creating": "Erstellen...",
+    "importMarkdown": "Markdown-Datei Importieren",
+    "dropMarkdown": ".md oder .mdx Datei hier ablegen",
+    "autoFills": "Füllt automatisch Titel, Beschreibung und Inhalt aus",
+    "dragDropUpload": "Ziehen & Ablegen oder Klicken zum Hochladen",
+    "autoTranslate": "Automatisch in alle Sprachen übersetzen",
+    "livePreview": "Live-Vorschau",
+    "hidePreview": "Ausblenden",
+    "showPreview": "Anzeigen",
+    "preview": "Vorschau",
+    "enterPostTitle": "Beitragstitel eingeben...",
+    "briefDescription": "Kurze Beschreibung...",
+    "imageUploaded": "Bild hochgeladen!",
+    "linkButton": "Link",
+    "imageButton": "Bild",
+    "enterUrl": "URL eingeben:",
+    "enterLinkText": "Linktext eingeben (optional):",
+    "uploadFailed": "Bild-Upload fehlgeschlagen",
+    "yourPostContent": "# Ihr Beitragsinhalt in Markdown\n\nSchreiben Sie hier Ihren Inhalt...",
+    "startTyping": "*Beginnen Sie zu tippen, um die Vorschau zu sehen...*",
+    "category": "Kategorie",
+    "postTitlePreview": "Beitragstitel",
+    "postDescriptionPreview": "Die Beitragsbeschreibung wird hier angezeigt...",
+    "categories": {
+      "webDevelopment": "Webentwicklung",
+      "cybersecurity": "Cybersicherheit",
+      "devops": "DevOps",
+      "cloudComputing": "Cloud Computing",
+      "programming": "Programmierung"
+    }
+  },
+  "contact": {
+    "title": "KONTAKT AUFNEHMEN",
+    "eyebrow": "KONTAKT",
+    "getInTouch": "Kontakt Aufnehmen",
+    "description": "Full-Stack-Entwickler und Cybersicherheitsanalyst mit Expertise in Java, Spring Boot, React und Next.js. Offen für Praktikumsmöglichkeiten in Softwareentwicklung und Cybersicherheit.",
+    "email": "E-Mail",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "footer": "© 2026 Matheus Sobral. Alle Rechte vorbehalten."
+  },
+  "certifications": {
+    "eyebrow": "ERFOLGE",
+    "title": "Zertifizierungen",
+    "description": "Professionelle Zertifizierungen und Erfolge, die Expertise in moderner Softwareentwicklung, Cloud-Infrastruktur und Cybersicherheit demonstrieren.",
+    "filters": {
+      "all": "Alle Zertifizierungen",
+      "aws": "AWS",
+      "google": "Google",
+      "fiap": "FIAP",
+      "uci": "UCI",
+      "udemy": "Udemy"
+    },
+    "showing": "Anzeigen",
+    "of": "von",
+    "certifications": "Zertifizierungen",
+    "certs": {
+      "awsSolutionsArchitect": { "name": "AWS Certified Solutions Architect", "description": "Demonstriert Expertise im Design verteilter Systeme auf AWS, einschließlich Compute-, Netzwerk-, Speicher- und Datenbankdiensten.", "skills": "AWS,Cloud-Architektur,EC2,S3,RDS,Lambda,VPC,IAM,CloudFormation" },
+      "awsMigration": { "name": "Migrating to the AWS Cloud", "description": "Umfassender Kurs zur AWS-Migration mit dem dreiphasigen Prozess: bewerten, mobilisieren und migrieren.", "skills": "AWS Migration Hub,Application Migration Service,Database Migration Service,Migrationsstrategie,Cloud-Bewertung" },
+      "fiapJava": { "name": "FIAP Java Development", "description": "Java-Grundlagen-Nanokurs (80 Stunden) über objektorientierte Programmierung, IDEs, Variablen, Datenbankzugriff und Design Patterns.", "skills": "Java,OOP,JDBC,Collections,Design Patterns,Exception Handling" },
+      "fiapCyber": { "name": "FIAP Cybersecurity Skills", "description": "Umfassender Cybersicherheits-Nanokurs über Sicherheitsgrundlagen, Bedrohungsanalyse und Verteidigungsstrategien.", "skills": "Cybersicherheit,Bedrohungsanalyse,Netzwerksicherheit,Incident Response,Schwachstellenbewertung" },
+      "fiapDotnet": { "name": "FIAP .NET Development", "description": ".NET-Entwicklungs-Nanokurs über C#, ASP.NET und moderne .NET-Framework-Entwicklungspraktiken.", "skills": "C#,ASP.NET,.NET Framework,MVC,Entity Framework" },
+      "fiapBlockchain": { "name": "FIAP Blockchain", "description": "Blockchain-Technologie-Nanokurs über Distributed-Ledger-Technologie, Smart Contracts und Kryptowährungsgrundlagen.", "skills": "Blockchain,Smart Contracts,Distributed Ledger,Kryptowährungen,Web3" },
+      "fiapLogic": { "name": "FIAP Programming Logic", "description": "Programmierlogik-Grundlagen-Nanokurs über Algorithmen, Datenstrukturen und computergestütztes Denken.", "skills": "Algorithmen,Datenstrukturen,Programmierlogik,Problemlösung,Computational Thinking" },
+      "fiapAlgorithms": { "name": "FIAP Algorithms", "description": "Fortgeschrittener Algorithmen-Nanokurs über Sortierung, Suche, Graphalgorithmen und Komplexitätsanalyse.", "skills": "Algorithmen,Sortierung,Suche,Graphen,Komplexitätsanalyse,Optimierung" },
+      "googleNetwork": { "name": "Connect and Protect: Networks and Network Security", "description": "Teil des Google Cybersecurity Professional Certificate. Umfasst Netzwerkarchitektur, Operationen, Intrusionstaktiken und Sicherheitshärtung.", "skills": "Netzwerksicherheit,TCP/IP,Firewalls,VPN,System Hardening,Cloud-Sicherheit,Intrusion Detection" },
+      "googleCyber": { "name": "Google Cybersecurity Foundations", "description": "Grundlegende Cybersicherheitskonzepte einschließlich Risikomanagement, Bedrohungsanalyse und Sicherheitsframeworks.", "skills": "Cybersicherheit-Grundlagen,Risikomanagement,Bedrohungsanalyse,Sicherheitsframeworks,Compliance" },
+      "uciPM": { "name": "Project Management", "description": "Umfassende Projektmanagement-Spezialisierung über Projektleitung, End-to-End-Planung, Risiko- und Stakeholder-Management.", "skills": "Projektmanagement,Leadership,Risikomanagement,Stakeholder-Management,Ressourcenplanung,Agile Methoden" },
+      "udemyPython": { "name": "The Complete Python Bootcamp From Zero to Hero", "description": "Vollständiges Python-Bootcamp (22,5 Stunden) über Python-Grundlagen, objektorientierte Programmierung, Web Scraping und Datenanalyse.", "skills": "Python,OOP,Web Scraping,Datenanalyse,Pandas,NumPy,Decorators,Generators" },
+      "udemyFullstack": { "name": "Vollständige Webentwicklung - 20 Kurse + 20 Projekte", "description": "Vollständiger Webentwicklungskurs (20 Kurse + 20 Projekte) über HTML5, CSS3, SASS, Bootstrap 5, JavaScript ES6/ES7, PHP 7, OOP, MySQL, jQuery, MVC, APIs, IONIC, WordPress und Git. Erstellen Sie reale Web- und Mobile-Anwendungen vom Frontend bis zum Backend mit Datenbankintegration.", "skills": "HTML5,CSS3,SASS,Bootstrap 5,JavaScript ES6/ES7,PHP 7,OOP,MySQL,jQuery,MVC,REST APIs,IONIC,WordPress,Git" }
+    }
+  },
+  "liveCoding": {
+    "title": "LIVE-CODIERUNG",
+    "description": "Automatisch aufgezeichnete Live-Codierungssitzungen aus meinem Entwicklungsworkflow",
+    "loading": "Neueste Sitzung wird geladen...",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "viewOnGithub": "Auf GitHub ansehen",
+    "autoRecorded": "Automatisch aufgezeichnete Live-Codierungssitzung",
+    "refresh": "Aktualisieren",
+    "tryAgain": "Erneut versuchen",
+    "fileName": "live-codierung-sitzung.gif"
+  },
+  "about": {
+    "title": "Über Mich",
+    "eyebrow": "ÜBER MICH",
+    "background": "Hintergrund",
+    "backgroundText1": "Full-Stack-Entwickler und Cybersicherheitsanalyst in Ausbildung mit über 2 Jahren Erfahrung in autonomen Projekten, Entwicklung von Java-Systemen mit über 1 Million Downloads in Produktion. Studiert Informatik an der UNESA und Cybersicherheit am Centro Universitário FIAP.",
+    "backgroundText2": "Fokussiert auf Softwarearchitektur, Leistung, Sicherheit und API-Integration. Erfahrung mit Java und Spring Boot, Verwendung von Redis, SQL und AWS, Anwendung von Best Practices wie Clean Code und Prinzipien der Organisation und Skalierbarkeit fur den Aufbau von REST-APIs.",
+    "expertise": "Fähigkeiten",
+    "security": "Sprachen & Back-end",
+    "development": "Front-end",
+    "backend": "Database & Cache",
+    "cybersecurity": "Cybersicherheit",
+    "securityTools": "Sicherheitstools",
+    "devtools": "DevOps & Cloud",
+    "aiTools": "KI & LLMs",
+    "philosophy": "Erfahrung",
+    "philosophyText1": "Autonom - Softwareentwickler mit Schwerpunkt Java (2023): Entwicklung und Wartung grosser Java-Anwendungen mit uber 1 Million Downloads in Produktion. Verantwortlich fur den vollstandigen Entwicklungszyklus, einschliesslich Implementierung, Tests, Debugging und Fehlerbehebung.",
+    "philosophyText2": "Bungo Stray ERP - Full-Stack-Entwickler mit Fokus auf Back-end (2026): Entwicklung eines skalierbaren Multi-Tenant-ERP-Systems mit Java 17 und Spring Boot. JWT-Authentifizierung mit Spring Security, RBAC und Passwort-Hashing mit BCrypt und Argon2id. Datenpersistenz mit Apache Cassandra und Cache-Schicht mit Redis."
+  }
+}

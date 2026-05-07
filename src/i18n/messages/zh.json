@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于",
+    "projects": "项目",
+    "certifications": "认证",
+    "blog": "博客",
+    "contact": "联系",
+    "github": "GITHUB"
+  },
+  "hero": {
+    "location": "巴西",
+    "availability": "开放实习机会",
+    "title": "全栈开发者和网络安全分析师",
+    "greeting": "",
+    "description": "全栈开发者和网络安全分析师，拥有超过2年的自主项目经验，开发的Java系统在生产环境中拥有超过100万次下载。在UNESA学习计算机科学，在Centro Universitario FIAP学习网络安全，专注于软件架构、性能、安全和API集成。",
+    "highlights": {
+      "fullstack": "Java & Spring Boot",
+      "architecture": "Clean Code & REST API",
+      "tdd": "AWS & Redis",
+      "opensource": "100万+下载"
+    },
+    "cta": {
+      "viewProjects": "查看项目",
+      "readBlog": "博客",
+      "downloadCV": "下载简历"
+    },
+    "openToOpportunities": "Online",
+    "stats": {
+      "projects": "项目",
+      "experience": "经验",
+      "commits": "提交"
+    },
+    "ticker": "免费 • 开源 • 24/7在线 • 可重用代码 • 零成本 • 自动化 • 安全 • 可扩展 • 每日维护 • DOCKER就绪 • CI/CD活跃 • 快速响应"
+  },
+  "skills": {
+    "title": "技能",
+    "frontend": {
+      "title": "前端"
+    },
+    "backend": {
+      "title": "后端"
+    },
+    "architecture": {
+      "title": "架构"
+    },
+    "devops": {
+      "title": "DevOps"
+    }
+  },
+  "projects": {
+    "title": "最新项目",
+    "work": "作品",
+    "code": "代码",
+    "demo": "演示",
+    "loading": "加载项目中...",
+    "techStack": "技术栈",
+    "noDescription": "没有可用的描述"
+  },
+  "blog": {
+    "title": "最新新闻",
+    "eyebrow": "博客",
+    "subtitle": "一个网络安全和开发初学者的日常博客。",
+    "readTime": "分钟阅读",
+    "backToBlog": "返回博客",
+    "createPost": "创建文章",
+    "newPost": "新文章",
+    "postTitle": "标题",
+    "postDescription": "描述",
+    "postCategory": "类别",
+    "postTags": "标签",
+    "postContent": "内容 (Markdown)",
+    "postCoverImage": "封面图片",
+    "cancel": "取消",
+    "create": "创建",
+    "creating": "创建中...",
+    "importMarkdown": "导入Markdown文件",
+    "dropMarkdown": "将.md或.mdx文件拖放到这里",
+    "autoFills": "自动填充标题、描述和内容",
+    "dragDropUpload": "拖放或点击上传",
+    "autoTranslate": "自动翻译为所有语言",
+    "livePreview": "实时预览",
+    "hidePreview": "隐藏",
+    "showPreview": "显示",
+    "preview": "预览",
+    "enterPostTitle": "输入文章标题...",
+    "briefDescription": "简要描述...",
+    "imageUploaded": "图片已上传！",
+    "linkButton": "链接",
+    "imageButton": "图片",
+    "enterUrl": "输入URL:",
+    "enterLinkText": "输入链接文本 (可选):",
+    "uploadFailed": "图片上传失败",
+    "yourPostContent": "# 您的Markdown文章内容\n\n在这里写您的内容...",
+    "startTyping": "*开始输入以查看预览...*",
+    "category": "类别",
+    "postTitlePreview": "文章标题",
+    "postDescriptionPreview": "文章描述将显示在这里...",
+    "categories": {
+      "webDevelopment": "Web开发",
+      "cybersecurity": "网络安全",
+      "devops": "DevOps",
+      "cloudComputing": "云计算",
+      "programming": "编程"
+    }
+  },
+  "contact": {
+    "title": "联系我",
+    "eyebrow": "联系",
+    "getInTouch": "联系我",
+    "description": "全栈开发者和网络安全分析师，擅长Java、Spring Boot、React和Next.js。开放软件开发和网络安全实习机会。",
+    "email": "邮箱",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "footer": "© 2026 Matheus Sobral. 保留所有权利。"
+  },
+  "certifications": {
+    "eyebrow": "成就",
+    "title": "认证",
+    "description": "专业认证和成就，展示在现代软件开发、云基础设施和网络安全方面的专业知识。",
+    "filters": {
+      "all": "所有认证",
+      "aws": "AWS",
+      "google": "Google",
+      "fiap": "FIAP",
+      "uci": "UCI",
+      "udemy": "Udemy"
+    },
+    "showing": "显示",
+    "of": "的",
+    "certifications": "认证",
+    "certs": {
+      "awsSolutionsArchitect": { "name": "AWS Certified Solutions Architect", "description": "展示在AWS上设计分布式系统的专业知识，包括计算、网络、存储和数据库服务。", "skills": "AWS,云架构,EC2,S3,RDS,Lambda,VPC,IAM,CloudFormation" },
+      "awsMigration": { "name": "Migrating to the AWS Cloud", "description": "全面的AWS迁移课程，涵盖三阶段流程：评估、动员和迁移。", "skills": "AWS Migration Hub,Application Migration Service,Database Migration Service,迁移策略,云评估" },
+      "fiapJava": { "name": "FIAP Java Development", "description": "Java基础纳米课程（80小时），涵盖面向对象编程、IDE、变量、数据库访问和设计模式。", "skills": "Java,面向对象编程,JDBC,集合,设计模式,异常处理" },
+      "fiapCyber": { "name": "FIAP Cybersecurity Skills", "description": "全面的网络安全纳米课程，涵盖安全基础、威胁分析和防御策略。", "skills": "网络安全,威胁分析,网络安全,事件响应,漏洞评估" },
+      "fiapDotnet": { "name": "FIAP .NET Development", "description": ".NET开发纳米课程，涵盖C#、ASP.NET和现代.NET框架开发实践。", "skills": "C#,ASP.NET,.NET Framework,MVC,Entity Framework" },
+      "fiapBlockchain": { "name": "FIAP Blockchain", "description": "区块链技术纳米课程，涵盖分布式账本技术、智能合约和加密货币基础。", "skills": "Blockchain,智能合约,分布式账本技术,加密货币,Web3" },
+      "fiapLogic": { "name": "FIAP Programming Logic", "description": "编程逻辑基础纳米课程，涵盖算法、数据结构和计算思维。", "skills": "算法,数据结构,编程逻辑,问题解决,计算思维" },
+      "fiapAlgorithms": { "name": "FIAP Algorithms", "description": "高级算法纳米课程，涵盖排序、搜索、图算法和复杂度分析。", "skills": "算法,排序,搜索,图,复杂度分析,优化" },
+      "googleNetwork": { "name": "Connect and Protect: Networks and Network Security", "description": "Google网络安全专业证书的一部分。涵盖网络架构、操作、入侵策略和安全加固。", "skills": "网络安全,TCP/IP,防火墙,VPN,系统加固,云安全,入侵检测" },
+      "googleCyber": { "name": "Google Cybersecurity Foundations", "description": "基础网络安全概念，包括风险管理、威胁分析和安全框架。", "skills": "网络安全基础,风险管理,威胁分析,安全框架,合规" },
+      "uciPM": { "name": "Project Management", "description": "全面的项目管理专业课程，涵盖项目领导力、端到端规划、风险和利益相关者管理。", "skills": "项目管理,领导力,风险管理,利益相关者管理,资源规划,敏捷方法" },
+      "udemyPython": { "name": "The Complete Python Bootcamp From Zero to Hero", "description": "完整的Python训练营（22.5小时），涵盖Python基础、面向对象编程、网络爬虫和数据分析。", "skills": "Python,面向对象编程,网络爬虫,数据分析,Pandas,NumPy,装饰器,生成器" },
+      "udemyFullstack": { "name": "完整Web开发 - 20门课程 + 20个项目", "description": "完整的Web开发课程（20门课程 + 20个项目），涵盖HTML5、CSS3、SASS、Bootstrap 5、JavaScript ES6/ES7、PHP 7、OOP、MySQL、jQuery、MVC、API、IONIC、WordPress和Git。构建真实的Web和移动应用程序，从前端到后端，包括数据库集成。", "skills": "HTML5,CSS3,SASS,Bootstrap 5,JavaScript ES6/ES7,PHP 7,OOP,MySQL,jQuery,MVC,REST API,IONIC,WordPress,Git" }
+    }
+  },
+  "liveCoding": {
+    "title": "实时编码",
+    "description": "从我的开发工作流程自动录制的实时编码会话",
+    "loading": "加载最新会话...",
+    "lastUpdated": "最后更新",
+    "viewOnGithub": "在GitHub上查看",
+    "autoRecorded": "自动录制的实时编码会话",
+    "refresh": "刷新",
+    "tryAgain": "重试",
+    "fileName": "实时编码会话.gif"
+  },
+  "about": {
+    "title": "关于我",
+    "eyebrow": "关于",
+    "background": "背景",
+    "backgroundText1": "全栈开发者和网络安全分析师，拥有超过2年的自主项目经验，开发的Java系统在生产环境中拥有超过100万次下载。在UNESA学习计算机科学，在Centro Universitário FIAP学习网络安全。",
+    "backgroundText2": "专注于软件架构、性能、安全和API集成。拥有Java和Spring Boot经验，使用Redis、SQL和AWS，应用Clean Code等最佳实践以及组织和可扩展性原则构建REST API。",
+    "expertise": "技能",
+    "security": "语言 & 后端",
+    "development": "前端",
+    "backend": "数据库 & 缓存",
+    "cybersecurity": "网络安全",
+    "securityTools": "安全工具",
+    "devtools": "DevOps & Cloud",
+    "aiTools": "AI & LLM",
+    "philosophy": "经验",
+    "philosophyText1": "自主 - 专注于Java的软件开发者（2023年）：开发和维护大型 Java 应用程序，在生产环境中拥有超过100万次下载。负责完整的开发周期，包括实现、测试、调试和错误修复。",
+    "philosophyText2": "Bungo Stray ERP - 专注于后端的全栈开发者（2026年）：使用Java 17和Spring Boot开发可扩展的多租户ERP系统。使用Spring Security进行JWT身份验证、RBAC以及使用BCrypt和Argon2id进行密码哈希。使用Apache Cassandra进行数据持久化，使用Redis作为缓存层。"
+  }
+}
