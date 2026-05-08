@@ -122,7 +122,7 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
       {/* Body */}
       <div className="px-6 pb-5 pt-5">
         {getPreviewSrc() && (
-          <div className="w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${primary}66`, background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.3)' }}>
+          <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${primary}66`, background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.3)' }}>
             {repo.isVideo ? (
               <video src={getPreviewSrc()!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
             ) : (
@@ -130,6 +130,7 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
                 src={getPreviewSrc()!}
                 alt={repo.name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-contain"
                 onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
