@@ -15,6 +15,7 @@ import LivePreview from '@/components/LivePreview';
 import { useClickSound } from '@/hooks/useClickSound';
 import HexagonGrid from '@/components/HexagonGrid';
 import ParticleBackground from '@/components/ParticleBackground';
+import VisitorCounter from '@/components/VisitorCounter';
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,6 +58,7 @@ export default function Page() {
           <Navigation />
           <ScrollProgress />
           <KeyboardNav onMenuToggle={() => setMenuOpen(!menuOpen)} />
+          <VisitorCounter />
           
           <main className="portfolio-main">
             <div className="page-section" id="hero">

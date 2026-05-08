@@ -8,6 +8,7 @@ import { routing } from '@/i18n/routing';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import DynamicFavicon from '@/components/DynamicFavicon';
 import { BackgroundMusic } from '@/components/BackgroundMusic';
+import { Analytics } from '@vercel/analytics/react';
 
 const geistSans = Inter({
   variable: '--font-geist-sans',
@@ -85,6 +86,7 @@ export default async function LocaleLayout({
             <DynamicFavicon />
             <BackgroundMusic autoPlay />
             {children}
+            <Analytics />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
