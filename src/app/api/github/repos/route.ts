@@ -158,27 +158,23 @@ async function fetchReadmeData(
 
 function getLanguageImage(language: string | null): string {
   const langImages: Record<string, string> = {
-    'TypeScript': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg',
-    'JavaScript': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg',
-    'Python': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg',
-    'Java': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg',
-    'C++': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg',
-    'C': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg',
-    'C#': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/csharp/csharp-original.svg',
-    'Go': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg',
-    'Rust': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/rust/rust-original.svg',
-    'Ruby': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/ruby/ruby-original.svg',
-    'PHP': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/php/php-original.svg',
-    'Swift': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/swift/swift-original.svg',
-    'Kotlin': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/kotlin/kotlin-original.svg',
-    'Shell': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/bash/bash-original.svg',
-    'HTML': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg',
-    'CSS': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg',
+    'TypeScript': '/icons/typescript.png',
+    'JavaScript': '/icons/javascript.png',
+    'Python': '/icons/python.png',
+    'Java': '/icons/java.png',
+    'C++': '/icons/cpp.png',
+    'C': '/icons/c.png',
+    'C#': '/icons/csharp.png',
+    'Rust': '/icons/rust.png',
+    'Ruby': '/icons/ruby.png',
+    'PHP': '/icons/php.png',
+    'Shell': '/icons/bash.png',
+    'Assembly': '/icons/assembly.png',
   };
   
   return language && langImages[language] 
     ? langImages[language] 
-    : 'https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg';
+    : '/icons/github.png';
 }
 
 export async function GET(request: NextRequest) {
