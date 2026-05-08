@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import SafeImage from './SafeImage';
 
 interface ImageSlideshowProps {
   images: string[];
@@ -32,13 +32,13 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
           className="absolute inset-0 transition-opacity duration-1000"
           style={{ opacity: index === currentIndex ? 1 : 0 }}
         >
-          <Image
+          <SafeImage
             src={src}
             alt={`${alt} - ${index + 1}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain"
-            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            fallbackSrc="/icons/github.png"
           />
         </div>
       ))}

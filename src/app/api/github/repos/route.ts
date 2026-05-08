@@ -157,6 +157,11 @@ async function fetchReadmeData(
 }
 
 function getLanguageImage(language: string | null): string {
+  if (!language) return '/icons/github.png';
+  
+  // Normalize language name (handle encoding issues)
+  const normalized = language.trim();
+  
   const langImages: Record<string, string> = {
     'TypeScript': '/icons/typescript.png',
     'JavaScript': '/icons/javascript.png',
@@ -172,9 +177,7 @@ function getLanguageImage(language: string | null): string {
     'Assembly': '/icons/assembly.png',
   };
   
-  return language && langImages[language] 
-    ? langImages[language] 
-    : '/icons/github.png';
+  return langImages[normalized] ?? '/icons/github.png';
 }
 
 export async function GET(request: NextRequest) {

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Github, ExternalLink, Star, GitFork } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/useHydrated';
-import Image from 'next/image';
+import SafeImage from './SafeImage';
 import ImageSlideshow from './ImageSlideshow';
 
 interface Repo {
