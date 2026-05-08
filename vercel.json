@@ -1,10 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm ci",
   "framework": "nextjs",
-  "outputDirectory": ".next",
   "cleanUrls": true,
   "trailingSlash": false,
   "regions": ["iad1"],
