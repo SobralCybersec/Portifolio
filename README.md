@@ -537,6 +537,6 @@ Returns:
 
 <p align="center">
   <strong>Developed by:</strong><br>
-  Matheus Sobral - Shadow Monarch<br>
-  <em>Inspired by Solo Leveling</em>
+  Matheus Sobral & Pyetrah (Designer)
+  <em>Lol</em>
 </p>
