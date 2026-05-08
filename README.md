@@ -1,9 +1,6 @@
 <div align="center">
 
 <h1 align="center">  
-
-  <img src="https://i.imgur.com/zZghGx7.png">
-
   ---
 
   Shadow Monarch Portfolio
