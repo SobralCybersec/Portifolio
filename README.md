@@ -1,8 +1,6 @@
 <div align="center">
 
 <h1 align="center">  
-  ---
-
   Shadow Monarch Portfolio
 </h1>
 
@@ -11,6 +9,16 @@ Modern Next.js portfolio with Solo Leveling theme, featuring dynamic theming, mu
 **English** | [Português](README.pt-BR.md)
 
 </div>
+
+---
+
+<h1 align="center">
+  <img src="https://i.imgur.com/dwyUWDH.gif" width="50" />
+  Demo | Demonstration:
+</h1>
+
+https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
+
 
 ---
 
