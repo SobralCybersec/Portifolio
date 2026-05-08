@@ -59,7 +59,6 @@ async function fetchReadmeData(
 
     const isFIAP = repo.toLowerCase().includes('fiap');
     const isJavaDoZero = repo.toLowerCase() === 'javadozero';
-    const isJJKUR = repo.toLowerCase() === 'jjkur' || repo.toLowerCase() === 'jujutsukaisenultimatereworked' || repo.toLowerCase() === 'jjku';
     
     if (isFIAP) {
       return { 
@@ -76,45 +75,62 @@ async function fetchReadmeData(
         techStack
       };
     }
-
-    if (isJJKUR) {
-      return {
-        previewImage: JSON.stringify([
-          'https://media.forgecdn.net/attachments/1063/600/captura-de-tela-2025-01-11-091355.png',
-          'https://media.forgecdn.net/attachments/1063/597/image-1.png',
-          'https://media.forgecdn.net/attachments/1063/599/captura-de-tela-2025-01-11-090958.png',
-          'https://media.forgecdn.net/attachments/1063/598/image-2.png',
-          'https://media.forgecdn.net/attachments/1063/601/captura-de-tela-2025-01-11-090439.png',
-          'https://media.forgecdn.net/attachments/1063/602/captura-de-tela-2025-01-11-090634.png'
-        ]),
-        isVideo: false,
-        techStack
-      };
-    }
     
     const demoIdx = readme.search(/(demonstration|demo|demonstração)/i);
     const content = demoIdx !== -1 && !isFIAP ? readme.slice(demoIdx) : readme;
 
-    const videoMatch = content.match(
-      /https:\/\/github\.com\/user-attachments\/assets\/[a-f0-9-]+/i
-    );
-    if (videoMatch) return { previewImage: videoMatch[0], isVideo: true, techStack };
+    // Extract all images from demonstration section
+    const images: string[] = [];
+    const videos: string[] = [];
 
+    // Check for videos first
+    const videoMatches = content.matchAll(/https:\/\/github\.com\/user-attachments\/assets\/[a-f0-9-]+/gi);
+    for (const match of videoMatches) {
+      videos.push(match[0]);
+    }
+
+    // Extract from HTML img tags
     for (const imgTag of content.matchAll(/<img[^>]*>/gi)) {
       const tag = imgTag[0];
       const widthMatch = tag.match(/width=["']?(\d+)["']?/i);
       if (widthMatch && parseInt(widthMatch[1]) < 100) continue;
       const src = tag.match(/src=["']([^"']+)["']/i)?.[1];
-      if (src) return { previewImage: src, isVideo: /\.(mp4|webm|mov)$/i.test(src), techStack };
+      if (src) {
+        if (/\.(mp4|webm|mov)$/i.test(src)) {
+          videos.push(src);
+        } else {
+          images.push(src);
+        }
+      }
     }
 
-    const mdImg = content.match(/!\[.*?\]\((.*?)\)/);
-    if (mdImg?.[1]) {
-      let url = mdImg[1];
+    // Extract from markdown images
+    const mdImgMatches = content.matchAll(/!\[.*?\]\((.*?)\)/g);
+    for (const match of mdImgMatches) {
+      let url = match[1];
       if (!url.startsWith('http')) {
         url = `https://raw.githubusercontent.com/${owner}/${repo}/main/${url.replace(/^\.?\//, '')}`;
       }
-      return { previewImage: url, isVideo: /\.(mp4|webm|mov)$/i.test(url), techStack };
+      if (/\.(mp4|webm|mov)$/i.test(url)) {
+        videos.push(url);
+      } else {
+        images.push(url);
+      }
+    }
+
+    // Return video if found
+    if (videos.length > 0) {
+      return { previewImage: videos[0], isVideo: true, techStack };
+    }
+
+    // Return multiple images as JSON array if more than 1
+    if (images.length > 1) {
+      return { previewImage: JSON.stringify(images), isVideo: false, techStack };
+    }
+
+    // Return single image
+    if (images.length === 1) {
+      return { previewImage: images[0], isVideo: false, techStack };
     }
 
     return { previewImage: null, isVideo: false, techStack };
