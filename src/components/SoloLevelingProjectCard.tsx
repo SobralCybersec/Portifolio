@@ -131,8 +131,7 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
                 alt={repo.name}
                 fill
                 className="object-contain"
-                unoptimized
-                onError={e => { (e.target as HTMLImageElement).src = `https://opengraph.githubassets.com/1/${repo.html_url.replace('https://github.com/', '')}`; }}
+                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             )}
           </div>

@@ -49,6 +49,18 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'github.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.imgur.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.forgecdn.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.fiap.com.br',
+      },
     ],
   },
   
