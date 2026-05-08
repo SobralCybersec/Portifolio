@@ -32,13 +32,16 @@ export default function SafeImage({
     }
   };
 
+  // Check if it's a local icon path
+  const isLocalIcon = imgSrc.startsWith('/icons/');
+
   return (
     <Image
       {...props}
       src={imgSrc}
       alt={alt}
       onError={handleError}
-      unoptimized={imgSrc.startsWith('/icons/')}
+      unoptimized={isLocalIcon}
     />
   );
 }

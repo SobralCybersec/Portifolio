@@ -49,14 +49,20 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
 
   const getPreviewImages = (): string[] => {
     if (!repo.previewImage) return [];
+    
+    // Handle JSON array of images
     try {
       const p = JSON.parse(repo.previewImage);
       if (Array.isArray(p)) return p;
     } catch {}
+    
+    // Single image (including language icons)
     return [repo.previewImage];
   };
 
   const previewImages = getPreviewImages();
+  const hasPreview = previewImages.length > 0;
+  const isLanguageIcon = hasPreview && previewImages[0].startsWith('/icons/');
 
   return (
     <motion.div
@@ -124,10 +130,21 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
 
       {/* Body */}
       <div className="px-6 pb-5 pt-5">
-        {previewImages.length > 0 && (
-          <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${primary}66`, background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.3)' }}>
+        {hasPreview && (
+          <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: isLanguageIcon ? '1/1' : '16/9', borderColor: `${primary}66`, background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.3)' }}>
             {repo.isVideo ? (
               <video src={previewImages[0]} className="w-full h-full object-contain" autoPlay loop muted playsInline />
+            ) : isLanguageIcon ? (
+              <div className="w-full h-full flex items-center justify-center p-8">
+                <SafeImage
+                  src={previewImages[0]}
+                  alt={repo.language || 'Language icon'}
+                  width={120}
+                  height={120}
+                  className="object-contain"
+                  style={{ filter: isDark ? 'brightness(0.9)' : 'brightness(1)' }}
+                />
+              </div>
             ) : (
               <ImageSlideshow images={previewImages} alt={repo.name} interval={5000} />
             )}
