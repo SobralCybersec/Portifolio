@@ -81,3 +81,5 @@ logs
 # Uploads (keep structure, ignore content)
 public/uploads/*
 !public/uploads/.gitkeep
+
+.vercel
