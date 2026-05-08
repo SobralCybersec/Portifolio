@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline 2026
 
 on:
   push:
@@ -8,9 +8,12 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 env:
   NODE_VERSION: '22'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   lint:
@@ -53,17 +56,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests with coverage
+      - name: Run tests
         run: npm test -- --no-coverage --maxWorkers=2
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: Build Application
@@ -97,9 +91,11 @@ jobs:
             public
           retention-days: 7
 
-  security:
-    name: Security Audit
+  bundle-analysis:
+    name: Bundle Size Analysis
     runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: Checkout code
@@ -114,12 +110,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
+      - name: Build with bundle analyzer
+        run: ANALYZE=true npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: .next/analyze
+          retention-days: 7
 
   lighthouse:
-    name: Lighthouse Audit
+    name: Lighthouse Performance Audit
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'pull_request'
@@ -142,17 +146,38 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Start Next.js server
-        run: npm start > /tmp/next.log 2>&1 &
-
-      - name: Wait for server
-        run: npx wait-on http://localhost:3000 --timeout 60000
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
 
       - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v12
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
         with:
-          urls: |
-            http://localhost:3000
-            http://localhost:3000/blog
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+          name: lighthouse-results
+          path: .lighthouseci
+          retention-days: 7
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
