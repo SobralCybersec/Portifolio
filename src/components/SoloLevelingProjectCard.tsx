@@ -5,6 +5,7 @@ import { Github, ExternalLink, Star, GitFork } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/useHydrated';
 import Image from 'next/image';
+import ImageSlideshow from './ImageSlideshow';
 
 interface Repo {
   id: number;
@@ -46,14 +47,16 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
   const primary = isDark ? '#a855f7' : '#3b82f6';
   const accent = isDark ? '#8b5cf6' : '#3b82f6';
 
-  const getPreviewSrc = (): string | null => {
-    if (!repo.previewImage) return null;
+  const getPreviewImages = (): string[] => {
+    if (!repo.previewImage) return [];
     try {
       const p = JSON.parse(repo.previewImage);
-      if (Array.isArray(p)) return p[0];
+      if (Array.isArray(p)) return p;
     } catch {}
-    return repo.previewImage;
+    return [repo.previewImage];
   };
+
+  const previewImages = getPreviewImages();
 
   return (
     <motion.div
@@ -121,19 +124,12 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
 
       {/* Body */}
       <div className="px-6 pb-5 pt-5">
-        {getPreviewSrc() && (
+        {previewImages.length > 0 && (
           <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${primary}66`, background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.3)' }}>
             {repo.isVideo ? (
-              <video src={getPreviewSrc()!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
+              <video src={previewImages[0]} className="w-full h-full object-contain" autoPlay loop muted playsInline />
             ) : (
-              <Image
-                src={getPreviewSrc()!}
-                alt={repo.name}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-contain"
-                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+              <ImageSlideshow images={previewImages} alt={repo.name} interval={5000} />
             )}
           </div>
         )}

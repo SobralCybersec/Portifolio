@@ -34,7 +34,9 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Blog CMS**: Full-featured blog with admin panel, live preview, markdown support, auto-translation, and proper spacing
 * **Background Music**: Theme-aware music that switches between dark/light modes
 * **Animated Components**: Hexagon grid, particle effects, scroll progress, and smooth page transitions
-* **GitHub Integration**: Automatic project fetching with image slideshows and tech stack display
+* **GitHub Integration**: Automatic project fetching with image slideshows (5s intervals) and tech stack display
+* **Visitor Counter**: Real-time cumulative visitor tracking with animated UI
+* **Vercel Analytics**: Integrated analytics for page views and user insights
 * **CI/CD Pipeline**: GitHub Actions with multi-platform Docker builds, security scanning, and Lighthouse audits
 * **Responsive Design**: Mobile-first approach with Tailwind CSS
 * **SEO Optimized**: Dynamic metadata, sitemap, and Open Graph support
@@ -126,52 +128,79 @@ npm run test:coverage
 
 ```
 Main/
-├── src/
-│   ├── app/
-│   │   ├── [locale]/          # Internationalized routes
-│   │   │   ├── page.tsx       # Home page
-│   │   │   ├── blog/          # Blog pages
-│   │   │   ├── projects/      # Projects page
-│   │   │   └── layout.tsx     # Root layout
-│   │   ├── api/               # API routes
-│   │   │   ├── blog/          # Blog CRUD endpoints
-│   │   │   └── health/        # Health check endpoint
-│   │   └── globals.css        # Global styles + custom scrollbar
-│   ├── components/            # React components
-│   │   ├── Hero.tsx           # With Bleach clip animations
-│   │   ├── Skills.tsx         # With stagger clip animations
-│   │   ├── Navigation.tsx
-│   │   ├── SoloLevelingBoot.tsx
-│   │   ├── BackgroundMusic.tsx
-│   │   ├── HexagonGrid.tsx
-│   │   └── ...
-│   ├── lib/                   # Utilities
-│   │   ├── blog.ts           # Blog file operations
-│   │   └── translate.ts      # Groq translation
-│   └── i18n/                  # Internationalization
-│       ├── routing.ts
-│       └── messages/          # 7 language files
-├── __tests__/                 # Test suite
-│   ├── api/                  # API tests
-│   ├── components/           # Component tests
-│   ├── hooks/                # Hook tests
-│   ├── integration/          # Integration tests
-│   └── lib/                  # Utility tests
-├── .github/
-│   └── workflows/            # CI/CD pipelines
-│       ├── ci.yml            # Main CI pipeline
-│       ├── deploy.yml        # Vercel deployment
-│       └── dependencies.yml  # Dependency updates
-├── public/
-│   ├── sounds/               # Background music
-│   ├── images/               # Static images
-│   └── uploads/              # Blog uploads
-├── content/
-│   └── blog/                 # Blog markdown files
-├── Dockerfile                # Multi-stage production build
-├── docker-compose.yml        # Docker orchestration
-├── vercel.json               # Vercel configuration
-└── jest.config.js            # Test configuration
+├── 📁 src/
+│   ├── 📁 app/
+│   │   ├── 📁 [locale]/              # 🌍 Internationalized routes (7 languages)
+│   │   │   ├── 📄 page.tsx           # 🏠 Home page with Hero, Skills, Projects
+│   │   │   ├── 📄 layout.tsx         # 🎨 Root layout with theme & i18n
+│   │   │   ├── 📁 blog/              # 📝 Blog pages
+│   │   │   │   ├── 📄 page.tsx       # Blog list with categories
+│   │   │   │   ├── 📁 [slug]/        # Individual blog posts
+│   │   │   │   └── 📁 admin/         # 🔐 Blog CMS admin panel
+│   │   │   ├── 📁 projects/          # 💼 Projects showcase
+│   │   │   ├── 📁 about/             # ℹ️ About page
+│   │   │   └── 📁 contact/           # 📧 Contact page
+│   │   ├── 📁 api/                   # 🔌 API routes
+│   │   │   ├── 📁 blog/              # Blog CRUD endpoints
+│   │   │   │   ├── 📁 create/        # Create post
+│   │   │   │   ├── 📁 update/        # Update post
+│   │   │   │   ├── 📁 delete/        # Delete post
+│   │   │   │   └── 📁 list/          # List posts
+│   │   │   ├── 📁 github/            # GitHub integration
+│   │   │   │   ├── 📁 repos/         # Fetch repositories
+│   │   │   │   └── 📁 stats/         # GitHub stats
+│   │   │   ├── 📁 visitors/          # 👁️ Visitor counter API
+│   │   │   ├── 📁 health/            # ❤️ Health check endpoint
+│   │   │   └── 📁 upload/            # 📤 File upload
+│   │   └── 📄 globals.css            # 🎨 Global styles + custom scrollbar
+│   ├── 📁 components/                # ⚛️ React components
+│   │   ├── 📄 Hero.tsx               # 🦸 Hero with Bleach animations
+│   │   ├── 📄 Skills.tsx             # 💪 Skills grid with stagger
+│   │   ├── 📄 Navigation.tsx         # 🧭 Main navigation
+│   │   ├── 📄 SoloLevelingBoot.tsx   # 🚀 Boot animation
+│   │   ├── 📄 BackgroundMusic.tsx    # 🎵 Theme-aware music
+│   │   ├── 📄 HexagonGrid.tsx        # 🔷 Animated hexagon grid
+│   │   ├── 📄 VisitorCounter.tsx     # 👁️ Real-time visitor counter
+│   │   ├── 📄 ImageSlideshow.tsx     # 🖼️ Auto image carousel (5s)
+│   │   ├── 📄 GitHubProjects.tsx     # 💼 GitHub projects display
+│   │   ├── 📄 SoloLevelingProjectCard.tsx  # 🎴 Project card
+│   │   └── 📄 ...                    # More components
+│   ├── 📁 lib/                       # 🛠️ Utilities
+│   │   ├── 📄 blog.ts                # Blog file operations
+│   │   └── 📄 translate.ts           # Groq AI translation
+│   ├── 📁 hooks/                     # 🪝 Custom React hooks
+│   │   ├── 📄 useHydrated.ts         # SSR/CSR detection
+│   │   ├── 📄 useClickSound.ts       # Click sound effects
+│   │   └── 📄 useLocalStorage.ts     # LocalStorage hook
+│   └── 📁 i18n/                      # 🌐 Internationalization
+│       ├── 📄 routing.ts             # i18n routing config
+│       └── 📁 messages/               # 7 language JSON files
+├── 📁 __tests__/                     # 🧪 Test suite (47 tests)
+│   ├── 📁 api/                       # API endpoint tests
+│   ├── 📁 components/                # Component tests
+│   ├── 📁 hooks/                     # Hook tests
+│   ├── 📁 integration/               # Integration tests
+│   └── 📁 lib/                       # Utility tests
+├── 📁 .github/
+│   └── 📁 workflows/                 # 🔄 CI/CD pipelines
+│       ├── 📄 ci.yml                 # Main CI (lint, test, build)
+│       └── 📄 docker.yml             # Docker multi-platform build
+├── 📁 public/
+│   ├── 📁 sounds/                    # 🎵 Background music files
+│   ├── 📁 images/                    # 🖼️ Static images
+│   ├── 📁 fonts/                     # 🔤 Custom fonts
+│   └── 📁 uploads/                   # 📤 Blog uploads
+├── 📁 content/
+│   └── 📁 blog/                      # 📝 Blog markdown files
+├── 📄 Dockerfile                     # 🐳 Multi-stage production build
+├── 📄 docker-compose.yml             # 🐳 Docker orchestration
+├── 📄 vercel.json                    # ▲ Vercel configuration
+├── 📄 next.config.mjs                # ⚙️ Next.js configuration
+├── 📄 tailwind.config.ts             # 🎨 Tailwind CSS config
+├── 📄 eslint.config.mjs              # 📏 ESLint 9 flat config
+├── 📄 jest.config.js                 # 🧪 Test configuration
+├── 📄 lighthouserc.js                # 🔦 Lighthouse CI config
+└── 📄 package.json                   # 📦 Dependencies
 ```
 
 ---
@@ -473,6 +502,9 @@ Returns:
 * [x] ESLint 9 migration with flat config
 * [x] React 19 strict linting compliance
 * [x] Next.js Image optimization for all components
+* [x] Image slideshow for projects with multiple images (5s intervals)
+* [x] Visitor counter with cumulative tracking
+* [x] Vercel Analytics integration
 * [ ] Contact form with email integration
 * [ ] Analytics dashboard
 * [ ] RSS feed for blog
