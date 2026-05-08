@@ -11,6 +11,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import matter from 'gray-matter';
 import remarkGfm from 'remark-gfm';
+import Image from 'next/image';
 
 export default function BlogAdminClient() {
   const params = useParams();
@@ -478,7 +479,7 @@ export default function BlogAdminClient() {
                 <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-6">
                   {coverImage && (
                     <div className="mb-6 rounded-lg overflow-hidden">
-                      <img 
+                      <Image 
                         src={coverImage} 
                         alt={title || 'Cover'}
                         className="w-full h-auto object-contain rounded-lg"
@@ -543,7 +544,7 @@ export default function BlogAdminClient() {
                           return <a href={href} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline" {...props}>{children}</a>;
                         },
                         img({ node, src, alt, ...props }: any) {
-                          return <img src={src} alt={alt} className="rounded-lg max-w-full h-auto my-8" {...props} />;
+                          return <Image src={src} alt={alt} className="rounded-lg max-w-full h-auto my-8" {...props} />;
                         },
                         table({ node, children, ...props }: any) {
                           return <div className="overflow-x-auto my-6"><table className="min-w-full border border-gray-700" {...props}>{children}</table></div>;

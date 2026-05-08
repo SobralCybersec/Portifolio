@@ -11,6 +11,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPost } from '@/lib/blog';
 import remarkGfm from 'remark-gfm';
+import Image from 'next/image';
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -65,7 +66,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
 
             {post.coverImage && (
               <div className="my-8 rounded-lg overflow-hidden">
-                <img 
+                <Image 
                   src={post.coverImage} 
                   alt={post.title}
                   className="w-full h-auto object-contain rounded-lg"
@@ -174,7 +175,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
                   },
                   img({ node, src, alt, ...props }: any) {
                     return (
-                      <img src={src} alt={alt} className="rounded-lg max-w-full h-auto my-8" {...props} />
+                      <Image src={src} alt={alt} className="rounded-lg max-w-full h-auto my-8" {...props} />
                     );
                   },
                   table({ node, children, ...props }: any) {

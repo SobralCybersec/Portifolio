@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Github, ExternalLink, Star, GitFork, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/useHydrated';
+import Image from 'next/image';
 
 interface Repo {
   id: number;
@@ -579,7 +580,7 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
                       <video src={getPreviewSrc(selectedRepo)!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={getPreviewSrc(selectedRepo)!}
                         alt={selectedRepo.name}
                         className="w-full h-full object-contain"
