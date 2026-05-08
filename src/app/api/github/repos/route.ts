@@ -57,8 +57,10 @@ async function fetchReadmeData(
     const readme = await res.text();
     const techStack = extractTechStack(readme);
 
+    // Manual configurations for specific projects
     const isFIAP = repo.toLowerCase().includes('fiap');
     const isJavaDoZero = repo.toLowerCase() === 'javadozero';
+    const isJJKUR = repo.toLowerCase() === 'jjkur' || repo.toLowerCase() === 'jujutsukaisenultimatereworked' || repo.toLowerCase() === 'jjku';
     
     if (isFIAP) {
       return { 
@@ -71,6 +73,21 @@ async function fetchReadmeData(
     if (isJavaDoZero) {
       return {
         previewImage: 'https://i.imgur.com/oOn2P0s.png',
+        isVideo: false,
+        techStack
+      };
+    }
+
+    if (isJJKUR) {
+      return {
+        previewImage: JSON.stringify([
+          'https://media.forgecdn.net/attachments/1063/600/captura-de-tela-2025-01-11-091355.png',
+          'https://media.forgecdn.net/attachments/1063/597/image-1.png',
+          'https://media.forgecdn.net/attachments/1063/599/captura-de-tela-2025-01-11-090958.png',
+          'https://media.forgecdn.net/attachments/1063/598/image-2.png',
+          'https://media.forgecdn.net/attachments/1063/601/captura-de-tela-2025-01-11-090439.png',
+          'https://media.forgecdn.net/attachments/1063/602/captura-de-tela-2025-01-11-090634.png'
+        ]),
         isVideo: false,
         techStack
       };
@@ -139,6 +156,31 @@ async function fetchReadmeData(
   }
 }
 
+function getLanguageImage(language: string | null): string {
+  const langImages: Record<string, string> = {
+    'TypeScript': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg',
+    'JavaScript': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg',
+    'Python': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg',
+    'Java': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg',
+    'C++': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg',
+    'C': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg',
+    'C#': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/csharp/csharp-original.svg',
+    'Go': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg',
+    'Rust': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/rust/rust-original.svg',
+    'Ruby': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/ruby/ruby-original.svg',
+    'PHP': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/php/php-original.svg',
+    'Swift': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/swift/swift-original.svg',
+    'Kotlin': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/kotlin/kotlin-original.svg',
+    'Shell': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/bash/bash-original.svg',
+    'HTML': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg',
+    'CSS': 'https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg',
+  };
+  
+  return language && langImages[language] 
+    ? langImages[language] 
+    : 'https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg';
+}
+
 export async function GET(request: NextRequest) {
   try {
     const headers: HeadersInit = {
@@ -175,8 +217,7 @@ export async function GET(request: NextRequest) {
         const readmeData = await fetchReadmeData(repo.owner.login, repo.name, headers);
         return {
           ...repo,
-          previewImage: readmeData.previewImage ??
-            `https://opengraph.githubassets.com/1/${repo.full_name}`,
+          previewImage: readmeData.previewImage ?? getLanguageImage(repo.language),
           isVideo: readmeData.isVideo,
           techStack: readmeData.techStack,
         };
