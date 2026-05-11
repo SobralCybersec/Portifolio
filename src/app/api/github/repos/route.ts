@@ -180,6 +180,26 @@ function getLanguageImage(language: string | null): string {
   return langImages[normalized] ?? '/icons/github.png';
 }
 
+
+async function fetchAllLanguages(
+  owner: string,
+  repo: string,
+  headers: HeadersInit
+): Promise<string[]> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/languages`,
+      { headers }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Object.keys(data).map(l => l.toLowerCase());
+  } catch {
+    return [];
+  }
+}
+
+
 export async function GET(request: NextRequest) {
   try {
     const headers: HeadersInit = {
@@ -213,12 +233,16 @@ export async function GET(request: NextRequest) {
 
     const enriched = await Promise.all(
       filtered.map(async (repo: any) => {
-        const readmeData = await fetchReadmeData(repo.owner.login, repo.name, headers);
+        const [readmeData, allLanguages] = await Promise.all([
+          fetchReadmeData(repo.owner.login, repo.name, headers),
+          fetchAllLanguages(repo.owner.login, repo.name, headers),
+        ]);
         return {
           ...repo,
           previewImage: readmeData.previewImage ?? getLanguageImage(repo.language),
           isVideo: readmeData.isVideo,
           techStack: readmeData.techStack,
+          allLanguages, // e.g. ["python", "batchfile", "assembly", "c", "yara"]
         };
       })
     );

@@ -23,6 +23,7 @@ interface Repo {
   forks_count: number;
   topics: string[];
   previewImage?: string;
+  allLanguages?: string[];
   isVideo?: boolean;
   techStack?: string[];
 }
@@ -49,7 +50,7 @@ export default function ProjectsPage() {
     { id: 'php', label: 'PHP', icon: '/icons/php.png' },
     { id: 'ruby', label: 'Ruby', icon: '/icons/ruby.png' },
     { id: 'rust', label: 'Rust', icon: '/icons/rust.png' },
-    { id: 'bash', label: 'Bash', icon: '/icons/bash.png' },
+    { id: 'batchfile', label: 'Bash', icon: '/icons/bash.png' },
     { id: 'assembly', label: 'Assembly', icon: '/icons/assembly.png' },
   ];
 
@@ -72,6 +73,7 @@ export default function ProjectsPage() {
 
   const filteredProjects = projects.filter(project => {
   const matchesLanguage = selectedFilter === 'all' ||
+    project.allLanguages?.includes(selectedFilter.toLowerCase()) ||
     project.language?.toLowerCase() === selectedFilter.toLowerCase();
 
   const matchesTech = selectedTech === 'all' ||
