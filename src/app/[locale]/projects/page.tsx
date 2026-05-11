@@ -71,19 +71,23 @@ export default function ProjectsPage() {
   ];
 
   const filteredProjects = projects.filter(project => {
-    const matchesLanguage = selectedFilter === 'all' || 
-      project.language?.toLowerCase() === selectedFilter;
-    
-    const matchesTech = selectedTech === 'all' ||
-      project.topics?.some(topic => topic.toLowerCase().includes(selectedTech)) ||
-      project.techStack?.some(tech => tech.toLowerCase().includes(selectedTech));
-    
-    const matchesSearch = searchQuery === '' ||
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesLanguage && matchesTech && matchesSearch;
-  });
+  const matchesLanguage = selectedFilter === 'all' ||
+    project.language?.toLowerCase() === selectedFilter.toLowerCase();
+
+  const matchesTech = selectedTech === 'all' ||
+    project.topics?.some(topic =>
+      topic.toLowerCase().split(/[-_\s]/).includes(selectedTech.toLowerCase())
+    ) ||
+    project.techStack?.some(tech =>
+      tech.toLowerCase().split(/[-_\s]/).includes(selectedTech.toLowerCase())
+    );
+
+  const matchesSearch = searchQuery === '' ||
+    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+  return matchesLanguage && matchesTech && matchesSearch;
+});
 
   useEffect(() => {
     async function fetchProjects() {
