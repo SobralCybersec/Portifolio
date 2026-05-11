@@ -166,14 +166,22 @@ export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingPro
           <span className="flex items-center gap-1"><GitFork className="w-3.5 h-3.5" />{repo.forks_count}</span>
         </div>
 
-        {repo.techStack && repo.techStack.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {repo.techStack.map(t => (
-              <span key={t} className="px-2.5 py-1 text-xs rounded border" style={{ background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.35)', borderColor: `${primary}66`, color: isDark ? 'rgba(210,160,255,0.8)' : 'rgba(59,130,246,0.95)' }}>{t}</span>
-            ))}
-          </div>
-        )}
-
+        {(() => {
+          const LANGUAGES = new Set([
+            'TypeScript', 'JavaScript', 'Python', 'Java', 'C++', 'C', 'C#',
+            'Go', 'Rust', 'Ruby', 'PHP', 'Swift', 'Kotlin', 'Shell', 'Assembly',
+            'HTML', 'CSS', 'Bash', 'Batchfile'
+          ]);
+          const filteredStack = repo.techStack?.filter(t => !LANGUAGES.has(t)) ?? [];
+          return filteredStack.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {filteredStack.map(t => (
+                <span key={t} className="px-2.5 py-1 text-xs rounded border" style={{ background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.35)', borderColor: `${primary}66`, color: isDark ? 'rgba(210,160,255,0.8)' : 'rgba(59,130,246,0.95)' }}>{t}</span>
+              ))}
+            </div>
+          ) : null;
+        })()}
+        
         {repo.topics.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-5">
             {repo.topics.slice(0, 5).map(t => (
