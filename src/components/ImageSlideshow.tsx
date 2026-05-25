@@ -28,7 +28,7 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
     <div className="relative w-full h-full">
       {images.map((src, index) => (
         <div
-          key={src}
+          key={`${src}-${index}`}
           className="absolute inset-0 transition-opacity duration-1000"
           style={{ opacity: index === currentIndex ? 1 : 0 }}
         >

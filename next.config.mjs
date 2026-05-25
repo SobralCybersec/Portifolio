@@ -31,35 +31,58 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'opengraph.githubassets.com',
+        hostname: 'go-skill-icons.vercel.app',
+        pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'repository-images.githubusercontent.com',
+        hostname: 'skillicons.dev',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.shields.io',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'raw.githubusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'opengraph.githubassets.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'repository-images.githubusercontent.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'user-images.githubusercontent.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'github.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'i.imgur.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'media.forgecdn.net',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.fiap.com.br',
+        pathname: '/**',
       },
     ],
   },
