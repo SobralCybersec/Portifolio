@@ -35,209 +35,618 @@ const LANG_COLORS: Record<string, string> = {
   CSS: '#563d7c',
 };
 
+
+const TOKYO_COLORS = {
+  bg: '#030000',
+  panel: '#090000',
+  panel2: '#120000',
+
+  crimson: '#d90429',
+  crimsonBright: '#ff2442',
+  crimsonDark: '#540000',
+
+  white: '#f5eeee',
+  muted: 'rgba(255,220,220,0.68)',
+
+  border: 'rgba(255,0,40,0.16)',
+  glow: 'rgba(255,0,30,0.32)',
+};
+
 function langColor(lang: string | null): string {
-  return lang ? (LANG_COLORS[lang] ?? '#a855f7') : '#a855f7';
+  return lang
+    ? LANG_COLORS[lang] ??
+        TOKYO_COLORS.crimson
+    : TOKYO_COLORS.crimson;
 }
 
-export default function SoloLevelingProjectCard({ repo, index }: SoloLevelingProjectCardProps) {
-  const { theme } = useTheme();
+export default function SoloLevelingProjectCard({
+  repo,
+  index,
+}: SoloLevelingProjectCardProps) {
   const mounted = useHydrated();
 
-  const isDark = mounted ? theme === 'dark' : true;
-  const primary = isDark ? '#a855f7' : '#3b82f6';
-  const accent = isDark ? '#8b5cf6' : '#3b82f6';
+  const primary =
+    TOKYO_COLORS.crimson;
 
-  const getPreviewImages = (): string[] => {
-    if (!repo.previewImage) return [];
-    
-    // Handle JSON array of images
-    try {
-      const p = JSON.parse(repo.previewImage);
-      if (Array.isArray(p)) return p;
-    } catch {}
-    
-    // Single image (including language icons)
-    return [repo.previewImage];
-  };
+  const accent =
+    TOKYO_COLORS.crimsonBright;
 
-  const previewImages = getPreviewImages();
-  const hasPreview = previewImages.length > 0;
-  const isLanguageIcon = hasPreview && previewImages[0].startsWith('/icons/');
+  const getPreviewImages =
+    (): string[] => {
+      if (!repo.previewImage)
+        return [];
+
+      try {
+        const parsed = JSON.parse(
+          repo.previewImage
+        );
+
+        if (Array.isArray(parsed))
+          return parsed;
+      } catch {}
+
+      return [repo.previewImage];
+    };
+
+  const previewImages =
+    getPreviewImages();
+
+  const hasPreview =
+    previewImages.length > 0;
+
+  const isLanguageIcon =
+    hasPreview &&
+    previewImages[0].startsWith(
+      '/icons/'
+    );
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.5 }}
-      className="relative overflow-hidden rounded-[2px]"
+      initial={{
+        opacity: 0,
+        y: 40,
+        scale: 0.96,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+      }}
+      transition={{
+        duration: 0.7,
+        delay: index * 0.06,
+      }}
+      className="group relative overflow-hidden"
       style={{
-        border: `1px solid ${primary}59`,
-        background: isDark ? 'rgba(10,5,20,0.96)' : 'rgba(59,130,246,0.35)',
-        boxShadow: `0 0 0 1px ${primary}33, 0 0 40px ${primary}1f, inset 0 0 80px ${isDark ? 'rgba(100,30,150,0.35)' : 'rgba(59,130,246,0.35)'}`,
+        clipPath: `
+          polygon(
+            0 0,
+            calc(100% - 34px) 0,
+            100% 34px,
+            100% 100%,
+            34px 100%,
+            0 calc(100% - 34px)
+          )
+        `,
+        background: `
+          linear-gradient(
+            145deg,
+            rgba(10,0,0,0.98) 0%,
+            rgba(2,0,0,1) 45%,
+            rgba(18,0,0,0.98) 100%
+          )
+        `,
+        border: `1px solid ${TOKYO_COLORS.border}`,
+        boxShadow: `
+          0 0 0 1px rgba(255,0,0,0.08),
+          0 0 60px rgba(120,0,0,0.22),
+          inset 0 0 120px rgba(255,0,0,0.04),
+          inset 0 0 12px rgba(255,255,255,0.03)
+        `,
       }}
     >
-      {/* Scanline effect */}
-      <motion.div
-        className="pointer-events-none absolute left-0 right-0 h-px"
-        style={{ background: `linear-gradient(90deg,transparent,${primary}b3,transparent)` }}
-        animate={{ top: ['-2px', '100%'] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+      {/* BACKGROUND NOISE */}
+      <div
+        className="absolute inset-0 opacity-[0.045] pointer-events-none"
+        style={{
+          backgroundImage: `
+            radial-gradient(
+              rgba(255,255,255,0.4) 0.6px,
+              transparent 0.6px
+            )
+          `,
+          backgroundSize: '6px 6px',
+        }}
       />
 
-      {/* Edge glows */}
-      {(['top','bottom'] as const).map((side) => (
-        <div key={side} className={`absolute ${side === 'top' ? '-top-px' : '-bottom-px'} left-[10%] right-[10%] h-px`}
-          style={{ background: `linear-gradient(90deg,transparent,${accent},${primary},${accent},transparent)`, animation: 'edgepulse 2.5s ease-in-out infinite' }} />
-      ))}
-      {(['left','right'] as const).map((side) => (
-        <div key={side} className={`absolute ${side === 'left' ? '-left-px' : '-right-px'} top-[10%] bottom-[10%] w-px`}
-          style={{ background: `linear-gradient(180deg,transparent,${accent},${primary},${accent},transparent)`, animation: 'edgepulse 2.5s ease-in-out infinite' }} />
-      ))}
+      {/* SCANLINES */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.06]"
+        style={{
+          background: `
+            repeating-linear-gradient(
+              to bottom,
+              transparent 0px,
+              transparent 2px,
+              rgba(255,0,0,0.14) 3px
+            )
+          `,
+        }}
+      />
 
-      {/* Corners */}
-      {[
-        { pos: '-top-[3px] -left-[3px]',   bw: '2px 0 0 2px',   dot: '-top-px -left-px'   },
-        { pos: '-top-[3px] -right-[3px]',  bw: '2px 2px 0 0',   dot: '-top-px -right-px'  },
-        { pos: '-bottom-[3px] -left-[3px]', bw: '0 0 2px 2px',  dot: '-bottom-px -left-px' },
-        { pos: '-bottom-[3px] -right-[3px]',bw: '0 2px 2px 0',  dot: '-bottom-px -right-px'},
-      ].map((c, i) => (
-        <div key={i} className={`absolute ${c.pos} h-5 w-5`} style={{ borderStyle: 'solid', borderWidth: c.bw, borderColor: accent }}>
-          <div className={`absolute ${c.dot} h-1.5 w-1.5`} style={{ background: accent, boxShadow: `0 0 10px 3px ${accent}e6` }} />
-        </div>
-      ))}
+      {/* KAGUNE GLOW */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          opacity: [0.15, 0.28, 0.15],
+          scale: [1, 1.03, 1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+        }}
+        style={{
+          background: `
+            radial-gradient(
+              circle at 50% 120%,
+              rgba(255,0,0,0.22),
+              transparent 55%
+            )
+          `,
+          mixBlendMode: 'screen',
+        }}
+      />
 
-      {/* Header */}
-      <div className="relative flex items-center border-b" style={{ borderColor: `${primary}4d` }}>
-        <div className="absolute -bottom-px left-0 right-0 h-px" style={{ background: `linear-gradient(90deg,transparent,${accent}e6,transparent)` }} />
-        <div className="flex h-[60px] w-[60px] flex-shrink-0 items-center justify-center border-r" style={{ borderColor: `${primary}4d`, background: isDark ? 'rgba(100,40,150,0.3)' : 'rgba(59,130,246,0.3)' }}>
+      {/* GLITCH SWEEP */}
+      <motion.div
+        className="absolute inset-y-0 -left-[40%] w-[30%] pointer-events-none"
+        animate={{
+          x: ['0%', '420%'],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+        style={{
+          background: `
+            linear-gradient(
+              90deg,
+              transparent,
+              rgba(255,0,0,0.12),
+              transparent
+            )
+          `,
+          transform: 'skewX(-20deg)',
+          filter: 'blur(8px)',
+        }}
+      />
+
+      {/* CORNERS */}
+      <div className="absolute top-0 left-0 h-10 w-10 border-l border-t border-red-500/70" />
+      <div className="absolute bottom-0 right-0 h-10 w-10 border-r border-b border-red-500/70" />
+
+      {/* SIDE LABEL */}
+      <div
+        className="absolute right-[-58px] top-24 rotate-90 text-[10px] tracking-[0.7em]"
+        style={{
+          color: 'rgba(255,0,0,0.28)',
+        }}
+      >
+        TOKYO GHOUL
+      </div>
+
+      {/* HEADER */}
+      <div
+        className="relative border-b px-5 py-4 overflow-hidden"
+        style={{
+          borderColor:
+            'rgba(255,0,0,0.12)',
+        }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(
+                90deg,
+                rgba(255,0,0,0.08),
+                transparent 42%
+              )
+            `,
+          }}
+        />
+
+        <div className="relative z-10 flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p
+              className="mb-1 text-[10px] uppercase tracking-[0.45em]"
+              style={{
+                color:
+                  'rgba(255,120,120,0.45)',
+              }}
+            >
+              Classified Archive
+            </p>
+
+            <h2
+              className="truncate text-[18px] font-black uppercase tracking-[0.24em]"
+              style={{
+                fontFamily:
+                  'var(--font-display)',
+                color:
+                  TOKYO_COLORS.white,
+                textShadow:
+                  '0 0 14px rgba(255,0,0,0.42)',
+              }}
+            >
+              {repo.name}
+            </h2>
+          </div>
+
           <motion.div
-            className="flex h-9 w-9 items-center justify-center rounded-full border-2"
-            style={{ borderColor: accent, boxShadow: `0 0 12px ${accent}b3, inset 0 0 10px ${accent}26` }}
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            animate={{
+              opacity: [0.4, 1, 0.4],
+              scale: [1, 1.08, 1],
+            }}
+            transition={{
+              duration: 2.4,
+              repeat: Infinity,
+            }}
+            className="relative flex h-11 w-11 items-center justify-center"
+            style={{
+              border:
+                '1px solid rgba(255,0,0,0.2)',
+              background:
+                'rgba(80,0,0,0.2)',
+              clipPath:
+                'polygon(0 0,100% 0,100% 72%,72% 100%,0 100%)',
+            }}
           >
-            <Github className="w-5 h-5" style={{ color: accent }} />
+            <Github
+              className="h-5 w-5"
+              style={{
+                color: accent,
+                filter:
+                  'drop-shadow(0 0 8px rgba(255,0,0,0.9))',
+              }}
+            />
           </motion.div>
-        </div>
-        <div className="relative mx-[14px] my-2.5 flex flex-1 items-center border px-4 py-2" style={{ borderColor: `${primary}40`, background: isDark ? 'rgba(80,30,120,0.2)' : 'rgba(59,130,246,0.2)' }}>
-          <div className="absolute -bottom-px -left-px -top-px w-[3px]" style={{ background: accent, boxShadow: `0 0 8px ${accent}cc` }} />
-          <div className="absolute -bottom-px -right-px -top-px w-[3px]" style={{ background: accent, boxShadow: `0 0 8px ${accent}cc` }} />
-          <span className="font-black uppercase leading-none tracking-[4px] truncate" style={{ fontFamily: 'Orbitron,monospace', fontSize: 13, color: '#e0f4ff', textShadow: `0 0 8px ${accent}e6, 0 0 20px ${primary}99` }}>
-            {repo.name}
-          </span>
         </div>
       </div>
 
-      {/* Body */}
-      <div className="px-6 pb-5 pt-5">
+      {/* BODY */}
+      <div className="relative px-5 py-5">
         {hasPreview && (
-          <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: isLanguageIcon ? '1/1' : '16/9', borderColor: `${primary}66`, background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.3)' }}>
+          <div
+            className="relative mb-5 overflow-hidden"
+            style={{
+              aspectRatio:
+                isLanguageIcon
+                  ? '1 / 1'
+                  : '16 / 9',
+              clipPath: `
+                polygon(
+                  0 0,
+                  100% 0,
+                  100% calc(100% - 18px),
+                  calc(100% - 18px) 100%,
+                  0 100%
+                )
+              `,
+              border:
+                '1px solid rgba(255,0,0,0.18)',
+              background:
+                'rgba(8,0,0,0.95)',
+            }}
+          >
+            {/* RED FILM */}
+            <div
+              className="absolute inset-0 z-10 pointer-events-none"
+              style={{
+                background: `
+                  linear-gradient(
+                    180deg,
+                    rgba(255,0,0,0.02),
+                    rgba(255,0,0,0.12)
+                  )
+                `,
+                mixBlendMode: 'screen',
+              }}
+            />
+
+            {/* DISTORTION */}
+            <motion.div
+              className="absolute inset-0 z-10 pointer-events-none"
+              animate={{
+                opacity: [0.08, 0.16, 0.08],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+              }}
+              style={{
+                background: `
+                  repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    rgba(255,0,0,0.08) 2px,
+                    transparent 4px
+                  )
+                `,
+              }}
+            />
+
             {repo.isVideo ? (
-              <video src={previewImages[0]} className="w-full h-full object-contain" autoPlay loop muted playsInline />
+              <video
+                src={previewImages[0]}
+                className="h-full w-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
             ) : isLanguageIcon ? (
-              <div className="w-full h-full flex items-center justify-center p-8">
+              <div className="flex h-full w-full items-center justify-center p-10">
                 <SafeImage
                   src={previewImages[0]}
-                  alt={repo.language || 'Language icon'}
-                  width={120}
-                  height={120}
+                  alt={
+                    repo.language ??
+                    'Language icon'
+                  }
+                  width={140}
+                  height={140}
                   className="object-contain"
-                  style={{ filter: isDark ? 'brightness(0.9)' : 'brightness(1)' }}
+                  style={{
+                    filter: `
+                      brightness(0.9)
+                      contrast(1.2)
+                      drop-shadow(0 0 18px rgba(255,0,0,0.5))
+                    `,
+                  }}
                 />
               </div>
             ) : (
-              <ImageSlideshow images={previewImages} alt={repo.name} interval={5000} />
+              <ImageSlideshow
+                images={previewImages}
+                alt={repo.name}
+                interval={5000}
+              />
             )}
           </div>
         )}
 
-        <p className="text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Rajdhani,sans-serif', color: isDark ? 'rgba(220,180,255,0.8)' : 'rgba(59,130,246,0.95)' }}>
-          {repo.description || 'No description available'}
+        {/* DESCRIPTION */}
+        <p
+          className="relative mb-5 text-sm leading-relaxed"
+          style={{
+            fontFamily:
+              'var(--font-body)',
+            color:
+              'rgba(255,220,220,0.82)',
+          }}
+        >
+          {repo.description ||
+            'No description available'}
         </p>
 
-        <div className="flex items-center gap-4 text-xs mb-4" style={{ color: isDark ? 'rgba(210,160,255,0.8)' : 'rgba(59,130,246,0.9)' }}>
+        {/* STATS */}
+        <div
+          className="mb-5 flex flex-wrap items-center gap-4 text-xs"
+          style={{
+            color:
+              'rgba(255,190,190,0.7)',
+          }}
+        >
           {repo.language && (
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ background: langColor(repo.language) }} />
+            <span className="flex items-center gap-2">
+              <span
+                className="h-2.5 w-2.5"
+                style={{
+                  background:
+                    langColor(
+                      repo.language
+                    ),
+                  boxShadow: `
+                    0 0 8px ${langColor(
+                      repo.language
+                    )}
+                  `,
+                  clipPath:
+                    'polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
+                }}
+              />
+
               {repo.language}
             </span>
           )}
-          <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5" />{repo.stargazers_count}</span>
-          <span className="flex items-center gap-1"><GitFork className="w-3.5 h-3.5" />{repo.forks_count}</span>
+
+          <span className="flex items-center gap-1.5">
+            <Star className="h-3.5 w-3.5" />
+            {repo.stargazers_count}
+          </span>
+
+          <span className="flex items-center gap-1.5">
+            <GitFork className="h-3.5 w-3.5" />
+            {repo.forks_count}
+          </span>
         </div>
 
-        {(() => {
-          const LANGUAGES = new Set([
-            'TypeScript', 'JavaScript', 'Python', 'Java', 'C++', 'C', 'C#',
-            'Go', 'Rust', 'Ruby', 'PHP', 'Swift', 'Kotlin', 'Shell', 'Assembly',
-            'HTML', 'CSS', 'Bash', 'Batchfile'
-          ]);
-          const filteredStack = repo.techStack?.filter(t => !LANGUAGES.has(t)) ?? [];
-          return filteredStack.length > 0 ? (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {filteredStack.map(t => (
-                <span key={t} className="px-2.5 py-1 text-xs rounded border" style={{ background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.35)', borderColor: `${primary}66`, color: isDark ? 'rgba(210,160,255,0.8)' : 'rgba(59,130,246,0.95)' }}>{t}</span>
-              ))}
-            </div>
-          ) : null;
-        })()}
-        
+        {/* TAGS */}
         {repo.topics.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-5">
-            {repo.topics.slice(0, 5).map(t => (
-              <span key={t} className="px-2.5 py-1 text-xs rounded-full" style={{ background: 'rgba(168,85,247,0.15)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.4)' }}>{t}</span>
-            ))}
+          <div className="mb-6 flex flex-wrap gap-2">
+            {repo.topics
+              .slice(0, 5)
+              .map((topic) => (
+                <span
+                  key={topic}
+                  className="px-3 py-1 text-[10px] uppercase tracking-[0.18em]"
+                  style={{
+                    clipPath:
+                      'polygon(0 0,100% 0,92% 100%,0 100%)',
+                    background:
+                      'rgba(90,0,0,0.22)',
+                    border:
+                      '1px solid rgba(255,0,0,0.18)',
+                    color:
+                      'rgba(255,220,220,0.88)',
+                  }}
+                >
+                  {topic}
+                </span>
+              ))}
           </div>
         )}
 
+        {/* BUTTONS */}
         <div className="flex gap-3">
-          <a href={repo.html_url} target="_blank" rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm rounded border transition-all hover:brightness-110"
-            style={{ 
-              background: isDark ? 'rgba(50,10,80,0.8)' : 'rgba(59,130,246,0.35)', 
-              borderColor: `${primary}66`,
-              color: isDark ? '#f0e0ff' : '#3b82f6',
-              fontFamily: 'Rajdhani,sans-serif',
-              fontWeight: 600
-            }}>
-            <Github className="w-4 h-4" /> Code
+          <a
+            href={repo.html_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/button relative flex flex-1 items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs uppercase tracking-[0.25em] transition-all duration-300"
+            style={{
+              clipPath:
+                'polygon(0 0,100% 0,92% 100%,0 100%)',
+              border:
+                '1px solid rgba(255,0,0,0.24)',
+              background:
+                'rgba(20,0,0,0.85)',
+              color:
+                TOKYO_COLORS.white,
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/button:opacity-100"
+              style={{
+                background: `
+                  linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,0,0,0.18),
+                    transparent
+                  )
+                `,
+              }}
+            />
+
+            <Github className="relative z-10 h-4 w-4" />
+
+            <span className="relative z-10">
+              Archive
+            </span>
           </a>
+
           {repo.homepage && (
-            <a href={repo.homepage} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm rounded border transition-all hover:brightness-110"
-              style={{ 
-                background: 'rgba(168,85,247,0.15)', 
-                borderColor: 'rgba(168,85,247,0.4)',
-                color: '#a855f7',
-                fontFamily: 'Rajdhani,sans-serif',
-                fontWeight: 600
-              }}>
-              <ExternalLink className="w-4 h-4" /> Demo
+            <a
+              href={repo.homepage}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/button relative flex flex-1 items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs uppercase tracking-[0.25em] transition-all duration-300"
+              style={{
+                clipPath:
+                  'polygon(0 0,100% 0,92% 100%,0 100%)',
+                border:
+                  '1px solid rgba(255,0,0,0.35)',
+                background:
+                  'rgba(255,0,0,0.08)',
+                color: accent,
+              }}
+            >
+              <div
+                className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/button:opacity-100"
+                style={{
+                  background: `
+                    linear-gradient(
+                      90deg,
+                      transparent,
+                      rgba(255,0,0,0.22),
+                      transparent
+                    )
+                  `,
+                }}
+              />
+
+              <ExternalLink className="relative z-10 h-4 w-4" />
+
+              <span className="relative z-10">
+                Deploy
+              </span>
             </a>
           )}
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between border-t px-[18px] py-2" style={{ borderColor: `${primary}33`, background: isDark ? 'rgba(50,10,80,0.4)' : 'rgba(59,130,246,0.3)' }}>
-        <span className="leading-none tracking-[2px] text-xs" style={{ fontFamily: 'Orbitron,monospace', color: `${primary}66` }}>
-          PROJECT #{String(index + 1).padStart(3, '0')}
+      {/* FOOTER */}
+      <div
+        className="relative flex items-center justify-between border-t px-5 py-3"
+        style={{
+          borderColor:
+            'rgba(255,0,0,0.1)',
+          background:
+            'rgba(25,0,0,0.72)',
+        }}
+      >
+        <div
+          className="absolute left-0 top-0 h-px w-full"
+          style={{
+            background: `
+              linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,0,0,0.7),
+                transparent
+              )
+            `,
+          }}
+        />
+
+        <span
+          className="text-[10px] tracking-[0.35em]"
+          style={{
+            color:
+              'rgba(255,180,180,0.4)',
+          }}
+        >
+          FILE #
+          {String(index + 1).padStart(
+            3,
+            '0'
+          )}
         </span>
-        <div className="flex items-center gap-1.5">
-          {[0, 0.3, 0.6].map((delay, i) => (
-            <motion.div 
-              key={i} 
-              className="h-1.5 w-1.5 rounded-full" 
-              style={{ background: accent, boxShadow: `0 0 6px ${accent}cc` }} 
-              animate={{ opacity: [0.2, 1, 0.2], scale: [0.8, 1, 0.8] }} 
-              transition={{ duration: 1.5, repeat: Infinity, delay }} 
-            />
-          ))}
+
+        <div className="flex items-center gap-2">
+          {[0, 0.3, 0.6].map(
+            (delay, i) => (
+              <motion.div
+                key={i}
+                className="h-1.5 w-1.5"
+                style={{
+                  background: accent,
+                  boxShadow:
+                    '0 0 10px rgba(255,0,0,0.9)',
+                  clipPath:
+                    'polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
+                }}
+                animate={{
+                  opacity: [0.2, 1, 0.2],
+                  scale: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  delay,
+                }}
+              />
+            )
+          )}
         </div>
       </div>
 
       <style jsx>{`
-        @keyframes edgepulse { 0%,100%{opacity:0.55} 50%{opacity:1} }
+        .group:hover {
+          transform: translateY(-4px);
+        }
       `}</style>
     </motion.div>
   );

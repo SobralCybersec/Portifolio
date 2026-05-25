@@ -1,29 +1,18 @@
 import '../globals.css';
-import { Inter, JetBrains_Mono, Rajdhani, Codystar } from 'next/font/google';
+import { Share_Tech_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale, getTranslations } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { ThemeProvider } from '@/components/ThemeProvider';
 import DynamicFavicon from '@/components/DynamicFavicon';
 import { BackgroundMusic } from '@/components/BackgroundMusic';
 import { Analytics } from '@vercel/analytics/react';
 
-const geistSans = Inter({
-  variable: '--font-geist-sans',
+const shareTechMono = Share_Tech_Mono({
+  variable: '--font-share-tech-mono',
   subsets: ['latin'],
-});
-
-const geistMono = JetBrains_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-const soloHeading = Rajdhani({
-  variable: '--font-solo-heading',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: '400',
 });
 
 const eternal = localFont({
@@ -32,28 +21,17 @@ const eternal = localFont({
   display: 'swap',
 });
 
-const codystar = Codystar({
-  variable: '--font-codystar',
-  subsets: ['latin'],
-  weight: ['300', '400'],
-});
-
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  
   return {
-    title: 'Matheus Sobral - Creative Technologist',
-    description: 'Portfolio of a creative technologist specializing in full-stack development, architecture, and modern web technologies.',
-    keywords: ['portfolio', 'developer', 'full-stack', 'TypeScript', 'Next.js', 'React'],
+    title: 'Matheus S. Silva — Black Reaper',
+    description: 'Full-Stack Developer and Cybersecurity Analyst. Building fast, secure, and hard-to-break systems.',
+    keywords: ['portfolio', 'developer', 'full-stack', 'cybersecurity', 'TypeScript', 'Next.js', 'React', 'Java'],
     icons: {
       icon: '/images/favicon/Ahjin.svg',
-    },
-    other: {
-      'darkreader': 'NO-DARKREADER-PLUGIN',
     },
   };
 }
@@ -79,15 +57,15 @@ export default async function LocaleLayout({
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <link rel="icon" type="image/svg+xml" href="/images/favicon/Ahjin.svg" />
+        <link rel="preconnect" href="https://fonts.cdnfonts.com" />
+        <link href="https://fonts.cdnfonts.com/css/downcome" rel="stylesheet" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${soloHeading.variable} ${eternal.variable} ${codystar.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${shareTechMono.variable} ${eternal.variable} antialiased`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
-          <ThemeProvider>
-            <DynamicFavicon />
-            <BackgroundMusic autoPlay />
-            {children}
-            <Analytics />
-          </ThemeProvider>
+          <DynamicFavicon />
+          <BackgroundMusic autoPlay />
+          {children}
+          <Analytics />
         </NextIntlClientProvider>
       </body>
     </html>
