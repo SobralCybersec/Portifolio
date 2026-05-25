@@ -2,65 +2,130 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     tags:
       - 'v*'
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: true
+
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
 
 jobs:
   deploy:
-    name: Deploy to Production
+    name: Build & Deploy
     runs-on: ubuntu-latest
+
     environment:
       name: production
       url: https://your-domain.com
+
+    timeout-minutes: 20
+
     steps:
-      - name: Checkout code
+      # ============================================
+      # Checkout
+      # ============================================
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ============================================
+      # Node.js
+      # ============================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
+      # ============================================
+      # Dependencies
+      # ============================================
       - name: Install dependencies
         run: npm ci
 
+      # ============================================
+      # Turbo / Next.js cache
+      # ============================================
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      # ============================================
+      # Build
+      # ============================================
       - name: Build application
         run: npm run build
         env:
           NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
 
+      # ============================================
+      # Install Vercel CLI
+      # ============================================
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # ============================================
+      # Pull Environment
+      # ============================================
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # ============================================
+      # Build Vercel Output
+      # ============================================
+      - name: Build Vercel Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # ============================================
+      # Deploy
+      # ============================================
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        if: ${{ secrets.VERCEL_TOKEN }}
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Create Release
+      # ============================================
+      # GitHub Release
+      # ============================================
+      - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: |
-            .next/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Notify deployment
+      # ============================================
+      # Success
+      # ============================================
+      - name: Deployment Success
         if: success()
         run: |
-          echo "✅ Deployment successful!"
-          echo "🚀 Application deployed to production"
+          echo "Deployment successful"
+          echo "Production updated"
 
-      - name: Notify failure
+      # ============================================
+      # Failure
+      # ============================================
+      - name: Deployment Failed
         if: failure()
         run: |
-          echo "❌ Deployment failed!"
-          echo "Please check the logs for more information"
+          echo "Deployment failed"
+          exit 1
