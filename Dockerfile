@@ -7,13 +7,14 @@ ARG NODE_VERSION=22-bookworm-slim
 # ============================================
 FROM node:${NODE_VERSION} AS dependencies
 
-RUN apk add --no-cache \
-    libc6-compat \
+WORKDIR /app
+
+# Debian package manager (NOT apk)
+RUN apt-get update && apt-get install -y \
     python3 \
     make \
-    g++
-
-WORKDIR /app
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json* ./
 
@@ -50,14 +51,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-RUN mkdir .next && \
-    chown nextjs:nodejs .next
+# Required for Next.js cache
+RUN mkdir .next && chown nextjs:nodejs .next
 
+# Standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
@@ -66,6 +68,6 @@ USER nextjs
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 CMD ["node", "server.js"]
