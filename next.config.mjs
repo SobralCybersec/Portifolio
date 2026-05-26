@@ -12,87 +12,42 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   reactStrictMode: true,
-  
-  // Transpile ESM packages for Jest compatibility
-  transpilePackages: ['next-intl', 'use-intl'],
-  
-  // Enable standalone output for Docker
   output: 'standalone',
-  
-  // Image Optimization (Next.js 16.2 - 2026)
+  crossOrigin: 'anonymous',
+
+  transpilePackages: ['next-intl', 'use-intl'],
+
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 14400, // 4 hours (Next.js 16 default, up from 60s)
+    qualities: [75],
+    minimumCacheTTL: 14400,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'go-skill-icons.vercel.app',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'skillicons.dev',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.shields.io',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'raw.githubusercontent.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'opengraph.githubassets.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'repository-images.githubusercontent.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'user-images.githubusercontent.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'github.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.imgur.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'media.forgecdn.net',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.fiap.com.br',
-        pathname: '/**',
-      },
+      { protocol: 'https', hostname: 'go-skill-icons.vercel.app', pathname: '/**' },
+      { protocol: 'https', hostname: 'skillicons.dev', pathname: '/**' },
+      { protocol: 'https', hostname: 'img.shields.io', pathname: '/**' },
+      { protocol: 'https', hostname: 'raw.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'opengraph.githubassets.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'repository-images.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'user-images.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'github.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'i.imgur.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'media.forgecdn.net', pathname: '/**' },
+      { protocol: 'https', hostname: 'www.fiap.com.br', pathname: '/**' },
     ],
   },
-  
-  // Compiler Optimizations
+
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
   },
-  
-  // Turbopack Configuration (Next.js 16.2+)
+
   turbopack: {
     rules: {
       '*.svg': {
@@ -101,84 +56,29 @@ const nextConfig = {
       },
     },
   },
-  
-  // Turbopack Filesystem Cache (Next.js 16.1+ - Stable for dev, experimental for build)
+
   experimental: {
     optimizePackageImports: [
-      'lucide-react',
       'framer-motion',
       'react-syntax-highlighter',
-      'date-fns',
       '@heroicons/react',
     ],
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
   },
-  
-  // Compression
+
   compress: true,
-  
-  // Performance optimizations
   poweredByHeader: false,
-  
-  // Headers for caching and performance (2026)
+
   async headers() {
     return [
       {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/:all*(svg|jpg|jpeg|png|gif|ico|webp|avif)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/fonts/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/icons/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
         source: '/:path*',
         headers: [
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
-          },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
         ],
       },
     ];
