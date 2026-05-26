@@ -1,7 +1,9 @@
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
-import HexagonGrid from '@/components/HexagonGrid';
-import ParticleBackground from '@/components/ParticleBackground';
 import BlogAdminClient from './BlogAdminClient';
+
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 
 export default function BlogAdminPage() {
   return (

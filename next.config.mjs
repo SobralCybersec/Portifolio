@@ -38,6 +38,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'i.imgur.com', pathname: '/**' },
       { protocol: 'https', hostname: 'media.forgecdn.net', pathname: '/**' },
       { protocol: 'https', hostname: 'www.fiap.com.br', pathname: '/**' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/**' },
     ],
   },
 
@@ -60,6 +61,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: [
       'framer-motion',
+      'lucide-react',
       'react-syntax-highlighter',
       '@heroicons/react',
     ],

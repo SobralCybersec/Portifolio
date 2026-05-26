@@ -124,7 +124,7 @@ export default function Hero({ animateSection }: HeroProps) {
                   {t('cta.viewProjects')}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href="/blog" className="hero-btn-secondary">
+                <Link href="/chat" className="hero-btn-secondary">
                   {t('cta.readBlog')}
                 </Link>
                 <a 

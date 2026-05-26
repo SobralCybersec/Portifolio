@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Save, Globe, FileText, Trash2, Edit, List, Eye, FileUp, Link as LinkIcon } from 'lucide-react';
-import { BlogPost } from '@/lib/blog';
+import type { BlogPost } from '@/lib/blog';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';

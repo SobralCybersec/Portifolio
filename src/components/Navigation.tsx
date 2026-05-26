@@ -29,7 +29,7 @@ export default function Navigation() {
     { href: '/about', label: t('about') },
     { href: '/projects', label: t('projects') },
     { href: '/certifications', label: t('certifications') },
-    { href: '/blog', label: t('blog') },
+    { href: '/chat', label: t('chat') },
     { href: '/contact', label: t('contact') },
   ];
 

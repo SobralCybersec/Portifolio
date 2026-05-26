@@ -1,17 +1,19 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import { AnimatedText, GradientText } from '@/components/AnimatedText';
 import { useClickSound } from '@/hooks/useClickSound';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
-import HexagonGrid from '@/components/HexagonGrid';
-import ParticleBackground from '@/components/ParticleBackground';
 import Image from 'next/image';
 import ScrollEffect from '@/components/ScrollEffect';
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import FilterDropdown from '@/components/FilterDropdown';
+
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 
 interface Certification {
   name: string;

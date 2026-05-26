@@ -145,86 +145,8 @@ async function translateWithGroq(
   }
 }
 
-export async function translateBlogPost(
-  content: string,
-  frontmatter: Record<string, any>,
-  targetLocale: string,
-  sourceLocale: string = 'en'
-): Promise<{ content: string; frontmatter: Record<string, any> }> {
-  if (sourceLocale === targetLocale) {
-    return { content, frontmatter };
-  }
 
-  const translatedFrontmatter = { ...frontmatter };
-  
-  // Translate title
-  if (frontmatter.title) {
-    translatedFrontmatter.title = await translateText(
-      frontmatter.title,
-      targetLocale,
-      sourceLocale
-    );
-  }
 
-  // Translate description
-  if (frontmatter.description) {
-    translatedFrontmatter.description = await translateText(
-      frontmatter.description,
-      targetLocale,
-      sourceLocale
-    );
-  }
-
-  // Translate content
-  const translatedContent = await translateMarkdownContent(
-    content,
-    targetLocale,
-    sourceLocale
-  );
-
-  return {
-    content: translatedContent,
-    frontmatter: translatedFrontmatter,
-  };
-}
-
-async function translateMarkdownContent(
-  content: string,
-  targetLocale: string,
-  sourceLocale: string
-): Promise<string> {
-  // Split by code blocks to preserve them
-  const codeBlockRegex = /```[\s\S]*?```/g;
-  const codeBlocks: string[] = [];
-  
-  let contentWithPlaceholders = content.replace(codeBlockRegex, (match) => {
-    const index = codeBlocks.length;
-    codeBlocks.push(match);
-    return `__CODE_BLOCK_${index}__`;
-  });
-
-  // Split into sentences for better translation
-  const sentences = contentWithPlaceholders.split(/(?<=[.!?])\s+/);
-  const translatedSentences: string[] = [];
-
-  for (const sentence of sentences) {
-    if (sentence.trim() && !sentence.includes('__CODE_BLOCK_')) {
-      const translated = await translateText(sentence, targetLocale, sourceLocale);
-      translatedSentences.push(translated);
-    } else {
-      translatedSentences.push(sentence);
-    }
-  }
-
-  let result = translatedSentences.join(' ');
-
-  // Restore code blocks
-  codeBlocks.forEach((block, index) => {
-    result = result.replace(`__CODE_BLOCK_${index}__`, block);
-  });
-
-  return result;
-}
 
 function mapLocaleToLanguageCode(locale: string): string {
   const mapping: Record<string, string> = {

@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { AnimatedText } from './AnimatedText';
-import ParticleBackground from './ParticleBackground';
 import { useTranslations } from 'next-intl';
+
+const ParticleBackground = dynamic(() => import('./ParticleBackground'), { ssr: false });
 
 interface ContactProps {
   animateSection?: string;

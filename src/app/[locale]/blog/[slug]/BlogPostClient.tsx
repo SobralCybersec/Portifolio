@@ -3,13 +3,15 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Clock } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import { useTheme } from 'next-themes';
-import HexagonGrid from '@/components/HexagonGrid';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { BlogPost } from '@/lib/blog';
+import type { BlogPost } from '@/lib/blog';
+
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
 import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
 

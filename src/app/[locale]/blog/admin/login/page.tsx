@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import { Lock } from 'lucide-react';
-import HexagonGrid from '@/components/HexagonGrid';
-import ParticleBackground from '@/components/ParticleBackground';
 import { useTheme } from 'next-themes';
+
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 
 function LoginForm() {
   const router = useRouter();

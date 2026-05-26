@@ -2,17 +2,19 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { ArrowRight, Clock, Plus, X, Upload, FileUp, Link as LinkIcon, Globe, Eye } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import { useClickSound } from '@/hooks/useClickSound';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import HexagonGrid from '@/components/HexagonGrid';
-import ParticleBackground from '@/components/ParticleBackground';
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { BlogPost } from '@/lib/blog';
+import type { BlogPost } from '@/lib/blog';
 import { useDropzone } from 'react-dropzone';
+
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';

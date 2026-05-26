@@ -1,16 +1,18 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import { AnimatedText, GradientText } from '@/components/AnimatedText';
 import { useClickSound } from '@/hooks/useClickSound';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
-import HexagonGrid from '@/components/HexagonGrid';
-import ParticleBackground from '@/components/ParticleBackground';
 import SoloLevelingProjectCard from '@/components/SoloLevelingProjectCard';
 import FilterDropdown from '@/components/FilterDropdown';
 import ScrollEffect from '@/components/ScrollEffect';
+
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 
 interface Repo {
   id: number;

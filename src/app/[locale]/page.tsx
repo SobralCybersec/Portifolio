@@ -2,19 +2,21 @@
 
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
-import Skills from '@/components/Skills';
-import GitHubProjects from '@/components/GitHubProjects';
-import Contact from '@/components/Contact';
-import TechCarousel from '@/components/TechCarousel';
-import KeyboardNav from '@/components/KeyboardNav';
-import ScrollProgress from '@/components/ScrollProgress';
 import Navigation from '@/components/Navigation';
-import SoloLevelingBoot from '@/components/SoloLevelingBoot';
-import LivePreview from '@/components/LivePreview';
+import ScrollProgress from '@/components/ScrollProgress';
 import { useClickSound } from '@/hooks/useClickSound';
-import HexagonGrid from '@/components/HexagonGrid';
-import ParticleBackground from '@/components/ParticleBackground';
+
+const SoloLevelingBoot = dynamic(() => import('@/components/SoloLevelingBoot'), { ssr: false });
+const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const KeyboardNav = dynamic(() => import('@/components/KeyboardNav'), { ssr: false });
+const Skills = dynamic(() => import('@/components/Skills'), { ssr: false });
+const GitHubProjects = dynamic(() => import('@/components/GitHubProjects'), { ssr: false });
+const Contact = dynamic(() => import('@/components/Contact'), { ssr: false });
+const TechCarousel = dynamic(() => import('@/components/TechCarousel'), { ssr: false });
+const LivePreview = dynamic(() => import('@/components/LivePreview'), { ssr: false });
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
