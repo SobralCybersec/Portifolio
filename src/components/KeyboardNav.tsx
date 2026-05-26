@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
-const sections = ['hero', 'skills', 'live', 'contact'];
+const sections = ['hero', 'live', 'skills', 'contact'];
 
 interface KeyboardNavProps {
   onMenuToggle?: () => void;
