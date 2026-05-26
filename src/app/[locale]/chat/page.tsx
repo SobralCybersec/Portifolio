@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth';
 import { SessionProvider } from 'next-auth/react';
 import Navigation from '@/components/Navigation';
-import { ClientHexagonGrid, ClientChatRoom } from '@/components/ClientOnlyComponents';
+import { HexagonGrid, ClientChatRoom } from '@/components/ClientOnlyComponents';
 
 export default async function ChatPage() {
   const session = await auth();
@@ -9,7 +9,7 @@ export default async function ChatPage() {
   return (
     <>
       <div style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none', opacity: 0.4 }}>
-        <ClientHexagonGrid
+        <HexagonGrid
           cellSize={60}
           glowColor="rgba(168,85,247,0.5)"
           lineColor="rgba(168,85,247,0.06)"
