@@ -49,7 +49,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 </h1>
 
 <p align="center">
-  <img src="https://go-skill-icons.vercel.app/api/icons?i=nextjs,react,typescript,tailwind,nodejs&size=64" />
+  <img src="https://go-skill-icons.vercel.app/api/icons?i=nextjs,react,typescript,tailwind,nodejs,redis&size=64" />
 </p>
 
 * **Framework**: Next.js 16.2.4 (App Router)

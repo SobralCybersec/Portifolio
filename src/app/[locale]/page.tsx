@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
@@ -29,6 +29,33 @@ export default function Page() {
     localStorage.setItem('bootComplete', 'true');
     window.dispatchEvent(new Event('bootComplete'));
   };
+  
+  // 1. Fix the state name — change this line:
+  const [repos, setRepos] = useState<Repo[]>([]);
+
+  // 2. Add the Repo interface at the top of the file (after imports):
+  interface Repo {
+    id: number;
+    name: string;
+    description: string;
+    html_url: string;
+    homepage: string | null;
+    language: string | null;
+    stargazers_count: number;
+    forks_count: number;
+    topics: string[];
+    previewImage?: string;
+    allLanguages?: string[];
+    isVideo?: boolean;
+    techStack?: string[];
+  }
+  
+  useEffect(() => {
+    fetch('/api/github/repos')
+      .then(r => r.json())
+      .then(setRepos)
+      .catch(() => setRepos([]));
+  }, []);
 
   return (
     <>
@@ -65,16 +92,17 @@ export default function Page() {
               <Hero />
             </div>
             
+            <div className="page-section" id="live">
+              <LivePreview />
+            </div>
+
+
             <div className="page-section" id="skills">
-              <Skills />
+             <Skills repos={repos} />
             </div>
 
             <div className="page-section" id="tech">
               <TechCarousel />
-            </div>
-            
-            <div className="page-section" id="live">
-              <LivePreview />
             </div>
 
             <div className="page-section" id="contact">
