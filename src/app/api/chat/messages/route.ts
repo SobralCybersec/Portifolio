@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { pusher, redis } from '@/lib/chat';
+import { chatLimit } from '@/lib/ratelimit';
 
 const CHAT_KEY = 'chat:messages';
 const MAX_MESSAGES = 100;
@@ -16,12 +17,11 @@ export interface ChatMessage {
 
 export async function GET() {
   try {
-    // lpush stores newest first; lrange 0..99 gives newest → oldest; reverse for chronological
     const messages = await redis.lrange<ChatMessage>(CHAT_KEY, 0, MAX_MESSAGES - 1);
     return NextResponse.json(messages.reverse());
   } catch (err) {
     console.error('[chat/messages GET]', err);
-    return NextResponse.json([], { status: 200 }); // graceful degradation
+    return NextResponse.json([], { status: 200 });
   }
 }
 
@@ -29,6 +29,15 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // Per-user rate limit (20 messages/min)
+  const { success } = await chatLimit.limit(`user:${session.user.id}`);
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Slow down — too many messages' },
+      { status: 429 }
+    );
   }
 
   let body: { text?: string };
