@@ -14,11 +14,13 @@ export async function GET() {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
+    const fetchOpts = { headers, next: { revalidate: 86400 } } as const;
+
     const [currentUserRes, oldUserRes, currentReposRes, oldReposRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${username}`, { headers }),
-      fetch(`https://api.github.com/users/${oldUsername}`, { headers }),
-      fetch(`https://api.github.com/users/${username}/repos?per_page=100`, { headers }),
-      fetch(`https://api.github.com/users/${oldUsername}/repos?per_page=100`, { headers }),
+      fetch(`https://api.github.com/users/${username}`, fetchOpts),
+      fetch(`https://api.github.com/users/${oldUsername}`, fetchOpts),
+      fetch(`https://api.github.com/users/${username}/repos?per_page=100`, fetchOpts),
+      fetch(`https://api.github.com/users/${oldUsername}/repos?per_page=100`, fetchOpts),
     ]);
 
     if (!currentUserRes.ok || !oldUserRes.ok || !currentReposRes.ok || !oldReposRes.ok) {
@@ -41,11 +43,10 @@ export async function GET() {
       return sum + (repo.size || 0);
     }, 0);
 
-    return NextResponse.json({
-      publicRepos: totalRepos,
-      yearsActive,
-      totalCommits: Math.floor(totalCommits / 10),
-    });
+    return NextResponse.json(
+      { publicRepos: totalRepos, yearsActive, totalCommits: Math.floor(totalCommits / 10) },
+      { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } }
+    );
   } catch (error) {
     return NextResponse.json(
       { publicRepos: 50, yearsActive: 5, totalCommits: 1000 },

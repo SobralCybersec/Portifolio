@@ -37,11 +37,20 @@
       ]
     },
     {
-      "source": "/api/(.*)",
+      "source": "/api/github/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "s-maxage=0, stale-while-revalidate"
+          "value": "public, s-maxage=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/api/(auth|chat|visitors)(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
         }
       ]
     },

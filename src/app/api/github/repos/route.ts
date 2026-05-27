@@ -49,6 +49,7 @@ async function fetchReadmeData(
           ...headers,
           'Accept': 'application/vnd.github.v3.raw',
         },
+        next: { revalidate: 3600 },
       }
     );
 
@@ -189,7 +190,7 @@ async function fetchAllLanguages(
   try {
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/languages`,
-      { headers }
+      { headers, next: { revalidate: 3600 } }
     );
     if (!res.ok) return [];
     const data = await res.json();
@@ -215,7 +216,7 @@ export async function GET(request: NextRequest) {
       GITHUB_USERNAMES.map(async (username) => {
         const response = await fetch(
           `https://api.github.com/users/${username}/repos?sort=${SORT_BY}&per_page=100&type=${REPO_TYPE}`,
-          { headers }
+          { headers, next: { revalidate: 3600 } }
         );
         if (!response.ok) return [];
         return response.json();
@@ -247,7 +248,9 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    return NextResponse.json(enriched);
+    return NextResponse.json(enriched, {
+      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+    });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },

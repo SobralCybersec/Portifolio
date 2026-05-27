@@ -18,9 +18,26 @@ const Contact = dynamic(() => import('@/components/Contact'), { ssr: false });
 const TechCarousel = dynamic(() => import('@/components/TechCarousel'), { ssr: false });
 const LivePreview = dynamic(() => import('@/components/LivePreview'), { ssr: false });
 
+interface Repo {
+  id: number;
+  name: string;
+  description: string;
+  html_url: string;
+  homepage: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  topics: string[];
+  previewImage?: string;
+  allLanguages?: string[];
+  isVideo?: boolean;
+  techStack?: string[];
+}
+
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [bootComplete, setBootComplete] = useState(false);
+  const [repos, setRepos] = useState<Repo[]>([]);
   const { theme } = useTheme();
   useClickSound();
 
@@ -29,27 +46,7 @@ export default function Page() {
     localStorage.setItem('bootComplete', 'true');
     window.dispatchEvent(new Event('bootComplete'));
   };
-  
-  // 1. Fix the state name — change this line:
-  const [repos, setRepos] = useState<Repo[]>([]);
 
-  // 2. Add the Repo interface at the top of the file (after imports):
-  interface Repo {
-    id: number;
-    name: string;
-    description: string;
-    html_url: string;
-    homepage: string | null;
-    language: string | null;
-    stargazers_count: number;
-    forks_count: number;
-    topics: string[];
-    previewImage?: string;
-    allLanguages?: string[];
-    isVideo?: boolean;
-    techStack?: string[];
-  }
-  
   useEffect(() => {
     fetch('/api/github/repos')
       .then(r => r.json())

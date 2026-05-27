@@ -105,28 +105,8 @@ export default function GitHubProjects() {
   }, []);
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch('/api/github/repos');
-        
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}));
-          throw new Error(data.error || 'Failed to fetch repositories');
-        }
-
-        const data = await response.json();
-        setRepos(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+    fetchRepos();
+  }, [fetchRepos]);
 
   if (loading) {
     return (

@@ -4,7 +4,7 @@
   Shadow Monarch Portfolio
 </h1>
 
-Modern Next.js portfolio with Solo Leveling theme, featuring dynamic theming, multilingual support, blog CMS, and stunning animations.
+Modern Next.js portfolio with Solo Leveling theme, featuring dynamic theming, multilingual support, real-time chat, GitHub integration, visitor tracking, and stunning animations.
 
 **English** | [Português](README.pt-BR.md)
 
@@ -31,16 +31,20 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Custom Scrollbar**: Modern purple gradient scrollbar with cross-browser support (webkit + Firefox)
 * **Bleach Animations**: Clip-path animations for Hero section and Skills grid with stagger effects
 * **Multilingual Support**: 7 languages (EN, ES, PT, FR, DE, JA, ZH) with automatic translation via Groq API
-* **Blog CMS**: Full-featured blog with admin panel, live preview, markdown support, auto-translation, and proper spacing
+* **Real-time Chat**: Live chat room powered by Pusher + Upstash Redis with rate limiting
 * **Background Music**: Theme-aware music that switches between dark/light modes
-* **Animated Components**: Hexagon grid, particle effects, scroll progress, and smooth page transitions
-* **GitHub Integration**: Automatic project fetching with image slideshows (5s intervals) and tech stack display
-* **Visitor Counter**: Real-time cumulative visitor tracking with animated UI
+* **Animated Components**: Hexagon grid, particle effects, scroll progress, letter glitch, and smooth page transitions
+* **GitHub Integration**: Dual-account project fetching (SobralCybersec + MatheusSobralCSharp) with image slideshows and tech stack detection
+* **Visitor Counter**: Persistent cumulative visitor tracking via Upstash Redis
+* **Live Preview**: Interactive live code preview component
+* **Tech Carousel**: Animated technology showcase carousel
+* **City Map**: Visual repository map rendered from GitHub data
 * **Vercel Analytics**: Integrated analytics for page views and user insights
 * **CI/CD Pipeline**: GitHub Actions with multi-platform Docker builds, security scanning, and Lighthouse audits
 * **Responsive Design**: Mobile-first approach with Tailwind CSS
 * **SEO Optimized**: Dynamic metadata, sitemap, and Open Graph support
-* **Performance**: Server components, image optimization, and code splitting
+* **Performance**: Turbopack dev/build cache, dynamic imports, image optimization (AVIF/WebP), and code splitting
+* **Rate Limiting**: Upstash Redis sliding window rate limits on auth (10/min), chat (20/min), and general API (100/min)
 
 ---
 
@@ -52,16 +56,18 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
   <img src="https://go-skill-icons.vercel.app/api/icons?i=nextjs,react,typescript,tailwind,nodejs,redis&size=64" />
 </p>
 
-* **Framework**: Next.js 16.2.4 (App Router)
+* **Framework**: Next.js 15+ (App Router, Turbopack)
 * **Language**: TypeScript 5.5+
 * **Styling**: Tailwind CSS 3.4+
-* **Animations**: CSS clip-path animations (Bleach-style)
+* **Animations**: Framer Motion + CSS clip-path animations (Bleach-style)
 * **i18n**: next-intl 4.11+
 * **Theme**: next-themes 0.4+
-* **Markdown**: react-markdown, gray-matter, remark-gfm
-* **AI Translation**: Groq API (openai/gpt-oss-120b)
+* **Real-time**: Pusher (WebSockets)
+* **Cache / Rate Limit**: Upstash Redis (@upstash/redis, @upstash/ratelimit)
+* **Auth**: NextAuth.js
+* **AI Translation**: Groq API
 * **Icons**: Lucide React
-* **Linting**: ESLint 9.39+ with Next.js 16 flat config
+* **Linting**: ESLint 9+ with Next.js flat config
 * **Testing**: Jest + React Testing Library
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel with optimized configuration
@@ -81,15 +87,29 @@ npm install
 
 ### Environment Variables
 
-Create `.env.local` file:
+Create `.env.local` file (see `.env.local.example` for full reference):
 
 ```env
+# GitHub Integration
+GITHUB_TOKEN=your_github_token
+GITHUB_USERNAME=SobralCybersec
+
 # Groq API for translations
 GROQ_API_KEY=your_groq_api_key
 
-# Blog Admin Access
-NEXT_PUBLIC_ENABLE_ADMIN=true
-ADMIN_SECRET_TOKEN=your_secret_token
+# Upstash Redis (rate limiting, chat, visitor counter)
+UPSTASH_REDIS_REST_URL=your_upstash_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+
+# Pusher (real-time chat)
+PUSHER_APP_ID=your_pusher_app_id
+PUSHER_SECRET=your_pusher_secret
+NEXT_PUBLIC_PUSHER_KEY=your_pusher_key
+NEXT_PUBLIC_PUSHER_CLUSTER=your_pusher_cluster
+
+# NextAuth
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
 ```
 
 ### Development
@@ -127,31 +147,27 @@ npm run test:coverage
 </h1>
 
 ```
-Main/
+Portifolio/
 ├── 📁 src/
 │   ├── 📁 app/
 │   │   ├── 📁 [locale]/              # 🌍 Internationalized routes (7 languages)
-│   │   │   ├── 📄 page.tsx           # 🏠 Home page with Hero, Skills, Projects
+│   │   │   ├── 📄 page.tsx           # 🏠 Home page (Hero, Skills, TechCarousel, Contact)
 │   │   │   ├── 📄 layout.tsx         # 🎨 Root layout with theme & i18n
-│   │   │   ├── 📁 blog/              # 📝 Blog pages
-│   │   │   │   ├── 📄 page.tsx       # Blog list with categories
-│   │   │   │   ├── 📁 [slug]/        # Individual blog posts
-│   │   │   │   └── 📁 admin/         # 🔐 Blog CMS admin panel
-│   │   │   ├── 📁 projects/          # 💼 Projects showcase
 │   │   │   ├── 📁 about/             # ℹ️ About page
-│   │   │   └── 📁 contact/           # 📧 Contact page
+│   │   │   ├── 📁 certifications/    # 🏅 Certifications showcase
+│   │   │   ├── 📁 chat/              # 💬 Real-time chat room
+│   │   │   ├── 📁 contact/           # 📧 Contact page
+│   │   │   └── 📁 projects/          # 💼 Projects showcase
 │   │   ├── 📁 api/                   # 🔌 API routes
-│   │   │   ├── 📁 blog/              # Blog CRUD endpoints
-│   │   │   │   ├── 📁 create/        # Create post
-│   │   │   │   ├── 📁 update/        # Update post
-│   │   │   │   ├── 📁 delete/        # Delete post
-│   │   │   │   └── 📁 list/          # List posts
-│   │   │   ├── 📁 github/            # GitHub integration
-│   │   │   │   ├── 📁 repos/         # Fetch repositories
-│   │   │   │   └── 📁 stats/         # GitHub stats
-│   │   │   ├── 📁 visitors/          # 👁️ Visitor counter API
+│   │   │   ├── 📁 auth/[...nextauth] # 🔐 NextAuth.js authentication
+│   │   │   ├── 📁 chat/messages/     # 💬 Chat message API (Pusher + Redis)
+│   │   │   ├── 📁 github/
+│   │   │   │   ├── 📁 repos/         # Dual-account repo fetching + README parsing
+│   │   │   │   └── 📁 stats/         # GitHub stats (repos, years, commits)
 │   │   │   ├── 📁 health/            # ❤️ Health check endpoint
-│   │   │   └── 📁 upload/            # 📤 File upload
+│   │   │   ├── 📁 upload/            # 📤 File upload
+│   │   │   ├── 📁 visitors/          # 👁️ Visitor counter (Redis-backed)
+│   │   │   └── 📁 youtube/config/    # 🎬 YouTube config endpoint
 │   │   └── 📄 globals.css            # 🎨 Global styles + custom scrollbar
 │   ├── 📁 components/                # ⚛️ React components
 │   │   ├── 📄 Hero.tsx               # 🦸 Hero with Bleach animations
@@ -160,42 +176,52 @@ Main/
 │   │   ├── 📄 SoloLevelingBoot.tsx   # 🚀 Boot animation
 │   │   ├── 📄 BackgroundMusic.tsx    # 🎵 Theme-aware music
 │   │   ├── 📄 HexagonGrid.tsx        # 🔷 Animated hexagon grid
-│   │   ├── 📄 VisitorCounter.tsx     # 👁️ Real-time visitor counter
-│   │   ├── 📄 ImageSlideshow.tsx     # 🖼️ Auto image carousel (5s)
-│   │   ├── 📄 GitHubProjects.tsx     # 💼 GitHub projects display
+│   │   ├── 📄 ChatRoom.tsx           # 💬 Real-time chat UI
+│   │   ├── 📄 GitHubProjects.tsx     # 💼 GitHub projects + ImageSlideshow
+│   │   ├── 📄 CityMap.tsx            # 🗺️ Visual repo city map
+│   │   ├── 📄 TechCarousel.tsx       # 🎠 Technology carousel
+│   │   ├── 📄 LivePreview.tsx        # 👁️ Live code preview
+│   │   ├── 📄 LetterGlitch.tsx       # ✨ Glitch text effect
+│   │   ├── 📄 MetricsTicker.tsx      # 📊 Animated metrics ticker
 │   │   ├── 📄 SoloLevelingProjectCard.tsx  # 🎴 Project card
 │   │   └── 📄 ...                    # More components
 │   ├── 📁 lib/                       # 🛠️ Utilities
-│   │   ├── 📄 blog.ts                # Blog file operations
+│   │   ├── 📄 auth.ts                # NextAuth configuration
+│   │   ├── 📄 chat.ts                # Pusher + Redis client
+│   │   ├── 📄 ratelimit.ts           # Upstash rate limiters
+│   │   ├── 📄 image-loader.ts        # Custom image loader
 │   │   └── 📄 translate.ts           # Groq AI translation
 │   ├── 📁 hooks/                     # 🪝 Custom React hooks
 │   │   ├── 📄 useHydrated.ts         # SSR/CSR detection
-│   │   ├── 📄 useClickSound.ts       # Click sound effects
-│   │   └── 📄 useLocalStorage.ts     # LocalStorage hook
+│   │   └── 📄 useClickSound.ts       # Click sound effects
 │   └── 📁 i18n/                      # 🌐 Internationalization
 │       ├── 📄 routing.ts             # i18n routing config
-│       └── 📁 messages/               # 7 language JSON files
-├── 📁 __tests__/                     # 🧪 Test suite (47 tests)
+│       ├── 📄 request.ts             # next-intl request config
+│       └── 📁 messages/              # 7 language JSON files (en, pt, es, fr, de, ja, zh)
+├── 📁 __tests__/                     # 🧪 Test suite
 │   ├── 📁 api/                       # API endpoint tests
-│   ├── 📁 components/                # Component tests
-│   ├── 📁 hooks/                     # Hook tests
+│   ├── 📁 docker/                    # Docker config tests
 │   ├── 📁 integration/               # Integration tests
 │   └── 📁 lib/                       # Utility tests
+├── 📁 src/components/__tests__/      # Component tests
 ├── 📁 .github/
 │   └── 📁 workflows/                 # 🔄 CI/CD pipelines
 │       ├── 📄 ci.yml                 # Main CI (lint, test, build)
-│       └── 📄 docker.yml             # Docker multi-platform build
+│       ├── 📄 deploy.yml             # Vercel deployment
+│       ├── 📄 docker.yml             # Docker multi-platform build
+│       └── 📄 dependencies.yml       # Weekly dependency updates
 ├── 📁 public/
+│   ├── 📁 certifications/            # 🏅 Certification images
+│   ├── 📁 cv/                        # 📄 CV/Resume PDFs (EN + PT)
+│   ├── 📁 fonts/                     # 🔤 Custom fonts (Eternal.ttf)
+│   ├── 📁 icons/                     # 🎨 Tech stack icons (40+ icons)
+│   ├── 📁 images/                    # 🖼️ Static images + badges + sprites
 │   ├── 📁 sounds/                    # 🎵 Background music files
-│   ├── 📁 images/                    # 🖼️ Static images
-│   ├── 📁 fonts/                     # 🔤 Custom fonts
-│   └── 📁 uploads/                   # 📤 Blog uploads
-├── 📁 content/
-│   └── 📁 blog/                      # 📝 Blog markdown files
+│   └── 📁 sprites/                   # 🎮 Animated character sprites
 ├── 📄 Dockerfile                     # 🐳 Multi-stage production build
 ├── 📄 docker-compose.yml             # 🐳 Docker orchestration
 ├── 📄 vercel.json                    # ▲ Vercel configuration
-├── 📄 next.config.mjs                # ⚙️ Next.js configuration
+├── 📄 next.config.mjs                # ⚙️ Next.js + Turbopack configuration
 ├── 📄 tailwind.config.ts             # 🎨 Tailwind CSS config
 ├── 📄 eslint.config.mjs              # 📏 ESLint 9 flat config
 ├── 📄 jest.config.js                 # 🧪 Test configuration
@@ -233,20 +259,14 @@ Epic system notification that plays on first visit:
 - Black favicon
 - sound2.mp3 background music
 
-### Blog CMS
+### Real-time Chat
 
-**Features**:
-- Create, edit, delete posts
-- Live markdown preview with proper spacing
-- Cover image upload
-- Category and tags
-- Auto-translation to 7 languages
-- Syntax highlighting
-- Reading time calculation
-- Custom ReactMarkdown renderers for consistent spacing
-- Fully internationalized form fields
-
-**Admin Access**: `/[locale]/blog/admin?token=your_secret_token`
+Powered by Pusher + Upstash Redis:
+- Live messaging with WebSocket connections
+- Rate limited: 20 messages/minute per user
+- Message history stored in Redis
+- Auth-gated via NextAuth.js
+- Available at `/[locale]/chat`
 
 ### Custom Scrollbar
 
@@ -267,14 +287,11 @@ Clip-path animations inspired by Bleach anime:
 
 ### Translation System
 
-Powered by Groq API (openai/gpt-oss-120b):
-- Automatic blog post translation
-- 7 supported languages
+Powered by Groq API:
+- Automatic UI translation across 7 languages
 - Retry logic with exponential backoff
 - Fallback to MyMemory API
 - Temperature: 0.1 (deterministic)
-- Max tokens: 8192
-- Reasoning effort: medium
 
 ---
 
@@ -298,11 +315,11 @@ Theme-aware music player:
 - Smooth transitions
 
 ### ImageSlideshow
-Automatic image carousel for projects:
-- 5-second intervals
+Automatic image carousel for projects (inline in GitHubProjects):
+- 3-second intervals
 - Smooth fade transitions
-- Supports multiple images
-- Error handling
+- Supports multiple images parsed from README
+- Error handling with GitHub OG image fallback
 
 ### ScrollProgress
 Animated progress bar:
@@ -364,18 +381,17 @@ npm run test:coverage
 ```
 __tests__/
 ├── api/
-│   └── blog.test.ts          # Blog API endpoints
-├── components/
-│   ├── Hero.test.tsx         # Hero component
-│   ├── Navigation.test.tsx   # Navigation
-│   └── Skills.test.tsx       # Skills grid
-├── hooks/
-│   └── useLocalStorage.test.ts
-├── integration/
-│   └── blog-flow.test.ts     # End-to-end blog flow
-└── lib/
-    ├── blog.test.ts          # Blog utilities
-    └── translate.test.ts     # Translation logic
+│   └── health.test.ts        # Health check endpoint
+├── docker/
+│   └── config.test.ts        # Docker configuration
+└── integration/              # Integration tests
+src/components/__tests__/
+├── Contact.test.tsx
+├── GitHubProjects.test.tsx
+├── Hero.test.tsx
+├── LivePreview.test.tsx
+├── Navigation.test.tsx
+└── TechCarousel.test.tsx
 ```
 
 ---
@@ -487,29 +503,33 @@ Returns:
 * [x] Custom scrollbar with gradient
 * [x] Bleach clip-path animations
 * [x] Multilingual support (7 languages)
-* [x] Blog CMS with admin panel
 * [x] Auto-translation with Groq API
 * [x] Background music system
-* [x] GitHub projects integration
-* [x] Image slideshow for projects
-* [x] Animated components
+* [x] GitHub projects integration (dual-account)
+* [x] Image slideshow for projects (3s intervals)
+* [x] Animated components (HexagonGrid, ParticleBackground, LetterGlitch, MetricsTicker)
 * [x] SEO optimization
-* [x] CI/CD pipeline with GitHub Actions
-* [x] Docker multi-platform builds
+* [x] CI/CD pipeline with GitHub Actions (ci, deploy, docker, dependencies)
+* [x] Docker multi-platform builds (amd64, arm64)
 * [x] Security scanning (Trivy, Snyk)
 * [x] Comprehensive test suite
 * [x] Vercel deployment optimization
 * [x] ESLint 9 migration with flat config
-* [x] React 19 strict linting compliance
-* [x] Next.js Image optimization for all components
-* [x] Image slideshow for projects with multiple images (5s intervals)
-* [x] Visitor counter with cumulative tracking
+* [x] Next.js Image optimization (AVIF/WebP)
+* [x] Visitor counter with Upstash Redis persistence
 * [x] Vercel Analytics integration
+* [x] Real-time chat (Pusher + Redis)
+* [x] NextAuth.js authentication
+* [x] Rate limiting (Upstash sliding window)
+* [x] Live code preview component
+* [x] Tech carousel
+* [x] City map visualization
+* [x] Certifications page
+* [x] CV/Resume download (EN + PT)
+* [x] Turbopack filesystem cache (dev + build)
 * [ ] Contact form with email integration
 * [ ] Analytics dashboard
-* [ ] RSS feed for blog
 * [ ] Search functionality
-* [ ] Comments system
 
 ---
 

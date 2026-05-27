@@ -1,24 +1,24 @@
 import { NextResponse } from 'next/server';
+import { redis } from '@/lib/chat';
 
-// In-memory storage (resets on deployment)
-// For production, use a database like Vercel KV, Redis, or PostgreSQL
-let totalVisits = 0;
+export const runtime = 'edge';
 
-export async function GET(request: Request) {
+const VISITORS_KEY = 'visitors:total';
+
+export async function GET() {
   try {
-    return NextResponse.json({ count: totalVisits });
-  } catch (error) {
+    const count = (await redis.get<number>(VISITORS_KEY)) ?? 0;
+    return NextResponse.json({ count });
+  } catch {
     return NextResponse.json({ error: 'Failed to get visitor count' }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
-    // Increment on every visit (cumulative counter)
-    totalVisits++;
-    
-    return NextResponse.json({ count: totalVisits });
-  } catch (error) {
+    const count = await redis.incr(VISITORS_KEY);
+    return NextResponse.json({ count });
+  } catch {
     return NextResponse.json({ error: 'Failed to increment visitor count' }, { status: 500 });
   }
 }
