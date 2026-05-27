@@ -6,8 +6,7 @@ export interface TranslationResult {
 
 /** Strip newline/carriage-return chars to prevent log injection (CWE-117). */
 function sanitizeLog(value: unknown): string {
-  return String(value).replace(/[
-]/g, ' ');
+  return String(value).replace(/[\r\n]/g, ' ');
 }
 
 const SUPPORTED_LOCALES = ['en', 'es', 'pt', 'fr', 'de', 'ja', 'zh'];
