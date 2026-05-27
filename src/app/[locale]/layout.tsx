@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   
   return {
-    title: 'Matheus Sobral - Creative Technologist',
+    title: 'M.S Creative Technologist',
     description: 'Portfolio of a creative technologist specializing in full-stack development, architecture, and modern web technologies.',
     keywords: ['portfolio', 'developer', 'full-stack', 'TypeScript', 'Next.js', 'React'],
     icons: {

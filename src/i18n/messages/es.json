@@ -22,7 +22,7 @@
     },
     "cta": {
       "viewProjects": "Ver Proyectos",
-      "readBlog": "Blog",
+      "readBlog": "Chat",
       "downloadCV": "Descargar CV"
     },
     "openToOpportunities": "Online",
@@ -42,7 +42,7 @@
       "title": "Backend"
     },
     "architecture": {
-      "title": "Arquitectura"
+      "title": "Sistemas"
     },
     "devops": {
       "title": "DevOps"

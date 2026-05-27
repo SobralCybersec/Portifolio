@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Code2, Database, Layers, Zap } from 'lucide-react';
+import { Code2, Database, Layers, Cpu, Zap } from 'lucide-react';
 import { AnimatedText } from './AnimatedText';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -156,7 +156,7 @@ export default function Skills({ animateSection, repos = [] }: SkillsProps) {
   const skills = [
     { category: t('frontend.title'),     icon: Code2,    key: 'frontend' },
     { category: t('backend.title'),      icon: Database, key: 'backend'  },
-    { category: t('architecture.title'), icon: Layers,   key: 'systems'  },
+    { category: t('architecture.title'), icon: Cpu,   key: 'systems'  },
     { category: t('devops.title'),       icon: Zap,      key: 'devops'   },
   ];
 
