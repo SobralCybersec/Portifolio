@@ -44,35 +44,35 @@ export default function ParticleBackground() {
       });
     }
 
+    const particleColor = theme === 'light' ? '59, 130, 246' : '147, 51, 234';
+    let rafId: number;
+
     // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((particle) => {
-        // Update position
+      for (const particle of particles) {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
 
-        // Wrap around edges
         if (particle.x < 0) particle.x = canvas.width;
         if (particle.x > canvas.width) particle.x = 0;
         if (particle.y < 0) particle.y = canvas.height;
         if (particle.y > canvas.height) particle.y = 0;
 
-        // Draw particle
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        const particleColor = theme === 'light' ? '59, 130, 246' : '147, 51, 234';
         ctx.fillStyle = `rgba(${particleColor}, ${particle.opacity})`;
         ctx.fill();
-      });
+      }
 
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     };
 
     animate();
 
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener('resize', resizeCanvas);
     };
   }, [theme]);

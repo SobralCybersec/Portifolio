@@ -38,6 +38,26 @@ function ImageSlideshow({ images }: { images: string[] }) {
 
 const GITHUB_USERNAME = 'SobralCybersec';
 
+/** Allow only https://github.com/* URLs — blocks javascript: and data: XSS vectors (CWE-79). */
+function safeGithubUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'https:' && parsed.hostname === 'github.com') return url;
+  } catch {}
+  return null;
+}
+
+/** Allow only https: URLs for external links (homepage, demo). */
+function safeExternalUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'https:') return url;
+  } catch {}
+  return null;
+}
+
 const LANGUAGE_COLORS: Record<string, string> = {
   JavaScript: '#f1e05a',
   TypeScript: '#3178c6',
@@ -210,8 +230,12 @@ export default function GitHubProjects() {
                         loading="lazy"
                         unoptimized
                         onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = `https://opengraph.githubassets.com/1/${repo.html_url.replace('https://github.com/', '')}`;
+                          const safeUrl = safeGithubUrl(repo.html_url);
+                          if (safeUrl) {
+                            const path = safeUrl.replace('https://github.com/', '');
+                            (e.target as HTMLImageElement).src =
+                              `https://opengraph.githubassets.com/1/${encodeURIComponent(path)}`;
+                          }
                         }}
                       />
                     );
@@ -270,7 +294,7 @@ export default function GitHubProjects() {
 
               <div className="project-links mt-auto">
                 <a 
-                  href={repo.html_url} 
+                  href={safeGithubUrl(repo.html_url) ?? '#'} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="project-link"
@@ -278,9 +302,9 @@ export default function GitHubProjects() {
                   <Github className="w-4 h-4" />
                   Code
                 </a>
-                {repo.homepage && (
+                {safeExternalUrl(repo.homepage) && (
                   <a 
-                    href={repo.homepage} 
+                    href={safeExternalUrl(repo.homepage)!} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="project-link"

@@ -12,6 +12,18 @@ interface LetterGlitchProps {
   vignetteColor?: string;
 }
 
+/** Allowlist: only accept valid 3- or 6-digit hex colors (CWE-20 / CWE-78). */
+const HEX_COLOR_RE = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
+const SAFE_RGB_RE = /^\d{1,3},\d{1,3},\d{1,3}$/;
+
+function sanitizeHexColor(color: string, fallback: string): string {
+  return HEX_COLOR_RE.test(color) ? color : fallback;
+}
+
+function sanitizeRgbTriplet(value: string, fallback: string): string {
+  return SAFE_RGB_RE.test(value) ? value : fallback;
+}
+
 const LetterGlitch = ({
   glitchColors = ['#2b4539', '#61dca3', '#61b3dc'],
   glitchSpeed = 50,
@@ -21,6 +33,9 @@ const LetterGlitch = ({
   characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$&*()-_+=/[]{};:<>.,0123456789',
   vignetteColor = '0,0,0'
 }: LetterGlitchProps) => {
+  // Sanitize all color inputs once on entry — never trust prop values downstream
+  const safeColors = glitchColors.map(c => sanitizeHexColor(c, '#61dca3'));
+  const safeVignetteColor = sanitizeRgbTriplet(vignetteColor, '0,0,0');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const letters = useRef<
@@ -46,7 +61,7 @@ const LetterGlitch = ({
   };
 
   const getRandomColor = () => {
-    return glitchColors[Math.floor(Math.random() * glitchColors.length)];
+    return safeColors[Math.floor(Math.random() * safeColors.length)];
   };
 
   const hexToRgb = (hex: string) => {
@@ -244,7 +259,7 @@ const LetterGlitch = ({
     width: '100%',
     height: '100%',
     pointerEvents: 'none',
-    background: `radial-gradient(circle, rgba(${vignetteColor},0) 60%, rgba(${vignetteColor},1) 100%)`
+    background: `radial-gradient(circle, rgba(${safeVignetteColor},0) 60%, rgba(${safeVignetteColor},1) 100%)`
   };
 
   const centerVignetteStyle = {
@@ -254,7 +269,7 @@ const LetterGlitch = ({
     width: '100%',
     height: '100%',
     pointerEvents: 'none',
-    background: `radial-gradient(circle, rgba(${vignetteColor},0.8) 0%, rgba(${vignetteColor},0) 60%)`
+    background: `radial-gradient(circle, rgba(${safeVignetteColor},0.8) 0%, rgba(${safeVignetteColor},0) 60%)`
   };
 
   return (

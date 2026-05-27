@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 
+/** Allowlist of GitHub API usernames this route is permitted to query (CWE-918). */
+const ALLOWED_USERNAMES = new Set(['SobralCybersec', 'MatheusSobralCSharp', 'octocat']);
+
+function safeGithubUsername(value: string | undefined, fallback: string): string {
+  if (value && ALLOWED_USERNAMES.has(value)) return value;
+  return fallback;
+}
+
 export async function GET() {
   try {
-    const username = process.env.GITHUB_USERNAME || 'octocat';
+    const username = safeGithubUsername(process.env.GITHUB_USERNAME, 'octocat');
     const oldUsername = 'MatheusSobralCSharp';
     const token = process.env.GITHUB_TOKEN;
 
@@ -10,8 +18,9 @@ export async function GET() {
       'Accept': 'application/vnd.github.v3+json',
     };
 
+
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+     headers['Authorization'] = `Bearer ${token}`;
     }
 
     const fetchOpts = { headers, next: { revalidate: 86400 } } as const;

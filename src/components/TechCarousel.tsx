@@ -99,6 +99,7 @@ export default function TechCarousel() {
                               alt={tech.name}
                               width={64}
                               height={64}
+                              loading="lazy"
                               className="tech-icon-img transition-transform duration-300 group-hover:scale-110"
                             />
                             <div className="tech-name">{tech.name}</div>
@@ -129,6 +130,7 @@ export default function TechCarousel() {
                               alt={tech.name}
                               width={64}
                               height={64}
+                              loading="lazy"
                               className="tech-icon-img transition-transform duration-300 group-hover:scale-110"
                             />
                             <div className="tech-name">{tech.name}</div>

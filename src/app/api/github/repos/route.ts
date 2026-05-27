@@ -4,6 +4,18 @@ const GITHUB_USERNAMES = ['SobralCybersec', 'MatheusSobralCSharp'];
 const SORT_BY = 'updated';
 const REPO_TYPE = 'owner';
 
+/**
+ * GitHub usernames and repo names only allow [a-zA-Z0-9._-] and are
+ * max 100 chars. Validate before interpolating into API URLs (CWE-918).
+ */
+const GITHUB_SLUG_RE = /^[a-zA-Z0-9._-]{1,100}$/;
+
+function assertSafeSlug(value: string, label: string): void {
+  if (!GITHUB_SLUG_RE.test(value)) {
+    throw new Error(`Invalid ${label}: ${value}`);
+  }
+}
+
 function extractTechStack(readmeContent: string): string[] {
   const techStack = new Set<string>();
 
@@ -42,6 +54,9 @@ async function fetchReadmeData(
   headers: HeadersInit
 ): Promise<{ previewImage: string | null; isVideo: boolean; techStack: string[] }> {
   try {
+    assertSafeSlug(owner, 'owner');
+    assertSafeSlug(repo, 'repo');
+
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/readme`,
       {
@@ -188,6 +203,9 @@ async function fetchAllLanguages(
   headers: HeadersInit
 ): Promise<string[]> {
   try {
+    assertSafeSlug(owner, 'owner');
+    assertSafeSlug(repo, 'repo');
+
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/languages`,
       { headers, next: { revalidate: 3600 } }

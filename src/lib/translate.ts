@@ -4,6 +4,12 @@ export interface TranslationResult {
   targetLanguage: string;
 }
 
+/** Strip newline/carriage-return chars to prevent log injection (CWE-117). */
+function sanitizeLog(value: unknown): string {
+  return String(value).replace(/[
+]/g, ' ');
+}
+
 const SUPPORTED_LOCALES = ['en', 'es', 'pt', 'fr', 'de', 'ja', 'zh'];
 
 export async function translateText(
@@ -42,7 +48,7 @@ async function translateWithMyMemory(
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error('MyMemory API error:', response.status, response.statusText);
+      console.error('MyMemory API error:', sanitizeLog(response.status), sanitizeLog(response.statusText));
       return text;
     }
 
@@ -52,10 +58,10 @@ async function translateWithMyMemory(
       return data.responseData.translatedText;
     }
     
-    console.error('MyMemory translation failed:', data);
+    console.error('MyMemory translation failed:', sanitizeLog(data.responseStatus));
     return text;
   } catch (error) {
-    console.error('MyMemory translation error:', error);
+    console.error('MyMemory translation error:', sanitizeLog(error));
     return text;
   }
 }
@@ -112,7 +118,7 @@ async function translateWithGroq(
     }
 
     if (!response.ok) {
-      console.error('Groq API error:', response.status);
+      console.error('Groq API error:', sanitizeLog(response.status));
       return translateWithMyMemory(text, targetLocale, sourceLocale);
     }
 
@@ -140,7 +146,7 @@ async function translateWithGroq(
     
     return translateWithMyMemory(text, targetLocale, sourceLocale);
   } catch (error) {
-    console.error('Groq translation error:', error);
+    console.error('Groq translation error:', sanitizeLog(error));
     return translateWithMyMemory(text, targetLocale, sourceLocale);
   }
 }

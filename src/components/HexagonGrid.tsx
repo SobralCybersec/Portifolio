@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useHydrated } from '@/hooks/useHydrated';
 
 interface HexagonGridProps {
@@ -9,6 +9,14 @@ interface HexagonGridProps {
   lineColor?: string;
   glowInterval?: number;
   maxSimultaneous?: number;
+}
+
+/** CWE-79: only allow CSS color values that match safe patterns before
+ *  injecting them into SVG attributes or inline styles. */
+const SAFE_COLOR_RE = /^(rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(\s*,\s*[\d.]+)?\s*\)|#[0-9a-fA-F]{3,8}|[a-zA-Z]{2,30}|transparent)$/;
+
+function sanitizeColor(value: string, fallback: string): string {
+  return SAFE_COLOR_RE.test(value.trim()) ? value.trim() : fallback;
 }
 
 const HexagonGrid = ({
@@ -24,6 +32,10 @@ const HexagonGrid = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const mounted = useHydrated();
 
+  // Sanitize color props once — never inject raw prop values into SVG attributes
+  const safeLineColor = sanitizeColor(lineColor, 'rgba(168, 85, 247, 0.08)');
+  const safeGlowColor = sanitizeColor(glowColor, 'rgba(168, 85, 247, 0.6)');
+
   useEffect(() => {
     if (!mounted) return;
     
@@ -31,11 +43,12 @@ const HexagonGrid = ({
     if (!svg) return;
 
     const buildGrid = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      // Clamp to safe positive integers before use in SVG attributes (CWE-79)
+      const w = Math.max(1, Math.trunc(window.innerWidth));
+      const h = Math.max(1, Math.trunc(window.innerHeight));
 
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      svg.innerHTML = '';
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
       cellsRef.current = [];
 
       const hexWidth = cellSize * Math.sqrt(3);
@@ -54,7 +67,7 @@ const HexagonGrid = ({
           const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
           polygon.setAttribute('points', points);
           polygon.setAttribute('fill', 'transparent');
-          polygon.setAttribute('stroke', lineColor);
+          polygon.setAttribute('stroke', safeLineColor);
           polygon.setAttribute('stroke-width', '1');
           polygon.style.transition = 'all 0.3s ease';
 
@@ -95,9 +108,10 @@ const HexagonGrid = ({
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(resizeTimeout);
       window.removeEventListener('resize', handleResize);
     };
-  }, [mounted, cellSize, glowColor, lineColor, glowInterval, maxSimultaneous]);
+  }, [mounted, cellSize, safeGlowColor, safeLineColor, glowInterval, maxSimultaneous]);
 
   if (!mounted) {
     return null;
