@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 export default function ChatEffects() {
   return (
@@ -16,11 +17,12 @@ export default function ChatEffects() {
           height: 64,
         }}
       >
-        <img
+        <Image
           src="/sprites/jinwoo.gif"
           alt=""
           width={64}
           height={64}
+          unoptimized
           style={{
             imageRendering: 'pixelated',
             filter: 'drop-shadow(0 0 6px rgba(168,85,247,0.9)) drop-shadow(0 0 2px rgba(168,85,247,1))',

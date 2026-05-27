@@ -579,7 +579,6 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
                     {selectedRepo.isVideo ? (
                       <video src={getPreviewSrc(selectedRepo)!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
                     ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <Image
                         src={getPreviewSrc(selectedRepo)!}
                         alt={selectedRepo.name}

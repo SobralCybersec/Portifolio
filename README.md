@@ -56,19 +56,19 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
   <img src="https://go-skill-icons.vercel.app/api/icons?i=nextjs,react,typescript,tailwind,nodejs,redis&size=64" />
 </p>
 
-* **Framework**: Next.js 15+ (App Router, Turbopack)
+* **Framework**: Next.js 16.2.6 (App Router, Turbopack)
 * **Language**: TypeScript 5.5+
 * **Styling**: Tailwind CSS 3.4+
-* **Animations**: Framer Motion + CSS clip-path animations (Bleach-style)
+* **Animations**: Framer Motion 11+ + CSS clip-path animations (Bleach-style)
 * **i18n**: next-intl 4.11+
 * **Theme**: next-themes 0.4+
-* **Real-time**: Pusher (WebSockets)
-* **Cache / Rate Limit**: Upstash Redis (@upstash/redis, @upstash/ratelimit)
-* **Auth**: NextAuth.js
+* **Real-time**: Pusher 5.2 / pusher-js 8.4
+* **Cache / Rate Limit**: Upstash Redis 1.34.9 + @upstash/ratelimit 2.0
+* **Auth**: NextAuth.js 5.0 (beta)
 * **AI Translation**: Groq API
-* **Icons**: Lucide React
-* **Linting**: ESLint 9+ with Next.js flat config
-* **Testing**: Jest + React Testing Library
+* **Icons**: Lucide React 0.400+
+* **Linting**: ESLint 9.39+ with Next.js flat config
+* **Testing**: Jest 29 + React Testing Library 16
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel with optimized configuration
 

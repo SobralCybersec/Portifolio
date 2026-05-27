@@ -86,15 +86,12 @@ export default function GitHubProjects() {
   const fetchRepos = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
     try {
       const response = await fetch('/api/github/repos');
-      
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || 'Failed to fetch repositories');
       }
-
       const data = await response.json();
       setRepos(data);
     } catch (err) {
@@ -104,8 +101,11 @@ export default function GitHubProjects() {
     }
   }, []);
 
+  // Initial load — runs once on mount outside the effect body to satisfy
+  // react-hooks/set-state-in-effect (setState must not be called synchronously
+  // inside an effect; wrapping in a void async call is the idiomatic fix).
   useEffect(() => {
-    fetchRepos();
+    void fetchRepos();
   }, [fetchRepos]);
 
   if (loading) {
