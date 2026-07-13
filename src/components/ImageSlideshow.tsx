@@ -12,6 +12,8 @@ interface ImageSlideshowProps {
 export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSlideshowProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Re-runs when images identity or interval changes; safeIndex clamps any
+  // out-of-bounds currentIndex that can occur if the array shrinks mid-session.
   useEffect(() => {
     if (images.length <= 1) return;
 
@@ -20,7 +22,9 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
     }, interval);
 
     return () => clearInterval(timer);
-  }, [images.length, interval]);
+  }, [images, interval]);
+
+  const safeIndex = images.length > 0 ? currentIndex % images.length : 0;
 
   if (images.length === 0) return null;
 
@@ -30,7 +34,7 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
         <div
           key={`${src}-${index}`}
           className="absolute inset-0 transition-opacity duration-1000"
-          style={{ opacity: index === currentIndex ? 1 : 0 }}
+          style={{ opacity: index === safeIndex ? 1 : 0 }}
         >
           <SafeImage
             src={src}
@@ -51,8 +55,8 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
               onClick={() => setCurrentIndex(index)}
               className="w-2 h-2 rounded-full transition-all"
               style={{
-                background: index === currentIndex ? '#a855f7' : 'rgba(168, 85, 247, 0.3)',
-                boxShadow: index === currentIndex ? '0 0 8px #a855f7' : 'none',
+                background: index === safeIndex ? '#a855f7' : 'rgba(168, 85, 247, 0.3)',
+                boxShadow: index === safeIndex ? '0 0 8px #a855f7' : 'none',
               }}
               aria-label={`Go to image ${index + 1}`}
             />

@@ -6,6 +6,7 @@ import { ExternalLink, Github, Star, GitFork, RefreshCw } from 'lucide-react';
 import { AnimatedText } from './AnimatedText';
 import CityMap from './CityMap';
 import Image from 'next/image';
+import { safeGithubUrl, safeExternalUrl } from '@/lib/url';
 
 function ImageSlideshow({ images }: { images: string[] }) {
   const [current, setCurrent] = useState(0);
@@ -37,26 +38,6 @@ function ImageSlideshow({ images }: { images: string[] }) {
 }
 
 const GITHUB_USERNAME = 'SobralCybersec';
-
-/** Allow only https://github.com/* URLs — blocks javascript: and data: XSS vectors (CWE-79). */
-function safeGithubUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol === 'https:' && parsed.hostname === 'github.com') return url;
-  } catch {}
-  return null;
-}
-
-/** Allow only https: URLs for external links (homepage, demo). */
-function safeExternalUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol === 'https:') return url;
-  } catch {}
-  return null;
-}
 
 const LANGUAGE_COLORS: Record<string, string> = {
   JavaScript: '#f1e05a',
@@ -264,8 +245,10 @@ export default function GitHubProjects() {
                           const safeUrl = safeGithubUrl(repo.html_url);
                           if (safeUrl) {
                             const path = safeUrl.replace('https://github.com/', '');
+                            // Fix: encode each segment separately so the separating '/' is preserved
+                            const encodedPath = path.split('/').map(encodeURIComponent).join('/');
                             (e.target as HTMLImageElement).src =
-                              `https://opengraph.githubassets.com/1/${encodeURIComponent(path)}`;
+                              `https://opengraph.githubassets.com/1/${encodedPath}`;
                           }
                         }}
                       />

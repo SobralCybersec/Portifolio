@@ -127,6 +127,8 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
   const treeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const treeRef = useRef<any>(null);
   const animRef = useRef(0);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const techIconsCacheRef = useRef<Map<number, string[]>>(new Map());
 
   // camera state
   const camRef = useRef({ x: 0, y: 0, z: 1 });
@@ -246,7 +248,8 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
 
       // LOD 2: tech icons at zoom ≥ 2.5
       if (z >= 2.5 && screenSize > 40) {
-        const icons = detectTechIcons(node.repo);
+        if (!techIconsCacheRef.current.has(node.repo.id)) techIconsCacheRef.current.set(node.repo.id, detectTechIcons(node.repo));
+        const icons = techIconsCacheRef.current.get(node.repo.id)!;
         const iconSize = Math.min(node.size * 0.6, 16 / z);
         const spacing = iconSize + 2 / z;
         const totalWidth = icons.length * spacing - 2 / z;
@@ -312,12 +315,12 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
     // inject TreePlugin script if not loaded
     if (!window.TreePlugin) {
       const script = document.createElement('script');
-      script.innerHTML = `!function(){function t(t){if(t=t||{},this.container=t.container||document.body,this.fullDepth=14,this.depth=t.depth||this.fullDepth,this.pixelRatio=window.devicePixelRatio>1?2:1,this.growthSpeed=t.growthSpeed||1,this.treeScale=t.treeScale||1,this.branchWidth=t.branchWidth||1,this.colorMode=t.colorMode||"solid",this.color=t.color||"#000",this.gradientStart=t.gradientStart||"#8B4513",this.gradientEnd=t.gradientEnd||"#228B22",this.seed=void 0!==t.seed?Number(t.seed):void 0,void 0!==this.seed){this.randSeq=[];for(var e=this.seed,i=0;i<1e4;i++){var s=((e=16807*e%2147483647)-1)/2147483646;this.randSeq.push(s)}this.randCounter=0}this.canvas=document.createElement("canvas"),this.container.appendChild(this.canvas),this.ctx=this.canvas.getContext("2d"),this.branches=[],this.animation=null,this.currentDepth=0,this.addEventListeners(),this.resize(),this.startTree(this.stageWidth/2,this.stageHeight)}t.prototype.addEventListeners=function(){window.addEventListener("resize",this.resize.bind(this))},t.prototype.resize=function(){this.stageWidth=this.container.clientWidth,this.stageHeight=this.container.clientHeight,this.canvas.width=this.stageWidth*this.pixelRatio,this.canvas.height=this.stageHeight*this.pixelRatio,this.ctx.setTransform(this.pixelRatio,0,0,this.pixelRatio,0,0),this.clearCanvas()},t.prototype.clearCanvas=function(){this.ctx.clearRect(0,0,this.stageWidth,this.stageHeight)},t.prototype.startTree=function(t,e){this.animation&&cancelAnimationFrame(this.animation),this.clearCanvas(),void 0!==this.seed&&(this.randCounter=0),this.branches=[];for(var i=0;i<=this.fullDepth;i++)this.branches.push([]);this.currentDepth=0,this.treeTop=1/0,this.treeX=t,this.treeY=e;var s=this.stageHeight/(10*this.fullDepth);this.treeScale>s&&(this.treeScale=s),this.createBranch(this.treeX,this.treeY,-90,0);for(var h=0;h<=this.fullDepth;h++)for(var r=0;r<this.branches[h].length;r++)this.branches[h][r].cntFrame=0;this.animate()},t.prototype.random=function(t,e){return this.randSeq?t+this.randSeq[this.randCounter++]*(e-t):Math.random()*(e-t)+t},t.prototype.degToRad=function(t){return t*(Math.PI/180)},t.prototype.createBranch=function(t,e,i,s){if(s<this.fullDepth){var h=this.treeScale,r=(0===s?this.random(12,16):this.random(0,13))*h,a=this.fullDepth-s,n=t+Math.cos(this.degToRad(i))*r*a,o=e+Math.sin(this.degToRad(i))*r*a;e<this.treeTop&&(this.treeTop=e),o<this.treeTop&&(this.treeTop=o);var d=this.branchWidth;this.branches[s].push({startX:t,startY:e,endX:n,endY:o,lineWidth:a*d,frame:100,cntFrame:0,gapX:(n-t)/100,gapY:(o-e)/100,plugin:this,draw:function(t,e){if(this.cntFrame<this.frame){t.beginPath();var i=this.cntFrame/this.frame,s=this.startX+(this.endX-this.startX)*i,h=this.startY+(this.endY-this.startY)*i;if(t.moveTo(this.startX,this.startY),t.lineTo(s,h),t.lineWidth=this.lineWidth,"gradient"===this.plugin.colorMode){var r=t.createLinearGradient(this.plugin.treeX,this.plugin.treeY,this.plugin.treeX,this.plugin.treeTop);r.addColorStop(0,this.plugin.gradientStart),r.addColorStop(1,this.plugin.gradientEnd),t.strokeStyle=r}else t.strokeStyle=this.plugin.color;return t.stroke(),t.closePath(),this.cntFrame+=e,!1}return!0}}),this.createBranch(n,o,i-this.random(18,28),s+1),this.createBranch(n,o,i+this.random(18,28),s+1)}},t.prototype.animate=function(){this.clearCanvas();for(var t=0;t<this.currentDepth&&t<this.depth&&t<this.branches.length;t++)for(var e=0;e<this.branches[t].length;e++){var i=this.branches[t][e];if(this.ctx.beginPath(),this.ctx.moveTo(i.startX,i.startY),this.ctx.lineTo(i.endX,i.endY),this.ctx.lineWidth=i.lineWidth,"gradient"===this.colorMode){var s=this.ctx.createLinearGradient(this.treeX,this.treeY,this.treeX,this.treeTop);s.addColorStop(0,this.gradientStart),s.addColorStop(1,this.gradientEnd),this.ctx.strokeStyle=s}else this.ctx.strokeStyle=this.color;this.ctx.stroke(),this.ctx.closePath()}var h=!1;if(this.currentDepth<this.depth&&this.currentDepth<this.branches.length){for(var r=!0,e=0;e<this.branches[this.currentDepth].length;e++){var i=this.branches[this.currentDepth][e];if(i.cntFrame<i.frame)i.draw(this.ctx,this.growthSpeed),h=!0,r=!1;else{if(this.ctx.beginPath(),this.ctx.moveTo(i.startX,i.startY),this.ctx.lineTo(i.endX,i.endY),this.ctx.lineWidth=i.lineWidth,"gradient"===this.colorMode){var s=this.ctx.createLinearGradient(this.treeX,this.treeY,this.treeX,this.treeTop);s.addColorStop(0,this.gradientStart),s.addColorStop(1,this.gradientEnd),this.ctx.strokeStyle=s}else this.ctx.strokeStyle=this.color;this.ctx.stroke(),this.ctx.closePath()}}r&&(this.currentDepth++,h=!0)}h?this.animation=requestAnimationFrame(this.animate.bind(this)):cancelAnimationFrame(this.animation)},t.prototype.updateColors=function(e){this.color=e.color||this.color,this.gradientStart=e.gradientStart||this.gradientStart,this.gradientEnd=e.gradientEnd||this.gradientEnd,this.colorMode=e.colorMode||this.colorMode},window.TreePlugin=t}();`;
+      script.innerHTML = `!function(){function t(t){if(t=t||{},this.container=t.container||document.body,this.fullDepth=14,this.depth=t.depth||this.fullDepth,this.pixelRatio=window.devicePixelRatio>1?2:1,this.growthSpeed=t.growthSpeed||1,this.treeScale=t.treeScale||1,this.branchWidth=t.branchWidth||1,this.colorMode=t.colorMode||"solid",this.color=t.color||"#000",this.gradientStart=t.gradientStart||"#8B4513",this.gradientEnd=t.gradientEnd||"#228B22",this.seed=void 0!==t.seed?Number(t.seed):void 0,void 0!==this.seed){this.randSeq=[];for(var e=this.seed,i=0;i<1e4;i++){var s=((e=16807*e%2147483647)-1)/2147483646;this.randSeq.push(s)}this.randCounter=0}this.canvas=document.createElement("canvas"),this.container.appendChild(this.canvas),this.ctx=this.canvas.getContext("2d"),this.branches=[],this.animation=null,this.currentDepth=0,this.addEventListeners(),this.resize(),this.startTree(this.stageWidth/2,this.stageHeight)}t.prototype.addEventListeners=function(){this._resizeBound=this.resize.bind(this);window.addEventListener("resize",this._resizeBound)},t.prototype.destroy=function(){window.removeEventListener("resize",this._resizeBound)},t.prototype.resize=function(){this.stageWidth=this.container.clientWidth,this.stageHeight=this.container.clientHeight,this.canvas.width=this.stageWidth*this.pixelRatio,this.canvas.height=this.stageHeight*this.pixelRatio,this.ctx.setTransform(this.pixelRatio,0,0,this.pixelRatio,0,0),this.clearCanvas()},t.prototype.clearCanvas=function(){this.ctx.clearRect(0,0,this.stageWidth,this.stageHeight)},t.prototype.startTree=function(t,e){this.animation&&cancelAnimationFrame(this.animation),this.clearCanvas(),void 0!==this.seed&&(this.randCounter=0),this.branches=[];for(var i=0;i<=this.fullDepth;i++)this.branches.push([]);this.currentDepth=0,this.treeTop=1/0,this.treeX=t,this.treeY=e;var s=this.stageHeight/(10*this.fullDepth);this.treeScale>s&&(this.treeScale=s),this.createBranch(this.treeX,this.treeY,-90,0);for(var h=0;h<=this.fullDepth;h++)for(var r=0;r<this.branches[h].length;r++)this.branches[h][r].cntFrame=0;this.animate()},t.prototype.random=function(t,e){return this.randSeq?t+this.randSeq[this.randCounter++]*(e-t):Math.random()*(e-t)+t},t.prototype.degToRad=function(t){return t*(Math.PI/180)},t.prototype.createBranch=function(t,e,i,s){if(s<this.fullDepth){var h=this.treeScale,r=(0===s?this.random(12,16):this.random(0,13))*h,a=this.fullDepth-s,n=t+Math.cos(this.degToRad(i))*r*a,o=e+Math.sin(this.degToRad(i))*r*a;e<this.treeTop&&(this.treeTop=e),o<this.treeTop&&(this.treeTop=o);var d=this.branchWidth;this.branches[s].push({startX:t,startY:e,endX:n,endY:o,lineWidth:a*d,frame:100,cntFrame:0,gapX:(n-t)/100,gapY:(o-e)/100,plugin:this,draw:function(t,e){if(this.cntFrame<this.frame){t.beginPath();var i=this.cntFrame/this.frame,s=this.startX+(this.endX-this.startX)*i,h=this.startY+(this.endY-this.startY)*i;if(t.moveTo(this.startX,this.startY),t.lineTo(s,h),t.lineWidth=this.lineWidth,"gradient"===this.plugin.colorMode){var r=t.createLinearGradient(this.plugin.treeX,this.plugin.treeY,this.plugin.treeX,this.plugin.treeTop);r.addColorStop(0,this.plugin.gradientStart),r.addColorStop(1,this.plugin.gradientEnd),t.strokeStyle=r}else t.strokeStyle=this.plugin.color;return t.stroke(),t.closePath(),this.cntFrame+=e,!1}return!0}}),this.createBranch(n,o,i-this.random(18,28),s+1),this.createBranch(n,o,i+this.random(18,28),s+1)}},t.prototype.animate=function(){this.clearCanvas();for(var t=0;t<this.currentDepth&&t<this.depth&&t<this.branches.length;t++)for(var e=0;e<this.branches[t].length;e++){var i=this.branches[t][e];if(this.ctx.beginPath(),this.ctx.moveTo(i.startX,i.startY),this.ctx.lineTo(i.endX,i.endY),this.ctx.lineWidth=i.lineWidth,"gradient"===this.colorMode){var s=this.ctx.createLinearGradient(this.treeX,this.treeY,this.treeX,this.treeTop);s.addColorStop(0,this.gradientStart),s.addColorStop(1,this.gradientEnd),this.ctx.strokeStyle=s}else this.ctx.strokeStyle=this.color;this.ctx.stroke(),this.ctx.closePath()}var h=!1;if(this.currentDepth<this.depth&&this.currentDepth<this.branches.length){for(var r=!0,e=0;e<this.branches[this.currentDepth].length;e++){var i=this.branches[this.currentDepth][e];if(i.cntFrame<i.frame)i.draw(this.ctx,this.growthSpeed),h=!0,r=!1;else{if(this.ctx.beginPath(),this.ctx.moveTo(i.startX,i.startY),this.ctx.lineTo(i.endX,i.endY),this.ctx.lineWidth=i.lineWidth,"gradient"===this.colorMode){var s=this.ctx.createLinearGradient(this.treeX,this.treeY,this.treeX,this.treeTop);s.addColorStop(0,this.gradientStart),s.addColorStop(1,this.gradientEnd),this.ctx.strokeStyle=s}else this.ctx.strokeStyle=this.color;this.ctx.stroke(),this.ctx.closePath()}}r&&(this.currentDepth++,h=!0)}h?this.animation=requestAnimationFrame(this.animate.bind(this)):cancelAnimationFrame(this.animation)},t.prototype.updateColors=function(e){this.color=e.color||this.color,this.gradientStart=e.gradientStart||this.gradientStart,this.gradientEnd=e.gradientEnd||this.gradientEnd,this.colorMode=e.colorMode||this.colorMode},window.TreePlugin=t}();`;
       document.head.appendChild(script);
       
-      setTimeout(() => {
+      timeoutsRef.current.push(setTimeout(() => {
         if (window.TreePlugin && containerRef.current) initTree();
-      }, 100);
+      }, 100));
     } else {
       initTree();
     }
@@ -349,13 +352,19 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
       treeRef.current = tree;
       treeCanvasRef.current = tree.canvas;
 
-      setTimeout(() => {
+      timeoutsRef.current.push(setTimeout(() => {
         placeReposOnTree(tree);
-      }, 3000);
+      }, 3000));
     }
 
     return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
       if (treeRef.current?.animation) cancelAnimationFrame(treeRef.current.animation);
+      treeRef.current?.destroy?.();
+      if (treeCanvasRef.current?.parentNode) {
+        treeCanvasRef.current.parentNode.removeChild(treeCanvasRef.current);
+      }
     };
   }, [repos, mounted, isDark, placeReposOnTree]);
 
@@ -575,14 +584,15 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
               {/* Body */}
               <div className="px-6 pb-5 pt-5">
                 {getPreviewSrc(selectedRepo) && (
-                  <div className="w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${isDark ? '#6366f1' : '#3b82f6'}66`, background: isDark ? 'rgba(0,10,30,0.8)' : 'rgba(59,130,246,0.05)' }}>
+                  <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${isDark ? '#6366f1' : '#3b82f6'}66`, background: isDark ? 'rgba(0,10,30,0.8)' : 'rgba(59,130,246,0.05)' }}>
                     {selectedRepo.isVideo ? (
                       <video src={getPreviewSrc(selectedRepo)!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
                     ) : (
                       <Image
                         src={getPreviewSrc(selectedRepo)!}
                         alt={selectedRepo.name}
-                        className="w-full h-full object-contain"
+                        fill
+                        className="object-contain"
                         onError={e => { (e.target as HTMLImageElement).src = `https://opengraph.githubassets.com/1/${selectedRepo.html_url.replace('https://github.com/', '')}`; }}
                       />
                     )}

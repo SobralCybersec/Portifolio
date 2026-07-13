@@ -29,7 +29,6 @@ const HexagonGrid = ({
   const svgRef = useRef<SVGSVGElement | null>(null);
   const cellsRef = useRef<SVGPolygonElement[]>([]);
   const activeCountRef = useRef(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const mounted = useHydrated();
 
   // Sanitize color props once — never inject raw prop values into SVG attributes
@@ -88,11 +87,6 @@ const HexagonGrid = ({
       return points.map(p => p.join(',')).join(' ');
     };
 
-    const highlightRandom = () => {
-      // Disabled - only showing static lines
-      return;
-    };
-
     buildGrid();
     // Removed interval for glowing effect
 
@@ -111,7 +105,7 @@ const HexagonGrid = ({
       clearTimeout(resizeTimeout);
       window.removeEventListener('resize', handleResize);
     };
-  }, [mounted, cellSize, safeGlowColor, safeLineColor, glowInterval, maxSimultaneous]);
+  }, [mounted, cellSize, safeGlowColor, safeLineColor]);
 
   if (!mounted) {
     return null;

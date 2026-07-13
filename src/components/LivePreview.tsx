@@ -14,27 +14,28 @@ export default function LivePreview() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const fetchGifUrl = useCallback(async () => {
+  const fetchGifUrl = useCallback(async (guard?: { cancelled: boolean }) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(
         'https://raw.githubusercontent.com/SobralCybersec/SobralCybersec/main/README.md'
       );
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch README');
       }
-      
+
       const text = await response.text();
-      
+
       const gifRegex = /<img\s+src="(https:\/\/github\.com\/SobralCybersec\/SobralCybersec\/releases\/download\/[^"]+\.gif)"/i;
       const match = text.match(gifRegex);
-      
+
+      if (guard?.cancelled) return;
       if (match && match[1]) {
         setGifUrl(match[1]);
-        
+
         const dateMatch = match[1].match(/(\d{4}-\d{2}-\d{2}\.\d{2}-\d{2}-\d{2})/);
         if (dateMatch) {
           const dateStr = dateMatch[1].replace(/\./g, ' ').replace(/-/g, ':');
@@ -44,50 +45,19 @@ export default function LivePreview() {
         throw new Error('GIF URL not found in README');
       }
     } catch (err) {
+      if (guard?.cancelled) return;
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false);
+      if (!guard?.cancelled) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(
-          'https://raw.githubusercontent.com/SobralCybersec/SobralCybersec/main/README.md'
-        );
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch README');
-        }
-        
-        const text = await response.text();
-        
-        const gifRegex = /<img\s+src="(https:\/\/github\.com\/SobralCybersec\/SobralCybersec\/releases\/download\/[^"]+\.gif)"/i;
-        const match = text.match(gifRegex);
-        
-        if (match && match[1]) {
-          setGifUrl(match[1]);
-          
-          const dateMatch = match[1].match(/(\d{4}-\d{2}-\d{2}\.\d{2}-\d{2}-\d{2})/);
-          if (dateMatch) {
-            const dateStr = dateMatch[1].replace(/\./g, ' ').replace(/-/g, ':');
-            setLastUpdated(dateStr);
-          }
-        } else {
-          throw new Error('GIF URL not found in README');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    };
+    const guard = { cancelled: false };
+    async function load() { await fetchGifUrl(guard); }
     load();
-  }, []);
+    return () => { guard.cancelled = true; };
+  }, [fetchGifUrl]);
 
   return (
     <section className="py-16 px-4">
@@ -123,7 +93,7 @@ export default function LivePreview() {
               </div>
               
               <button
-                onClick={fetchGifUrl}
+                onClick={() => fetchGifUrl()}
                 disabled={loading}
                 className="flex items-center gap-2 px-3 py-1 text-sm text-[var(--text-muted)] hover:text-[var(--theme-primary)] transition-colors disabled:opacity-50"
                 aria-label="Refresh"
@@ -150,7 +120,7 @@ export default function LivePreview() {
                   </div>
                   <p className="text-[var(--text-muted)] font-mono text-sm mb-4">{error}</p>
                   <button
-                    onClick={fetchGifUrl}
+                    onClick={() => fetchGifUrl()}
                     className="px-4 py-2 bg-[var(--theme-primary)] text-white rounded-lg hover:bg-[var(--theme-secondary)] transition-colors"
                   >
                     {t('tryAgain')}

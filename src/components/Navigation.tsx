@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { Github, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/routing';
+import { Link, usePathname } from '@/i18n/routing';
 import LanguageSwitcher from './LanguageSwitcher';
-import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -23,7 +22,8 @@ export default function Navigation() {
 
   const primary = isDark ? '#a855f7' : '#3b82f6';
 
-  const isActive = (path: string) => pathname?.includes(path);
+  const isActive = (path: string) =>
+    pathname === path || pathname.startsWith(path + '/');
 
   const navLinks = [
     { href: '/about', label: t('about') },

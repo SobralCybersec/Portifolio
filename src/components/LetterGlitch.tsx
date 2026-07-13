@@ -65,6 +65,14 @@ const LetterGlitch = ({
   };
 
   const hexToRgb = (hex: string) => {
+    // Support rgb(r, g, b) strings produced by interpolateColor
+    if (hex.startsWith('rgb')) {
+      const m = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/.exec(hex);
+      return m
+        ? { r: parseInt(m[1], 10), g: parseInt(m[2], 10), b: parseInt(m[3], 10) }
+        : null;
+    }
+
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.replace(shorthandRegex, (_m, r, g, b) => {
       return r + r + g + g + b + b;
@@ -203,19 +211,24 @@ const LetterGlitch = ({
     context.current = canvas.getContext('2d');
     resizeCanvas();
 
+    let loopId = 0;
+
     const animate = () => {
-      const now = Date.now();
-      if (now - lastGlitchTime.current >= glitchSpeed) {
-        updateLetters();
-        drawLetters();
-        lastGlitchTime.current = now;
-      }
-
-      if (smooth) {
-        handleSmoothTransitions();
-      }
-
-      animationRef.current = requestAnimationFrame(animate);
+      const myId = ++loopId;
+      const tick = () => {
+        if (loopId !== myId) return; // stale loop — a newer one owns the cycle
+        const now = Date.now();
+        if (now - lastGlitchTime.current >= glitchSpeed) {
+          updateLetters();
+          drawLetters();
+          lastGlitchTime.current = now;
+        }
+        if (smooth) {
+          handleSmoothTransitions();
+        }
+        animationRef.current = requestAnimationFrame(tick);
+      };
+      tick();
     };
 
     animate();
@@ -227,7 +240,7 @@ const LetterGlitch = ({
       resizeTimeout = setTimeout(() => {
         cancelAnimationFrame(animationRef.current as number);
         resizeCanvas();
-        animate();
+        animate(); // increments loopId — old tick() sees mismatch and exits
       }, 100);
     };
 

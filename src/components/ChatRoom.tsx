@@ -53,21 +53,24 @@ export default function ChatRoom({ session }: { session: Session | null }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch('/api/chat/messages')
-      .then(r => r.json())
+    const ac = new AbortController();
+    fetch('/api/chat/messages', { signal: ac.signal })
+      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
       .then((data: ChatMessage[]) => setMessages(data))
-      .catch(console.error);
+      .catch(err => { if ((err as Error).name !== 'AbortError') console.error(err); });
+    return () => ac.abort();
   }, []);
 
   useEffect(() => {
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-    });
+    const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
+    const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
+    if (!key || !cluster) return;
+    const pusher = new Pusher(key, { cluster });
     const channel = pusher.subscribe('chat');
     channel.bind('message', (msg: ChatMessage) => {
       setMessages(prev => {
         if (prev.some(m => m.id === msg.id)) return prev;
-        return [...prev, msg];
+        return [...prev, msg].slice(-100);
       });
     });
     return () => {
@@ -87,11 +90,12 @@ export default function ChatRoom({ session }: { session: Session | null }) {
     const body = text.trim();
     setText('');
     try {
-      await fetch('/api/chat/messages', {
+      const res = await fetch('/api/chat/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: body }),
       });
+      if (!res.ok) throw new Error(String(res.status));
     } catch {
       setText(body);
     } finally {

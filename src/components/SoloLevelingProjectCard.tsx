@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/useHydrated';
 import SafeImage from './SafeImage';
 import ImageSlideshow from './ImageSlideshow';
+import { safeGithubUrl, safeExternalUrl } from '@/lib/url';
 
 interface Repo {
   id: number;
@@ -391,7 +392,7 @@ export default function SoloLevelingProjectCard({
         {/* BUTTONS */}
         <div className="flex gap-3">
           <a
-            href={repo.html_url}
+            href={safeGithubUrl(repo.html_url) ?? '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="group/button relative flex flex-1 items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs uppercase tracking-[0.25em] transition-all duration-300"
@@ -412,9 +413,9 @@ export default function SoloLevelingProjectCard({
             <span className="relative z-10">Archive</span>
           </a>
 
-          {repo.homepage && (
+          {safeExternalUrl(repo.homepage) && (
             <a
-              href={repo.homepage}
+              href={safeExternalUrl(repo.homepage)!}
               target="_blank"
               rel="noopener noreferrer"
               className="group/button relative flex flex-1 items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs uppercase tracking-[0.25em] transition-all duration-300"

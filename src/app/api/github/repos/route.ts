@@ -250,21 +250,35 @@ export async function GET(request: NextRequest) {
         new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
 
-    const enriched = await Promise.all(
-      filtered.map(async (repo: any) => {
-        const [readmeData, allLanguages] = await Promise.all([
-          fetchReadmeData(repo.owner.login, repo.name, headers),
-          fetchAllLanguages(repo.owner.login, repo.name, headers),
-        ]);
-        return {
-          ...repo,
-          previewImage: readmeData.previewImage ?? getLanguageImage(repo.language),
-          isVideo: readmeData.isVideo,
-          techStack: readmeData.techStack,
-          allLanguages, // e.g. ["python", "batchfile", "assembly", "c", "yara"]
-        };
-      })
-    );
+    // ponytail: enrich only the first 12 (displayed slice) to cap concurrent GitHub sub-calls.
+    // Tail repos get cheap defaults; they're never rendered in the primary grid.
+    const toEnrich = filtered.slice(0, 12);
+    const remainder = filtered.slice(12);
+
+    const enriched = [
+      ...(await Promise.all(
+        toEnrich.map(async (repo: any) => {
+          const [readmeData, allLanguages] = await Promise.all([
+            fetchReadmeData(repo.owner.login, repo.name, headers),
+            fetchAllLanguages(repo.owner.login, repo.name, headers),
+          ]);
+          return {
+            ...repo,
+            previewImage: readmeData.previewImage ?? getLanguageImage(repo.language),
+            isVideo: readmeData.isVideo,
+            techStack: readmeData.techStack,
+            allLanguages, // e.g. ["python", "batchfile", "assembly", "c", "yara"]
+          };
+        })
+      )),
+      ...remainder.map((repo: any) => ({
+        ...repo,
+        previewImage: getLanguageImage(repo.language),
+        isVideo: false,
+        techStack: [] as string[],
+        allLanguages: [] as string[],
+      })),
+    ];
 
     return NextResponse.json(enriched, {
       headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' },

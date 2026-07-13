@@ -14,14 +14,6 @@ export default function ParticleBackground() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
     // Particle system
     const particles: Array<{
       x: number;
@@ -31,6 +23,20 @@ export default function ParticleBackground() {
       speedY: number;
       opacity: number;
     }> = [];
+
+    // Set canvas size
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      if (canvas.width > 0 && canvas.height > 0) {
+        for (const p of particles) {
+          p.x %= canvas.width;
+          p.y %= canvas.height;
+        }
+      }
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
     // Create particles
     for (let i = 0; i < 50; i++) {

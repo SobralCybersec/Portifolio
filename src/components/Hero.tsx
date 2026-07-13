@@ -20,11 +20,13 @@ export default function Hero({ animateSection }: HeroProps) {
   const { theme } = useTheme();
   const pathname = usePathname();
   const locale = pathname.split('/')[1] || 'en';
-  const [stats, setStats] = useState([
-    { label: t('stats.projects'), value: '50+', icon: Code2 },
-    { label: t('stats.experience'), value: '5Y', icon: Briefcase },
-    { label: t('stats.commits'), value: '1K+', icon: GitCommit },
-  ]);
+  const [statValues, setStatValues] = useState(['50+', '5Y', '1K+']);
+
+  const stats = [
+    { label: t('stats.projects'), value: statValues[0], icon: Code2 },
+    { label: t('stats.experience'), value: statValues[1], icon: Briefcase },
+    { label: t('stats.commits'), value: statValues[2], icon: GitCommit },
+  ];
 
   const highlights = [
     t('highlights.fullstack'),
@@ -45,15 +47,15 @@ export default function Hero({ animateSection }: HeroProps) {
       try {
         const res = await fetch('/api/github/stats');
         const data = await res.json();
-        setStats([
-          { label: t('stats.projects'), value: `${data.publicRepos}+`, icon: Code2 },
-          { label: t('stats.experience'), value: `${data.yearsActive}Y`, icon: Briefcase },
-          { label: t('stats.commits'), value: `${Math.floor(data.totalCommits / 1000)}K+`, icon: GitCommit },
+        setStatValues([
+          `${data.publicRepos}+`,
+          `${data.yearsActive}Y`,
+          `${Math.floor(data.totalCommits / 1000)}K+`,
         ]);
       } catch {}
     }
     fetchStats();
-  }, [t]);
+  }, []);
 
   return (
     <section className="hero-section">

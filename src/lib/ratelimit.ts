@@ -1,10 +1,5 @@
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+import { redis } from './chat';
 
 // Strict limit for auth routes — 10 attempts per minute per IP
 export const authLimit = new Ratelimit({

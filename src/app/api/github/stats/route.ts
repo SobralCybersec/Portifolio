@@ -48,18 +48,23 @@ export async function GET() {
     const totalRepos = currentUser.public_repos + oldUser.public_repos;
 
     const allRepos = [...currentRepos, ...oldRepos];
-    const totalCommits = allRepos.reduce((sum: number, repo: any) => {
+    // ponytail: repo.size is the repo disk size in KB, not a commit count.
+    // The list endpoint exposes no true commit count, so we use size as a
+    // rough relative proxy divided by 10.  The field name is kept as
+    // `totalCommits` because Hero.tsx reads it by that key.
+    const totalSizeKb = allRepos.reduce((sum: number, repo: any) => {
       return sum + (repo.size || 0);
     }, 0);
 
     return NextResponse.json(
-      { publicRepos: totalRepos, yearsActive, totalCommits: Math.floor(totalCommits / 10) },
+      { publicRepos: totalRepos, yearsActive, totalCommits: Math.floor(totalSizeKb / 10) },
       { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } }
     );
   } catch (error) {
+    console.error('[github/stats]', error);
     return NextResponse.json(
-      { publicRepos: 50, yearsActive: 5, totalCommits: 1000 },
-      { status: 200 }
+      { error: 'Failed to fetch stats' },
+      { status: 502 }
     );
   }
 }
