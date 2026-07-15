@@ -51,7 +51,7 @@ jobs:
       # Turbo / Next.js cache
       # ============================================
       - name: Restore Next.js cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .next/cache
