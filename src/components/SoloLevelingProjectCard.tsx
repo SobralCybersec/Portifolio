@@ -86,6 +86,8 @@ export default function SoloLevelingProjectCard({
   const C = mounted && resolvedTheme === 'light' ? LIGHT_COLORS : DARK_COLORS;
   const isLight = mounted && resolvedTheme === 'light';
 
+  const languageFallback = getLanguageImage(repo.language);
+
   const getPreviewImages = (): string[] => {
     if (!repo.previewImage) return [];
     try {
@@ -99,8 +101,11 @@ export default function SoloLevelingProjectCard({
     return [repo.previewImage];
   };
 
-  const previewImages = getPreviewImages();
-  const languageFallback = getLanguageImage(repo.language);
+  // When no readme/preview image was detected, fall back to the language icon
+  // so every card still shows a relevant visual instead of a blank tile.
+  const parsedPreviewImages = getPreviewImages();
+  const previewImages =
+    parsedPreviewImages.length > 0 ? parsedPreviewImages : [languageFallback];
   const hasPreview = previewImages.length > 0;
   const isLanguageIcon =
     hasPreview && previewImages[0].startsWith('/icons/');
