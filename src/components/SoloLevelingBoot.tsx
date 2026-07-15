@@ -38,6 +38,9 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
   }, [onComplete]);
 
   useEffect(() => {
+    setRevealed(false);
+    setVisible(true);
+
     let audio: HTMLAudioElement | null = null;
     const timers: number[] = [];
 
@@ -59,6 +62,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
         }, 520),
       );
 
+      // Mirrors the original intro: reveal at ~520 ms, remove at ~1900 ms.
       timers.push(window.setTimeout(finish, 1900));
     }
 
