@@ -236,14 +236,16 @@ export async function GET(request: NextRequest) {
         new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
 
-    // ponytail: enrich only the first 12 (displayed slice) to cap concurrent GitHub sub-calls.
-    // Tail repos get cheap defaults; they're never rendered in the primary grid.
-    const toEnrich = filtered.slice(0, 12);
-    const remainder = filtered.slice(12);
-
-    const enriched = [
-      ...(await Promise.all(
-        toEnrich.map(async (repo: any) => {
+    // Enrich EVERY repo (not just the first 12) so every card gets its real
+    // README media — video/screenshots — instead of falling back to the bare
+    // language icon. GitHub sub-calls are run in bounded-concurrency batches so
+    // we stay well under GitHub's rate/socket limits even with 100+ repos.
+    const ENRICH_CONCURRENCY = 8;
+    const enriched: any[] = [];
+    for (let i = 0; i < filtered.length; i += ENRICH_CONCURRENCY) {
+      const batch = filtered.slice(i, i + ENRICH_CONCURRENCY);
+      const results = await Promise.all(
+        batch.map(async (repo: any) => {
           const [readmeData, allLanguages] = await Promise.all([
             fetchReadmeData(repo.owner.login, repo.name, headers),
             fetchAllLanguages(repo.owner.login, repo.name, headers),
@@ -256,18 +258,12 @@ export async function GET(request: NextRequest) {
             allLanguages, // e.g. ["python", "batchfile", "assembly", "c", "yara"]
           };
         })
-      )),
-      ...remainder.map((repo: any) => ({
-        ...repo,
-        previewImage: getLanguageImage(repo.language),
-        isVideo: false,
-        techStack: [] as string[],
-        allLanguages: [] as string[],
-      })),
-    ];
+      );
+      enriched.push(...results);
+    }
 
     return NextResponse.json(enriched, {
-      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+      headers: { 'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=86400' },
     });
   } catch (error) {
     return NextResponse.json(
