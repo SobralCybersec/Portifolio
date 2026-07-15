@@ -5,15 +5,16 @@ import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/useHydrated';
 
 export default function DynamicFavicon() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const mounted = useHydrated();
 
   useEffect(() => {
     if (!mounted) return;
 
-    const faviconPath = theme === 'dark' 
-      ? '/images/favicon/Ahjin-white.svg'
-      : '/images/favicon/Ahjin.svg';
+    const isDark = resolvedTheme !== 'light';
+    const faviconPath = isDark
+      ? '/images/favicon/Ahjin.svg'
+      : '/images/favicon/Ahjin-white.svg';
 
     let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
     
@@ -24,7 +25,7 @@ export default function DynamicFavicon() {
     }
     
     link.href = faviconPath;
-  }, [theme, mounted]);
+  }, [resolvedTheme, mounted]);
 
   return null;
 }

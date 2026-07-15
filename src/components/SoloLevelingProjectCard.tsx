@@ -7,6 +7,7 @@ import { useHydrated } from '@/hooks/useHydrated';
 import SafeImage from './SafeImage';
 import ImageSlideshow from './ImageSlideshow';
 import { safeGithubUrl, safeExternalUrl } from '@/lib/url';
+import { getLanguageImage } from '@/lib/languageIcon';
 
 interface Repo {
   id: number;
@@ -99,6 +100,7 @@ export default function SoloLevelingProjectCard({
   };
 
   const previewImages = getPreviewImages();
+  const languageFallback = getLanguageImage(repo.language);
   const hasPreview = previewImages.length > 0;
   const isLanguageIcon =
     hasPreview && previewImages[0].startsWith('/icons/');
@@ -316,6 +318,7 @@ export default function SoloLevelingProjectCard({
                   width={140}
                   height={140}
                   className="object-contain"
+                  fallbackSrc={languageFallback}
                   style={{
                     filter: `brightness(0.95) contrast(1.1) drop-shadow(0 0 18px ${C.primary}80)`,
                   }}
@@ -326,6 +329,7 @@ export default function SoloLevelingProjectCard({
                 images={previewImages}
                 alt={repo.name}
                 interval={5000}
+                fallbackSrc={languageFallback}
               />
             )}
           </div>

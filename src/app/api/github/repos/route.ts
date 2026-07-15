@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLanguageImage } from '@/lib/languageIcon';
 
 const GITHUB_USERNAMES = ['SobralCybersec', 'MatheusSobralCSharp'];
 const SORT_BY = 'updated';
@@ -171,31 +172,6 @@ async function fetchReadmeData(
     return { previewImage: null, isVideo: false, techStack: [] };
   }
 }
-
-function getLanguageImage(language: string | null): string {
-  if (!language) return '/icons/github.png';
-  
-  // Normalize language name (handle encoding issues)
-  const normalized = language.trim();
-  
-  const langImages: Record<string, string> = {
-    'TypeScript': '/icons/typescript.png',
-    'JavaScript': '/icons/javascript.png',
-    'Python': '/icons/python.png',
-    'Java': '/icons/java.png',
-    'C++': '/icons/cpp.png',
-    'C': '/icons/c.png',
-    'C#': '/icons/csharp.png',
-    'Rust': '/icons/rust.png',
-    'Ruby': '/icons/ruby.png',
-    'PHP': '/icons/php.png',
-    'Shell': '/icons/bash.png',
-    'Assembly': '/icons/assembly.png',
-  };
-  
-  return langImages[normalized] ?? '/icons/github.png';
-}
-
 
 async function fetchAllLanguages(
   owner: string,

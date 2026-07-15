@@ -7,9 +7,10 @@ interface ImageSlideshowProps {
   images: string[];
   alt: string;
   interval?: number;
+  fallbackSrc?: string;
 }
 
-export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSlideshowProps) {
+export default function ImageSlideshow({ images, alt, interval = 5000, fallbackSrc = '/icons/github.png' }: ImageSlideshowProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Re-runs when images identity or interval changes; safeIndex clamps any
@@ -42,7 +43,7 @@ export default function ImageSlideshow({ images, alt, interval = 5000 }: ImageSl
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain"
-            fallbackSrc="/icons/github.png"
+            fallbackSrc={fallbackSrc}
           />
         </div>
       ))}

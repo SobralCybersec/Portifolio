@@ -2,45 +2,195 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Bebas_Neue, Chakra_Petch } from 'next/font/google';
+import { Teko, Rajdhani, Noto_Sans_KR } from 'next/font/google';
+import { useTheme } from 'next-themes';
+import { useHydrated } from '@/hooks/useHydrated';
 
 interface SoloLevelingBootProps {
   onComplete: () => void;
 }
 
-const displayFont = Bebas_Neue({
+// Display font for the giant "SOLO / LEVELING" wordmark.
+const displayFont = Teko({
   subsets: ['latin'],
-  weight: '400',
+  weight: ['500', '600', '700'],
   display: 'swap',
 });
 
-const systemFont = Chakra_Petch({
+// System / HUD font for labels, the typewriter log and status line.
+const systemFont = Rajdhani({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
+// Korean accent used on the System stamps ("각성" — awakening).
+// No `subsets` here: Noto Sans KR has no selectable "korean" subset name in
+// next/font, and 'latin' alone drops the Korean glyphs. Omitting subsets +
+// preload:false pulls the full face (incl. Korean) without a build error.
+const koreanFont = Noto_Sans_KR({
+  weight: ['500', '700'],
+  display: 'swap',
+  preload: false,
+});
+
+// reveal transition 1s cubic-bezier(.78,0,.2,1) — from the reference.
 const PANEL_EASE = [0.78, 0, 0.2, 1] as const;
 const MARK_EASE = [0.2, 0.8, 0.2, 1] as const;
 
+// Timing contract: panels part at REVEAL_MS, overlay finishes at FINISH_MS.
+const REVEAL_MS = 520;
+const FINISH_MS = 1900;
+const REDUCED_FINISH_MS = 700;
+
+// Boot log that types out before the gate opens.
+const AUTH_LINE = 'ACCESS :: GRANTED';
+
 /**
- * Short full-screen route boot matching the earlier split-panel Bleach intro,
- * rebuilt with Solo Leveling's gate, mana and System visual language.
+ * Matrix-style glyph rain, painted on a canvas so it never triggers React
+ * re-renders. Purely decorative and skipped entirely under reduced motion.
+ */
+function MatrixRain({ active, light }: { active: boolean; light: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!active) {
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+
+    const glyphs = 'アイウエオカキクケコサシスセソ0123456789ABCDEF각성길드던전';
+    const cellSize = 16;
+    let width = 0;
+    let height = 0;
+    let columns = 0;
+    let drops: number[] = [];
+    let raf = 0;
+    let last = 0;
+
+    const blue = light ? 'rgba(60, 200, 255, 0.92)' : 'rgba(60, 200, 255, 0.85)';
+    const purple = light ? 'rgba(150, 93, 255, 0.9)' : 'rgba(150, 93, 255, 0.78)';
+    const fade = light ? 'rgba(8, 10, 28, 0.16)' : 'rgba(2, 3, 10, 0.22)';
+
+    const resize = () => {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+      columns = Math.ceil(width / cellSize);
+      drops = new Array(columns)
+        .fill(0)
+        .map(() => Math.floor((Math.random() * -height) / cellSize));
+    };
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    const draw = (time: number) => {
+      raf = window.requestAnimationFrame(draw);
+      if (time - last < 55) {
+        return;
+      }
+      last = time;
+
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, 0, width, height);
+      ctx.font = `${cellSize}px monospace`;
+
+      for (let i = 0; i < columns; i += 1) {
+        const char = glyphs[Math.floor(Math.random() * glyphs.length)];
+        const x = i * cellSize;
+        const y = drops[i] * cellSize;
+        ctx.fillStyle = i % 3 === 0 ? blue : purple;
+        ctx.fillText(char, x, y);
+
+        if (y > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i] += 1;
+      }
+    };
+
+    raf = window.requestAnimationFrame(draw);
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+  }, [active, light]);
+
+  return <canvas ref={canvasRef} aria-hidden="true" className="sl-matrix absolute inset-0 h-full w-full" />;
+}
+
+/**
+ * Typewriter that reveals `text` one character at a time once `start` is true.
+ * Under reduced motion it fills in immediately (via a 0ms timer so no state is
+ * set synchronously inside the effect body — react-hooks/set-state-in-effect).
+ */
+function useTypewriter(text: string, start: boolean, reduceMotion: boolean) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!start) {
+      return;
+    }
+
+    if (reduceMotion) {
+      const id = window.setTimeout(() => setCount(text.length), 0);
+      return () => window.clearTimeout(id);
+    }
+
+    // Pace so the line finishes just before the gate opens.
+    const speed = Math.max(18, Math.floor((REVEAL_MS - 60) / text.length));
+    const id = window.setInterval(() => {
+      setCount((current) => {
+        if (current >= text.length) {
+          window.clearInterval(id);
+          return current;
+        }
+        return current + 1;
+      });
+    }, speed);
+
+    return () => window.clearInterval(id);
+  }, [text, start, reduceMotion]);
+
+  return text.slice(0, count);
+}
+
+/**
+ * Short full-screen route boot: a Solo Leveling "shadow-wipe" gate. Two jagged
+ * panels sit closed over the viewport, a System card types itself in, then the
+ * panels slide apart (the shadow wipe) before the overlay fades and unmounts.
  */
 export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) {
   const [revealed, setRevealed] = useState(false);
   const [visible, setVisible] = useState(true);
   const reduceMotion = useReducedMotion();
+  const { resolvedTheme } = useTheme();
+  const mounted = useHydrated();
+  // Treat as DARK until mounted so SSR/first paint stays on the dark palette
+  // and never mismatches (even if ssr:false or system theme is later enabled).
+  const isLight = mounted && resolvedTheme === 'light';
+
   const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  useEffect(() => {
-    setRevealed(false);
-    setVisible(true);
+  const typed = useTypewriter(AUTH_LINE, visible, Boolean(reduceMotion));
 
+  useEffect(() => {
+    // revealed/visible already initialise to false/true via useState, so no
+    // synchronous reset is needed here (that triggers react-hooks/set-state-in-effect).
     let audio: HTMLAudioElement | null = null;
     const timers: number[] = [];
 
@@ -50,7 +200,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
     };
 
     if (reduceMotion) {
-      timers.push(window.setTimeout(finish, 700));
+      timers.push(window.setTimeout(finish, REDUCED_FINISH_MS));
     } else {
       timers.push(
         window.setTimeout(() => {
@@ -59,11 +209,11 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
           audio = new Audio('/sounds/pop.mov');
           audio.volume = 0.65;
           void audio.play().catch(() => undefined);
-        }, 520),
+        }, REVEAL_MS),
       );
 
       // Mirrors the original intro: reveal at ~520 ms, remove at ~1900 ms.
-      timers.push(window.setTimeout(finish, 1900));
+      timers.push(window.setTimeout(finish, FINISH_MS));
     }
 
     return () => {
@@ -84,7 +234,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
           role="status"
           aria-label="Shadow Monarch authorization sequence"
           aria-live="polite"
-          className={`${systemFont.className} sl-intro fixed inset-0 z-[9999] overflow-hidden text-white`}
+          className={`${systemFont.className} sl-intro ${isLight ? 'sl-theme-light' : ''} fixed inset-0 z-[9999] overflow-hidden text-white`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -95,7 +245,9 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
             className="sl-backdrop absolute inset-0"
             animate={{ opacity: revealed ? 0 : 1 }}
             transition={{ duration: reduceMotion ? 0 : 0.72, delay: revealed ? 0.28 : 0 }}
-          />
+          >
+            <MatrixRain active={!reduceMotion} light={isLight} />
+          </motion.div>
 
           <motion.div
             aria-hidden="true"
@@ -118,7 +270,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
           </motion.div>
 
           <motion.div
-            className="absolute inset-0 z-10 grid place-items-center px-5"
+            className="sl-intro-card absolute inset-0 z-10 grid place-items-center px-5"
             animate={{
               opacity: revealed ? 0 : 1,
               scale: revealed ? 0.92 : 1,
@@ -138,12 +290,13 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
                 <div aria-hidden="true" className="sl-corner sl-corner-bl" />
                 <div aria-hidden="true" className="sl-corner sl-corner-br" />
 
-                <p className="sl-system-label mb-3 text-[9px] font-semibold uppercase tracking-[0.34em] sm:text-[10px]">
-                  Player authorization // Shadow protocol
+                <p className="sl-system-label mb-3 flex items-center justify-center gap-2 text-[9px] font-semibold uppercase tracking-[0.34em] sm:text-[10px]">
+                  <span>Player authorization</span>
+                  <span className={`${koreanFont.className} sl-kr`}>각성</span>
                 </p>
 
                 <h1
-                  className={`${displayFont.className} sl-title relative m-0 text-[clamp(3.25rem,11vw,7rem)] uppercase leading-[0.73] tracking-[-0.035em]`}
+                  className={`${displayFont.className} sl-title relative m-0 uppercase`}
                 >
                   <span className="sl-title-solo block">Solo</span>
                   <span className="sl-title-leveling block">Leveling</span>
@@ -151,8 +304,9 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
 
                 <div className="sl-divider mx-auto my-4 h-px w-[min(330px,72%)]" />
 
-                <p className="sl-subtitle m-0 text-[10px] font-bold uppercase tracking-[0.38em] sm:text-xs">
-                  Arise from the shadow
+                <p className="sl-typeline m-0 font-mono text-[10px] font-bold uppercase tracking-[0.32em] sm:text-xs">
+                  <span className="sl-typeline-text">{typed}</span>
+                  <span className="sl-cursor" aria-hidden="true" />
                 </p>
 
                 <div className="mt-4 flex items-center justify-center gap-2" aria-hidden="true">
@@ -172,13 +326,33 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
             .sl-intro {
               pointer-events: none;
               isolation: isolate;
+              /* Theme accents — purple + blue, shared by dark & light. */
+              --sl-purple: #6f32ff;
+              --sl-purple-hot: #965dff;
+              --sl-blue: #3cc8ff;
             }
 
             .sl-backdrop {
               background:
-                radial-gradient(circle at 50% 49%, rgba(58, 104, 255, 0.15), transparent 30%),
-                radial-gradient(circle at 50% 60%, rgba(115, 55, 220, 0.16), transparent 42%),
-                #02030a;
+                radial-gradient(circle at 50% 49%, rgba(60, 200, 255, 0.16), transparent 30%),
+                radial-gradient(circle at 50% 60%, rgba(111, 50, 255, 0.18), transparent 42%),
+                #04030b;
+            }
+
+            .sl-theme-light .sl-backdrop {
+              background:
+                radial-gradient(circle at 50% 49%, rgba(60, 200, 255, 0.24), transparent 32%),
+                radial-gradient(circle at 50% 60%, rgba(111, 50, 255, 0.26), transparent 44%),
+                #0a0b23;
+            }
+
+            .sl-matrix {
+              opacity: 0.5;
+              mix-blend-mode: screen;
+            }
+
+            .sl-theme-light .sl-matrix {
+              opacity: 0.62;
             }
 
             .sl-panel {
@@ -187,10 +361,10 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
               background:
                 radial-gradient(circle at 21% 28%, rgba(219, 236, 255, 0.19) 0 1px, transparent 2px),
                 radial-gradient(circle at 74% 63%, rgba(115, 178, 255, 0.14) 0 1px, transparent 2px),
-                linear-gradient(112deg, #020817 0%, #08245e 34%, #392480 62%, #7654db 75%, #0a0b23 100%);
-              background-size: 18px 18px, 23px 23px, auto;
+                linear-gradient(108deg, #090711 0%, #160c2e 34%, #3b1682 68%, #120923 100%);
+              background-size: 19px 19px, 23px 23px, auto;
               box-shadow:
-                0 0 110px rgba(86, 77, 231, 0.5),
+                0 0 90px rgba(111, 50, 255, 0.38),
                 inset 0 0 90px rgba(1, 5, 20, 0.62);
             }
 
@@ -292,6 +466,13 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
               clip-path: polygon(0 0, 95% 0, 100% 12%, 100% 100%, 5% 100%, 0 88%);
             }
 
+            .sl-theme-light .sl-glass {
+              background:
+                linear-gradient(135deg, rgba(60, 200, 255, 0.16), transparent 37%),
+                linear-gradient(315deg, rgba(150, 93, 255, 0.2), transparent 43%),
+                rgba(6, 10, 32, 0.6);
+            }
+
             .sl-scan {
               opacity: 0.35;
               background:
@@ -341,8 +522,17 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
               text-shadow: 0 0 12px rgba(86, 179, 255, 0.45);
             }
 
+            .sl-kr {
+              color: var(--sl-blue);
+              letter-spacing: 0.1em;
+              text-shadow: 0 0 12px rgba(60, 200, 255, 0.55);
+            }
+
             .sl-title {
               font-style: italic;
+              font-size: clamp(4rem, 11vw, 8.6rem);
+              line-height: 0.72;
+              letter-spacing: -0.035em;
               text-shadow: 0 8px 28px rgba(0, 0, 0, 0.88);
             }
 
@@ -355,7 +545,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
               height: 2px;
               background: linear-gradient(90deg, transparent, rgba(116, 205, 255, 0.86), rgba(160, 111, 255, 0.85), transparent);
               box-shadow: 0 0 15px rgba(112, 179, 255, 0.85);
-              transform: skewX(-28deg) rotate(-2deg);
+              transform: skewX(-24deg) rotate(-3deg);
             }
 
             .sl-title-solo {
@@ -364,9 +554,9 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
             }
 
             .sl-title-leveling {
-              margin-top: 0.06em;
+              margin-top: 0.04em;
               color: transparent;
-              background: linear-gradient(90deg, #79c9ff 0%, #b7d8ff 31%, #9d7aff 68%, #d7c8ff 100%);
+              background: linear-gradient(90deg, var(--sl-blue) 0%, #b7d8ff 31%, var(--sl-purple-hot) 68%, #d7c8ff 100%);
               background-clip: text;
               -webkit-background-clip: text;
               filter: drop-shadow(0 0 15px rgba(107, 103, 255, 0.55));
@@ -377,9 +567,21 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
               box-shadow: 0 0 11px rgba(96, 170, 255, 0.55);
             }
 
-            .sl-subtitle {
-              color: rgba(231, 239, 255, 0.78);
+            .sl-typeline {
+              color: rgba(231, 239, 255, 0.82);
               text-shadow: 0 0 13px rgba(114, 98, 255, 0.48);
+              min-height: 1.2em;
+            }
+
+            .sl-cursor {
+              display: inline-block;
+              width: 0.62em;
+              height: 1.05em;
+              margin-left: 0.15em;
+              vertical-align: -0.16em;
+              background: var(--sl-blue);
+              box-shadow: 0 0 10px rgba(60, 200, 255, 0.85);
+              animation: sl-blink 0.9s steps(1) infinite;
             }
 
             .sl-status-dot {
@@ -427,6 +629,12 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
               }
             }
 
+            @keyframes sl-blink {
+              50% {
+                opacity: 0;
+              }
+            }
+
             @media (max-width: 640px) {
               .sl-glass {
                 clip-path: polygon(0 0, 92% 0, 100% 9%, 100% 100%, 8% 100%, 0 91%);
@@ -441,7 +649,8 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
             @media (prefers-reduced-motion: reduce) {
               .sl-panel-runes,
               .sl-scan,
-              .sl-status-dot {
+              .sl-status-dot,
+              .sl-cursor {
                 animation: none;
               }
             }
