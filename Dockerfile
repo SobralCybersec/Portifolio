@@ -55,6 +55,10 @@ ENV HOSTNAME=0.0.0.0
 RUN apt-get update \
     && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/* \
+    # The standalone Next.js server (node server.js) does not need npm at
+    # runtime. Removing the bundled npm strips its vendored deps (sigstore,
+    # tar, @sigstore/core, ...) that Trivy otherwise flags in the image.
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
     && groupadd --system --gid 1001 nodejs \
     && useradd --system --uid 1001 --gid nodejs nextjs
 

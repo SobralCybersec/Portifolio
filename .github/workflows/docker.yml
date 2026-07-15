@@ -107,6 +107,10 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: CRITICAL,HIGH
+          # Only report vulnerabilities that have a fix available, so the
+          # Security tab stays actionable instead of filling up with base-image
+          # CVEs Debian has not patched yet.
+          ignore-unfixed: true
 
       - name: Upload Trivy results to GitHub Security
         if: github.event_name != 'pull_request'
