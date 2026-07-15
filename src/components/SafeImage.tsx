@@ -3,23 +3,16 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-// Third-party hosts that reject Next.js' server-side optimizer fetch
-// (hotlink protection → 403/429). Their images must be loaded unoptimized so
-// the *browser* fetches them directly, otherwise they silently fall back.
-const UNOPTIMIZED_HOSTS = new Set([
-  'i.imgur.com',
-  'media.forgecdn.net',
-  'www.fiap.com.br',
-]);
-
 function shouldBypassOptimizer(url: string): boolean {
-  // Local icons are already static and must not hit the optimizer.
-  if (url.startsWith('/icons/')) return true;
-  try {
-    return UNOPTIMIZED_HOSTS.has(new URL(url).hostname);
-  } catch {
-    return false;
-  }
+  // Local static assets (icons) must not hit the optimizer.
+  if (url.startsWith('/')) return true;
+  // Bypass Next.js' server-side optimizer for ALL remote images. Many hosts we
+  // embed (imgur, forgecdn, fiap, github user-attachments, raw.githubusercontent,
+  // ...) reject or throttle the optimizer's hotlinked fetch (403/429), which made
+  // perfectly valid images silently fall back to the language icon. Loading them
+  // unoptimized lets the *browser* fetch them directly, so real content renders
+  // instead of being overridden by the fallback.
+  return /^https?:\/\//i.test(url);
 }
 
 interface SafeImageProps {

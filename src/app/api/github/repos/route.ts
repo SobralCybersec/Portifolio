@@ -123,6 +123,16 @@ async function fetchReadmeData(
       videos.push(match[0]);
     }
 
+    // Extract videos from HTML <video>/<source> tags. GitHub renders these
+    // inline, but without parsing them a readme that embeds a
+    // `<video src="...mp4">` produced NO preview and — since the card now
+    // defaults empty previews to the language icon — the video was silently
+    // overridden by the language icon. Capturing them here keeps isVideo true.
+    for (const tag of content.matchAll(/<(?:video|source)\b[^>]*>/gi)) {
+      const src = tag[0].match(/(?:src|data-canonical-src)=["']([^"']+)["']/i)?.[1];
+      if (src) videos.push(src);
+    }
+
     // Extract from HTML img tags
     for (const imgTag of content.matchAll(/<img[^>]*>/gi)) {
       const tag = imgTag[0];
