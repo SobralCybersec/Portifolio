@@ -7,7 +7,7 @@ import { useReducedMotion } from 'framer-motion';
  * Permanent cmatrix-style glyph rain, painted on a canvas so it never triggers
  * React re-renders. Sits behind everything and outlives the boot overlay — this
  * is the "cmatrix permanence" the page keeps once SoloLevelingBoot unmounts.
- * Skipped entirely under reduced motion.
+ * Skipped entirely under reduced motion. Runs on a 16px glyph grid at ~18fps.
  */
 export default function MatrixBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
