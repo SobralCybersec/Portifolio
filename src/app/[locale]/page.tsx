@@ -9,6 +9,7 @@ import ScrollProgress from '@/components/ScrollProgress';
 import { useClickSound } from '@/hooks/useClickSound';
 
 const SoloLevelingBoot = dynamic(() => import('@/components/SoloLevelingBoot'), { ssr: false });
+const MatrixBackground = dynamic(() => import('@/components/MatrixBackground'), { ssr: false });
 const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 const KeyboardNav = dynamic(() => import('@/components/KeyboardNav'), { ssr: false });
@@ -56,6 +57,8 @@ export default function Page() {
 
   return (
     <>
+      {/* Permanent cmatrix rain — lives behind everything, before and after boot */}
+      <MatrixBackground />
       {!bootComplete && <SoloLevelingBoot onComplete={handleBootComplete} />}
       {bootComplete && (
         <>

@@ -36,11 +36,11 @@ const koreanFont = Noto_Sans_KR({
 
 // reveal transition 1s cubic-bezier(.78,0,.2,1) — from the reference.
 const PANEL_EASE = [0.78, 0, 0.2, 1] as const;
-const MARK_EASE = [0.2, 0.8, 0.2, 1] as const;
 
-// Timing contract: panels part at REVEAL_MS, overlay finishes at FINISH_MS.
-const REVEAL_MS = 520;
-const FINISH_MS = 1900;
+// Timing contract: HUD frame draws in, types, then panels part at REVEAL_MS
+// (frame reverse-collapses), overlay finishes at FINISH_MS.
+const REVEAL_MS = 1300;
+const FINISH_MS = 2600;
 const REDUCED_FINISH_MS = 700;
 
 // Boot log that types out before the gate opens.
@@ -269,21 +269,34 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
             <div className="sl-panel-fractures sl-panel-fractures-reverse" />
           </motion.div>
 
-          <motion.div
-            className="sl-intro-card absolute inset-0 z-10 grid place-items-center px-5"
-            animate={{
-              opacity: revealed ? 0 : 1,
-              scale: revealed ? 0.92 : 1,
-              y: revealed ? -10 : 0,
-            }}
-            transition={{
-              opacity: { duration: reduceMotion ? 0 : 0.38 },
-              scale: { duration: reduceMotion ? 0 : 0.55, ease: MARK_EASE },
-              y: { duration: reduceMotion ? 0 : 0.55, ease: MARK_EASE },
-            }}
-          >
-            <div className="sl-glass-shell w-[min(590px,86vw)] -skew-x-[4deg]">
-              <div className="sl-glass relative overflow-hidden px-6 py-7 text-center sm:px-10 sm:py-9">
+          <div className="sl-intro-card absolute inset-0 z-10 grid place-items-center px-5">
+            {/* HUD frame: draws in as a line → box (LO's `hud` keyframe), then
+                reverse-collapses box → line on close. */}
+            <motion.div
+              className="sl-glass-shell sl-hud-frame w-[min(590px,86vw)] -skew-x-[4deg]"
+              style={{ transformOrigin: 'center' }}
+              initial={reduceMotion ? false : { scaleX: 0, scaleY: 0, opacity: 0 }}
+              animate={
+                reduceMotion
+                  ? { scaleX: 1, scaleY: 1, opacity: 1 }
+                  : revealed
+                    ? { scaleX: [1, 1, 0], scaleY: [1, 0, 0], opacity: [1, 1, 0] }
+                    : { scaleX: [0, 1, 1], scaleY: [0, 0, 1], opacity: 1 }
+              }
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { duration: revealed ? 0.55 : 0.8, ease: PANEL_EASE, times: [0, 0.5, 1] }
+              }
+            >
+              <motion.div
+                className="sl-glass relative overflow-hidden px-6 py-7 text-center sm:px-10 sm:py-9"
+                animate={{ opacity: reduceMotion ? 1 : revealed ? 0 : 1 }}
+                transition={{
+                  duration: reduceMotion ? 0 : 0.32,
+                  delay: reduceMotion ? 0 : revealed ? 0 : 0.55,
+                }}
+              >
                 <div aria-hidden="true" className="sl-scan absolute inset-0" />
                 <div aria-hidden="true" className="sl-corner sl-corner-tl" />
                 <div aria-hidden="true" className="sl-corner sl-corner-tr" />
@@ -318,9 +331,9 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
                   <span className="sl-status-line sl-status-line-reverse" />
                   <span className="sl-status-dot" />
                 </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
 
           <style jsx>{`
             .sl-intro {
@@ -450,6 +463,16 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
 
             .sl-glass-shell {
               filter: drop-shadow(0 25px 70px rgba(0, 0, 0, 0.62));
+            }
+
+            /* Bright neon edge so the flat line (scaleY ~0) reads as a HUD scan
+               bar while the frame draws in and reverse-collapses out. */
+            .sl-hud-frame {
+              will-change: transform, opacity;
+              box-shadow:
+                0 0 22px rgba(60, 200, 255, 0.55),
+                0 0 44px rgba(111, 50, 255, 0.4);
+              border-radius: 10px;
             }
 
             .sl-glass {
