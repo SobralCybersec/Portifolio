@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import createMDX from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
 import bundleAnalyzer from '@next/bundle-analyzer';
@@ -119,6 +120,11 @@ const nextConfig = {
             exclude: ['error', 'warn'],
           }
         : false,
+  },
+
+  turbopack: {
+    // Pin workspace root so Next.js doesn't pick up a stray parent-dir lockfile
+    root: fileURLToPath(new URL('.', import.meta.url)),
   },
 
   experimental: {

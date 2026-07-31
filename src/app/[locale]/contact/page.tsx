@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import { AnimatedText, GradientText } from '@/components/AnimatedText';
@@ -17,6 +18,17 @@ export default function ContactPage() {
   useClickSound();
   const { theme } = useTheme();
   const t = useTranslations('contact');
+
+  // LinkedIn's profile.js only scans badges once on load. Remount the badge div
+  // (key={theme}) to reset it to unrendered markup, then re-append the script to
+  // force a fresh scan so the badge matches the current theme.
+  useEffect(() => {
+    const s = document.createElement('script');
+    s.src = 'https://platform.linkedin.com/badges/js/profile.js';
+    s.async = true;
+    document.body.appendChild(s);
+    return () => { s.remove(); };
+  }, [theme]);
 
   const socialLinks = [
     { 
@@ -97,6 +109,33 @@ export default function ContactPage() {
                 );
               })}
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="flex justify-center mt-12"
+            >
+              <div
+                key={theme}
+                className="badge-base LI-profile-badge"
+                data-locale="pt_BR"
+                data-size="medium"
+                data-theme={theme === 'dark' ? 'dark' : 'light'}
+                data-type="VERTICAL"
+                data-vanity="matheusdecyber"
+                data-version="v1"
+              >
+                <a
+                  className="badge-base__link LI-simple-link"
+                  href="https://br.linkedin.com/in/matheusdecyber?trk=profile-badge"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Matheus S.
+                </a>
+              </div>
+            </motion.div>
           </div>
         </div>
       </main>

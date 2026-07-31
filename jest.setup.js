@@ -52,8 +52,15 @@ jest.mock('next/navigation', () => ({
 jest.mock('framer-motion', () => ({
   motion: new Proxy({}, {
     get: (target, prop) => {
-      return ({ children, ...props }) => {
-        return require('react').createElement(prop, props, children);
+      return ({
+        children,
+        // Drop framer-motion-only props so React doesn't warn about unknown DOM attrs
+        whileInView, whileHover, whileTap, whileFocus, whileDrag,
+        initial, animate, exit, variants, transition, viewport,
+        layout, layoutId, drag,
+        ...rest
+      }) => {
+        return require('react').createElement(prop, rest, children);
       };
     },
   }),
