@@ -22,7 +22,10 @@ const nextConfig = {
 
   reactStrictMode: true,
 
-  output: 'standalone',
+  // Vercel supplies its own Next.js runtime and post-build trace step.
+  // Standalone output remains for the Docker image, but it makes Vercel's
+  // onBuildComplete hook look for a trace file that its build layout omits.
+  output: process.env.VERCEL ? undefined : 'standalone',
 
   poweredByHeader: false,
 
