@@ -225,6 +225,8 @@ export default function GitHubProjects() {
                       loop
                       muted
                       playsInline
+                      controls
+                      preload="metadata"
                     />
                   ) : (() => {
                     try {

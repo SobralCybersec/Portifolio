@@ -42,7 +42,7 @@ const nextConfig = {
 
     imageSizes: [16, 32, 64, 128, 256],
 
-    qualities: [75],
+    qualities: [100, 75],
 
     minimumCacheTTL: 2592000,
 

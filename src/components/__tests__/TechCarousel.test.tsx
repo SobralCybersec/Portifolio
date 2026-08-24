@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import TechCarousel from '../TechCarousel';
 
 jest.mock('framer-motion', () => ({
@@ -28,5 +28,19 @@ describe('TechCarousel Component', () => {
     expect(screen.getAllByText('Python')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Docker')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Kafka')[0]).toBeInTheDocument();
+  });
+
+  it('opens and closes the detail modal', () => {
+    const { container } = render(<TechCarousel />);
+    fireEvent.click(container.querySelector('.tech-card-wrapper')!);
+    expect(screen.getByText('Key Features')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Learn More' })).toHaveAttribute('href', 'https://www.typescriptlang.org/');
+    const modal = screen.getByText('Key Features').closest('.fixed')!;
+    fireEvent.click(modal.querySelector(':scope > div')!);
+    fireEvent.click(modal);
+    fireEvent.click(Array.from(container.querySelectorAll('.tech-card-wrapper')).at(-1)!);
+    expect(screen.getByText('Key Features')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button'));
+    expect(screen.queryByText('Key Features')).not.toBeInTheDocument();
   });
 });

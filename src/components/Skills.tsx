@@ -174,7 +174,7 @@ export default function Skills({ animateSection, repos = [] }: SkillsProps) {
         <div className="skills-grid">
           {skills.map((skill, index) => {
             const Icon = skill.icon;
-            const items = derived[skill.key] ?? [];
+            const items = derived[skill.key];
             return (
               <motion.div
                 key={skill.category}

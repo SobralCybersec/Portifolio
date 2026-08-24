@@ -7,6 +7,7 @@
 # testing
 /coverage
 *.lcov
+/.quality-venv/
 
 # next.js
 /.next/
@@ -77,6 +78,9 @@ logs
 
 # Test coverage
 .nyc_output
+
+# Generated quality reports
+/reports/
 
 # Uploads (keep structure, ignore content)
 public/uploads/*

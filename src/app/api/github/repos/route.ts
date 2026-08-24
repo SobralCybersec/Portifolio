@@ -49,6 +49,28 @@ function extractTechStack(readmeContent: string): string[] {
   return Array.from(techStack).slice(0, 8);
 }
 
+const VIDEO_EXTENSION_RE = /\.(?:mp4|webm|mov|m4v|ogg)(?:[?#].*)?$/i;
+const GITHUB_ATTACHMENT_RE = /^https:\/\/github\.com\/user-attachments\/assets\/[a-z0-9-]+(?:[/?#].*)?$/i;
+
+function normalizeReadmeMediaUrl(value: string, owner: string, repo: string): string {
+  const url = value.trim().replace(/^<|>$/g, '').replace(/[),.;]+$/g, '');
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith('//')) return `https:${url}`;
+  return `https://raw.githubusercontent.com/${owner}/${repo}/main/${url.replace(/^\.?\//, '')}`;
+}
+
+function isVideoUrl(url: string): boolean {
+  return VIDEO_EXTENSION_RE.test(url) || GITHUB_ATTACHMENT_RE.test(url);
+}
+
+function extractDemoContent(readmeContent: string): string {
+  const demoHeading = readmeContent.match(
+    /(?:^|\n)[ \t]{0,3}#{1,6}[ \t]+[^\n]*(?:demo(?:[ \t]+preview)?|demonstration|demonstração)\b[^\n]*|<h[1-6]\b[^>]*>[\s\S]*?(?:demo(?:[ \t]+preview)?|demonstration|demonstração)\b[\s\S]*?<\/h[1-6]>/i
+  );
+  const demoIdx = demoHeading?.index ?? readmeContent.search(/(?:demonstration|demo|demonstração)/i);
+  return demoIdx >= 0 ? readmeContent.slice(demoIdx) : readmeContent;
+}
+
 async function fetchReadmeData(
   owner: string,
   repo: string,
@@ -110,17 +132,18 @@ async function fetchReadmeData(
       };
     }
     
-    const demoIdx = readme.search(/(demonstration|demo|demonstração)/i);
-    const content = demoIdx !== -1 && !isFIAP ? readme.slice(demoIdx) : readme;
+    const content = !isFIAP ? extractDemoContent(readme) : readme;
 
     // Extract all images from demonstration section
     const images: string[] = [];
     const videos: string[] = [];
+    const bareVideos: string[] = [];
 
-    // Check for videos first
-    const videoMatches = content.matchAll(/https:\/\/github\.com\/user-attachments\/assets\/[a-f0-9-]+/gi);
-    for (const match of videoMatches) {
-      videos.push(match[0]);
+    // Bare GitHub attachments and absolute video URLs have no HTML tag to
+    // identify them. GitHub attachment URLs also omit a file extension.
+    for (const match of content.matchAll(/https?:\/\/[^\s<>"')\]]+/gi)) {
+      const url = normalizeReadmeMediaUrl(match[0], owner, repo);
+      if (isVideoUrl(url)) bareVideos.push(url);
     }
 
     // Extract videos from HTML <video>/<source> tags. GitHub renders these
@@ -130,7 +153,7 @@ async function fetchReadmeData(
     // overridden by the language icon. Capturing them here keeps isVideo true.
     for (const tag of content.matchAll(/<(?:video|source)\b[^>]*>/gi)) {
       const src = tag[0].match(/(?:src|data-canonical-src)=["']([^"']+)["']/i)?.[1];
-      if (src) videos.push(src);
+      if (src) videos.push(normalizeReadmeMediaUrl(src, owner, repo));
     }
 
     // Extract from HTML img tags
@@ -140,10 +163,11 @@ async function fetchReadmeData(
       if (widthMatch && parseInt(widthMatch[1]) < 100) continue;
       const src = tag.match(/src=["']([^"']+)["']/i)?.[1];
       if (src) {
-        if (/\.(mp4|webm|mov)$/i.test(src)) {
-          videos.push(src);
+        const url = normalizeReadmeMediaUrl(src, owner, repo);
+        if (VIDEO_EXTENSION_RE.test(url)) {
+          videos.push(url);
         } else {
-          images.push(src);
+          images.push(url);
         }
       }
     }
@@ -151,16 +175,24 @@ async function fetchReadmeData(
     // Extract from markdown images
     const mdImgMatches = content.matchAll(/!\[.*?\]\((.*?)\)/g);
     for (const match of mdImgMatches) {
-      let url = match[1];
-      if (!url.startsWith('http')) {
-        url = `https://raw.githubusercontent.com/${owner}/${repo}/main/${url.replace(/^\.?\//, '')}`;
-      }
-      if (/\.(mp4|webm|mov)$/i.test(url)) {
+      const url = normalizeReadmeMediaUrl(match[1].split(/\s+/)[0], owner, repo);
+      if (isVideoUrl(url)) {
         videos.push(url);
       } else {
         images.push(url);
       }
     }
+
+    // Markdown links are common in Demo Preview sections when a raw video
+    // URL is not accepted by the renderer as an image.
+    for (const match of content.matchAll(/\[([^\]]+)\]\(([^)\s]+)(?:\s+["'][^)]*["'])?\)/g)) {
+      const url = normalizeReadmeMediaUrl(match[2], owner, repo);
+      if (isVideoUrl(url) || /\b(?:demo|demonstration|video|preview)\b/i.test(match[1])) {
+        videos.push(url);
+      }
+    }
+
+    videos.push(...bareVideos);
 
     // Return video if found
     if (videos.length > 0) {

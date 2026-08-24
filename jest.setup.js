@@ -2,6 +2,12 @@ import '@testing-library/jest-dom';
 import 'jest-canvas-mock';
 import { TextEncoder, TextDecoder } from 'util';
 
+
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: ({ fill, priority, quality, unoptimized, ...props }) => require('react').createElement('img', props),
+}));
+
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
@@ -70,8 +76,13 @@ jest.mock('framer-motion', () => ({
     stop: jest.fn(),
   }),
   useMotionValue: (initial) => ({ get: () => initial, set: jest.fn() }),
-  useTransform: () => ({ get: () => 0, set: jest.fn() }),
+  useTransform: (value, transform) => transform
+    ? transform(typeof value?.get === 'function' ? value.get() : value)
+    : value,
   useScroll: () => ({ scrollYProgress: { get: () => 0, set: jest.fn() } }),
+  useSpring: (value) => value,
+  useReducedMotion: () => false,
+  animate: (_value, _target, _options) => ({ stop: jest.fn() }),
 }));
 
 // Mock next-intl routing

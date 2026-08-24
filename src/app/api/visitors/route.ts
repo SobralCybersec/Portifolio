@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { redis } from '@/lib/chat';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const VISITORS_KEY = 'visitors:total';
 

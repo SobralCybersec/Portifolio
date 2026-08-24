@@ -314,6 +314,8 @@ export default function SoloLevelingProjectCard({
                 loop
                 muted
                 playsInline
+                controls
+                preload="metadata"
               />
             ) : isLanguageIcon ? (
               <div className="flex h-full w-full items-center justify-center p-10">

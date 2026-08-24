@@ -98,17 +98,6 @@ export function BackgroundMusic({ autoPlay = false }: BackgroundMusicProps = {})
     }
   }, [autoPlay, mounted, canPlay]);
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-    }
-  };
-
   if (!mounted || !canPlay) return null;
 
   const soundFile = theme === 'dark' ? '/sounds/sound.mp3' : '/sounds/sound2.mp3';
