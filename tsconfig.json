@@ -41,6 +41,7 @@
     ".next",
     "dist",
     "coverage",
-    "__tests__"
+    "__tests__",
+    "resources"
   ]
 }

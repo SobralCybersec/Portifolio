@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kai — Creative Studio</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Satoshi", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      line-height: 1.45;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .intro,
+    .section {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      isolation: isolate;
+    }
+
+    /* Each section stacks above the previous so its skew-bg can cover prior content */
+    main > *:nth-child(1) {
+      z-index: 1;
+    }
+
+    main > *:nth-child(2) {
+      z-index: 2;
+    }
+
+    main > *:nth-child(3) {
+      z-index: 3;
+    }
+
+    main > *:nth-child(4) {
+      z-index: 4;
+    }
+
+    main > *:nth-child(5) {
+      z-index: 5;
+    }
+
+    .ink {
+      --bg: #12100e;
+      --fg: #fff4e8;
+      --fg-soft: rgba(255, 244, 232, 0.6);
+      --line: rgba(255, 244, 232, 0.25);
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    /* Blue portrait — warm white so royal blue pops */
+    .porcelain {
+      --bg: #f3efe6;
+      --fg: #12141c;
+      --fg-soft: rgba(18, 20, 28, 0.58);
+      --line: rgba(18, 20, 28, 0.18);
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    /* Moody cat — soft blush matching its pastel field */
+    .forest {
+      --bg: #e8d4c8;
+      --fg: #1a1412;
+      --fg-soft: rgba(26, 20, 18, 0.58);
+      --line: rgba(26, 20, 18, 0.18);
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    /* Samurai art — cream field so the red stays in the image only */
+    .ember {
+      --bg: #f2ebe2;
+      --fg: #16120f;
+      --fg-soft: rgba(22, 18, 15, 0.58);
+      --line: rgba(22, 18, 15, 0.18);
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    /* Grain silhouette — pure black to melt into the art */
+    .steel {
+      --bg: #000000;
+      --fg: #f2f2f2;
+      --fg-soft: rgba(242, 242, 242, 0.58);
+      --line: rgba(242, 242, 242, 0.2);
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    .intro {
+      display: grid;
+      place-content: center;
+      place-items: center;
+      text-align: center;
+      padding: 4rem;
+      gap: 0.85rem;
+      height: 110vh;
+    }
+
+    .intro p {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fg-soft);
+      visibility: hidden;
+    }
+
+    .intro h1 {
+      font-size: 5rem;
+      font-weight: 900;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      max-width: 12ch;
+      visibility: hidden;
+    }
+
+    .section {
+      display: flex;
+      padding: 4rem;
+      padding-bottom: 6rem;
+      overflow: visible;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      max-width: 1480px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 3rem;
+      min-height: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .skew-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: visible;
+    }
+
+    .bg {
+      width: 100%;
+      height: 100%;
+      transform: none;
+      will-change: transform;
+    }
+
+    .heading {
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      width: min(100%, 54rem);
+      margin-left: auto;
+      visibility: hidden;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 34% 1fr;
+      gap: 4rem;
+      align-items: end;
+      min-height: 0;
+      height: 100%;
+    }
+
+    .media {
+      width: 100%;
+      max-width: 340px;
+      height: 46vh;
+      border-radius: 6px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 2rem;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 6.5rem 1fr;
+      gap: 2rem;
+    }
+
+    .row span {
+      font-size: 1rem;
+    }
+
+    .row p {
+      font-size: 1rem;
+      color: var(--fg-soft);
+      max-width: 36rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      list-style: none;
+      max-width: 26rem;
+    }
+
+    .stats li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="intro ink">
+      <p>Kai Studio®</p>
+      <h1>Loud ideas. Sharp execution.</h1>
+    </section>
+
+    <section class="section porcelain">
+      <div class="skew-bg">
+        <div class="bg porcelain"></div>
+      </div>
+      <div class="container">
+        <h2 class="heading">
+          We build brands that refuse to whisper—color-first identities, wild
+          type, and digital stages made to steal the scroll®.
+        </h2>
+        <div class="content">
+          <div class="media">
+            <img src="https://i.pinimg.com/736x/2d/46/b7/2d46b7b8aeb8cec7bdc78edeadefdfef.jpg" alt="" />
+          </div>
+          <div class="details">
+            <div class="row">
+              <span>(Spark)</span>
+              <p>
+                It starts messy on purpose. Moodboards, gut checks, and one
+                reckless idea that sets the whole direction on fire.
+              </p>
+            </div>
+            <div class="row">
+              <span>(+Craft)</span>
+              <p>
+                Then we tighten the screws—motion, type, and layout locked into
+                a system loud enough to feel, clear enough to scale.
+              </p>
+            </div>
+            <div class="row">
+              <span>(=Heat)</span>
+              <ul class="stats">
+                <li><span>Campaigns lit</span><span>48</span></li>
+                <li><span>Scroll-stop rate</span><span>92%</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section forest">
+      <div class="skew-bg">
+        <div class="bg forest"></div>
+      </div>
+      <div class="container">
+        <h2 class="heading">
+          Culture-obsessed creative partners for founders who want their brand
+          to feel like a scene, not a template®.
+        </h2>
+        <div class="content">
+          <div class="media">
+            <img src="https://i.pinimg.com/736x/4a/62/15/4a6215c4463f68dbabb3ac0f3996f289.jpg" alt="" />
+          </div>
+          <div class="details">
+            <div class="row">
+              <span>(Spark)</span>
+              <p>
+                We dig into the taste, tension, and tribal codes around your
+                product until the brief feels inevitable.
+              </p>
+            </div>
+            <div class="row">
+              <span>(+Craft)</span>
+              <p>
+                Identities, drop films, and launch kits built like mixtapes—
+                sequenced, surprising, impossible to ignore.
+              </p>
+            </div>
+            <div class="row">
+              <span>(=Heat)</span>
+              <ul class="stats">
+                <li><span>Brand worlds</span><span>27</span></li>
+                <li><span>Repeat clients</span><span>89%</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section ember">
+      <div class="skew-bg">
+        <div class="bg ember"></div>
+      </div>
+      <div class="container">
+        <h2 class="heading">
+          Kinetic type, sticky motion, and interface energy for products that
+          want to feel alive the second they load®.
+        </h2>
+        <div class="content">
+          <div class="media">
+            <img src="https://i.pinimg.com/control1/736x/be/2b/93/be2b93da249b0fc75819bda5b77d1dbc.jpg" alt="" />
+          </div>
+          <div class="details">
+            <div class="row">
+              <span>(Spark)</span>
+              <p>
+                One narrative spine. No committee fog. We align the room around
+                a visual charge before a single frame ships.
+              </p>
+            </div>
+            <div class="row">
+              <span>(+Craft)</span>
+              <p>
+                Sites, launch films, and 3D playgrounds delivered with systems
+                your team can keep remixing after we leave.
+              </p>
+            </div>
+            <div class="row">
+              <span>(=Heat)</span>
+              <ul class="stats">
+                <li><span>Awards</span><span>31</span></li>
+                <li><span>Avg. uplift</span><span>4.1×</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section steel">
+      <div class="skew-bg">
+        <div class="bg steel"></div>
+      </div>
+      <div class="container">
+        <h2 class="heading">
+          From napkin sketch to cultural moment—Fuel is the voltage between
+          your brand, your product, and the people who care®.
+        </h2>
+        <div class="content">
+          <div class="media">
+            <img src="https://i.pinimg.com/736x/65/74/af/6574af961dfe8754c28b377a6e047db2.jpg" alt="" />
+          </div>
+          <div class="details">
+            <div class="row">
+              <span>(Spark)</span>
+              <p>
+                Workshops that surface the story only you can tell—messy,
+                honest, and sharp enough to build on.
+              </p>
+            </div>
+            <div class="row">
+              <span>(+Craft)</span>
+              <p>
+                Long-haul creative partnership: seasonal drops, product stories,
+                and systems that stay loud as you grow.
+              </p>
+            </div>
+            <div class="row">
+              <span>(=Heat)</span>
+              <ul class="stats">
+                <li><span>Years lit</span><span>9</span></li>
+                <li><span>Cities hit</span><span>36+</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Smooth scroll ↔ ScrollTrigger
+      const lenis = new Lenis();
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((t) => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+
+      // Split text into lines, hide them below, then reveal
+      function splitAndHide(el) {
+        const split = SplitText.create(el, { type: "lines", mask: "lines" });
+        gsap.set(split.lines, { yPercent: 90 });
+        gsap.set(el, { visibility: "visible" });
+        return split.lines;
+      }
+
+      function revealLines(lines) {
+        return gsap.to(lines, {
+          yPercent: 0,
+          duration: 1.4,
+          ease: "power4.out",
+          stagger: 0.08,
+        });
+      }
+
+      // Intro
+      const labelLines = splitAndHide(document.querySelector(".intro p"));
+      const introLines = splitAndHide(document.querySelector(".intro h1"));
+
+      gsap
+        .timeline()
+        .add(revealLines(labelLines))
+        .add(revealLines(introLines), "<");
+
+
+      document.querySelectorAll(".section").forEach((section) => {
+        const lines = splitAndHide(section.querySelector("h2"));
+
+        gsap.to(section.querySelector(".bg"), {
+          y: -220,
+          skewY: -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 95%",
+            end: "top 40%",
+            scrub: 0.5,
+          },
+        });
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 85%",
+          once: true,
+          onEnter: () => revealLines(lines),
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

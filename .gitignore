@@ -3,6 +3,7 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+.claude-token-cleanup-backup-20260825
 
 # testing
 /coverage

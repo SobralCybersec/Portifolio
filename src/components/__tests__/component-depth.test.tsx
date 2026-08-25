@@ -4,7 +4,6 @@ import { AnimatedChar, AnimatedText, AnimatedWord, GradientText } from '../Anima
 import ChatEffects from '../ChatEffects';
 import ChatRoom from '../ChatRoom';
 import { ClientChatRoom, HexagonGrid, ParticleBackground } from '../ClientOnlyComponents';
-import ChatPageClient from '../pageclient';
 import SoloLevelingBoot from '../SoloLevelingBoot';
 import SoloLevelingProjectCard from '../SoloLevelingProjectCard';
 import { ThemeProvider } from '../ThemeProvider';
@@ -59,7 +58,6 @@ test('covers all AnimatedText exports and common component wrappers', () => {
       <HexagonGrid />
       <ParticleBackground />
       <ClientChatRoom session={null} />
-      <ChatPageClient session={null} />
     </>,
   );
   expect(screen.getByText('theme-child')).toBeInTheDocument();

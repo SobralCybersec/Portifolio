@@ -183,7 +183,6 @@ export default function Navigation() {
             {/* Desktop nav */}
             <div
               style={{
-                display: 'flex',
                 alignItems: 'center',
                 gap: '2px',
                 flex: '1 1 0',
