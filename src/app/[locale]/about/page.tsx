@@ -1,191 +1,149 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
+import { useEffect, useMemo, useState } from 'react';
 import Navigation from '@/components/Navigation';
 import { AnimatedText, GradientText } from '@/components/AnimatedText';
-import { motion } from 'framer-motion';
-import { useClickSound } from '@/hooks/useClickSound';
-import { useTheme } from 'next-themes';
-import { useTranslations } from 'next-intl';
+import AboutScrollStory, { type AboutStoryItem } from '@/components/about/AboutScrollStory';
+import InteractiveExpertiseGrid, { type ExpertiseGroup } from '@/components/about/InteractiveExpertiseGrid';
 import ScrollEffect from '@/components/ScrollEffect';
+import ScrollReveal from '@/components/ScrollReveal';
+import { useClickSound } from '@/hooks/useClickSound';
 import { useHydrated } from '@/hooks/useHydrated';
+import { deriveSkills, type Repo } from '@/lib/deriveSkills';
 
 const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const AboutParticleField = dynamic(() => import('@/components/about/AboutParticleField'), { ssr: false });
 
 export default function AboutPage() {
   useClickSound();
   const mounted = useHydrated();
   const { theme } = useTheme();
   const t = useTranslations('about');
+  const [repos, setRepos] = useState<Repo[]>([]);
+
+  useEffect(() => {
+    let active = true;
+
+    fetch('/api/github/repos')
+      .then((response) => (response.ok ? response.json() : []))
+      .then((data: unknown) => {
+        if (active && Array.isArray(data)) setRepos(data as Repo[]);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const liveSkills = useMemo(() => deriveSkills(repos), [repos]);
+
+  const storyItems: AboutStoryItem[] = [
+    {
+      label: t('story.backgroundLabel'),
+      title: t('background'),
+      body: t('backgroundText2'),
+      signal: t('story.backgroundSignal'),
+      detail: t('story.backgroundDetail'),
+      image: '/images/JinWoo-BackFacing3.png',
+    },
+    {
+      label: t('story.expertiseLabel'),
+      title: t('expertise'),
+      body: t('story.expertiseBody'),
+      signal: t('story.expertiseSignal'),
+      detail: t('story.expertiseDetail'),
+      image: '/images/JinWoo-BackFacing34 (2).png',
+    },
+    {
+      label: t('story.experienceLabel'),
+      title: t('philosophy'),
+      body: `${t('philosophyText1')} ${t('philosophyText2')}`,
+      signal: t('story.experienceSignal'),
+      detail: t('story.experienceDetail'),
+      image: '/images/JinWoo-render.png',
+    },
+  ];
+
+  const expertiseVisuals = [
+    { background: '/images/gifs/jinwoogf.gif', portrait: '/images/jinwoo.png' },
+    { background: '/images/gifs/jinwoogf2.gif', portrait: '/images/jinwoo2.png' },
+    { background: '/images/gifs/jinwoogf3.gif', portrait: '/images/jinwoo3.png' },
+    { background: '/images/gifs/jinwoogf4.gif', portrait: '/images/jinwoo.png' },
+    { background: '/images/gifs/jinwoogf5.gif', portrait: '/images/jinwoo2.png' },
+    { background: '/images/gifs/jinwoogf6.gif', portrait: '/images/jinwoo3.png' },
+    { background: '/images/gifs/jinwoogf2.gif', portrait: '/images/jinwoo.png' },
+    { background: '/images/gifs/jinwoo1.gif', portrait: '/images/jinwoo3.png' },
+  ];
+
+  const expertiseGroups: ExpertiseGroup[] = [
+    { title: t('security'), items: [...new Set([...liveSkills.systems, ...liveSkills.backend, 'Spring Boot'])].slice(0, 10), ...expertiseVisuals[0] },
+    { title: t('development'), items: liveSkills.frontend, ...expertiseVisuals[1] },
+    { title: t('backend'), items: liveSkills.backend, ...expertiseVisuals[2] },
+    { title: t('cybersecurity'), items: ['Penetration Testing', 'OWASP Top 10', 'Network Security', 'Cryptography', 'Kali Linux'], ...expertiseVisuals[3] },
+    { title: t('securityTools'), items: ['Burp Suite', 'Nessus', 'Hashcat', 'Gobuster', 'BloodHound', 'Ghidra'], ...expertiseVisuals[4] },
+    { title: t('devtools'), items: [...new Set([...liveSkills.devops, 'Git', 'GitHub Actions', 'Maven'])].slice(0, 10), ...expertiseVisuals[5] },
+    { title: t('aiTools'), items: ['ChatGPT', 'Claude', 'Gemini', 'OpenAPI', 'Swagger'], ...expertiseVisuals[6] },
+    { title: t('execution'), items: ['Architecture', 'Automation', 'Testing', 'Delivery'], ...expertiseVisuals[7] },
+  ];
 
   return (
     <>
       <Navigation />
       <div className="page-grid-overlay" />
       {mounted && theme === 'dark' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
-          <HexagonGrid 
-            cellSize={60} 
-            glowColor="rgba(168, 85, 247, 0.6)" 
+        <div className="pointer-events-none fixed inset-0 z-[-2]">
+          <HexagonGrid
+            cellSize={60}
+            glowColor="rgba(168, 85, 247, 0.6)"
             lineColor="rgba(168, 85, 247, 0.08)"
             glowInterval={150}
             maxSimultaneous={6}
           />
         </div>
       )}
-      <main className="min-h-screen pt-20 relative">
+      <main className="relative min-h-screen overflow-x-clip pt-20">
         <ScrollEffect />
         <ParticleBackground />
-        <div className="container mx-auto px-4 py-16 relative z-10">
-          <div className="max-w-4xl mx-auto">
+        <AboutParticleField
+          className="z-0 opacity-55"
+          particleColors={theme === 'light' ? ['#3b82f6', '#2563eb', '#8b5cf6'] : ['#a855f7', '#8b5cf6', '#3b82f6']}
+        />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <header className="relative mb-16 max-w-4xl">
             <AnimatedText className="mb-4">
-              <p className="text-sm uppercase tracking-wider text-[var(--text-muted)] font-semibold" style={{ fontFamily: 'var(--font-eternal)', letterSpacing: '0.05em' }}>{t('eyebrow')}</p>
+              <p className="font-[var(--font-eternal)] text-sm font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">{t('eyebrow')}</p>
             </AnimatedText>
-            
-            <AnimatedText delay={0.1} className="mb-12">
-              <div className="animate-clip-intro">
-                <h1 className="text-5xl font-bold" style={{ fontFamily: 'var(--font-eternal)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  <GradientText>{t('title')}</GradientText>
-                </h1>
-              </div>
+            <AnimatedText delay={0.1}>
+              <h1 className="font-[var(--font-eternal)] text-5xl font-bold uppercase tracking-[0.05em] sm:text-6xl md:text-8xl">
+                <GradientText>{t('title')}</GradientText>
+              </h1>
             </AnimatedText>
-            
-            <div className="space-y-6 stagger-clip-in">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="bg-[var(--bg-card)] border border-[var(--border)] p-8 rounded-lg hover:border-[var(--theme-primary)] transition-all duration-300"
-              >
-                <h2 className="text-2xl font-bold text-[var(--theme-primary)] mb-4" style={{ fontFamily: 'var(--font-solo-heading)' }}>{t('background')}</h2>
-                <p className="leading-relaxed text-[var(--text-muted)] mb-4">
-                  {t('backgroundText1')}
-                </p>
-                <p className="leading-relaxed text-[var(--text-muted)]">
-                  {t('backgroundText2')}
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="bg-[var(--bg-card)] border border-[var(--border)] p-8 rounded-lg hover:border-[var(--theme-secondary)] transition-all duration-300"
-              >
-                <h2 className="text-2xl font-bold text-[var(--theme-secondary)] mb-6" style={{ fontFamily: 'var(--font-solo-heading)' }}>{t('expertise')}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-clip-in">
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('security')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['Java', 'Spring Boot', 'Python', 'Node.js', 'C', 'C++', 'C#', 'Rust'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-primary)]/10 border border-[var(--theme-primary)]/30 rounded-full text-sm text-[var(--theme-primary)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('development')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'JavaScript'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-secondary)]/10 border border-[var(--theme-secondary)]/30 rounded-full text-sm text-[var(--theme-secondary)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('backend')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['PostgreSQL', 'MySQL', 'Redis', 'Cassandra', 'MongoDB'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-accent)]/10 border border-[var(--theme-accent)]/30 rounded-full text-sm text-[var(--theme-accent)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('cybersecurity')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['Penetration Testing', 'OWASP Top 10', 'Network Security', 'Cryptography', 'Kali Linux'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-primary)]/10 border border-[var(--theme-primary)]/30 rounded-full text-sm text-[var(--theme-primary)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('securityTools')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['Burp Suite', 'Nessus', 'Hashcat', 'Gobuster', 'BloodHound', 'Ghidra'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-secondary)]/10 border border-[var(--theme-secondary)]/30 rounded-full text-sm text-[var(--theme-secondary)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('devtools')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['Docker', 'Git', 'GitHub Actions', 'Maven', 'AWS', 'Vim', 'Bash', 'JetBrains'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-accent)]/10 border border-[var(--theme-accent)]/30 rounded-full text-sm text-[var(--theme-accent)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{t('aiTools')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['ChatGPT', 'Claude', 'Gemini', 'OpenAPI', 'Swagger'].map((skill) => (
-                        <span 
-                          key={skill}
-                          className="px-3 py-1 bg-[var(--theme-primary)]/10 border border-[var(--theme-primary)]/30 rounded-full text-sm text-[var(--theme-primary)] font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="bg-[var(--bg-card)] border border-[var(--border)] p-8 rounded-lg hover:border-[var(--theme-accent)] transition-all duration-300"
-              >
-                <h2 className="text-2xl font-bold text-[var(--theme-accent)] mb-4" style={{ fontFamily: 'var(--font-solo-heading)' }}>{t('philosophy')}</h2>
-                <p className="leading-relaxed text-[var(--text-muted)] mb-4">
-                  {t('philosophyText1')}
-                </p>
-                <p className="leading-relaxed text-[var(--text-muted)]">
-                  {t('philosophyText2')}
-                </p>
-              </motion.div>
+            <ScrollReveal containerClassName="mt-8 max-w-3xl" textClassName="text-base text-[var(--text-muted)] md:text-lg">
+              {t('backgroundText1')}
+            </ScrollReveal>
+            <div className="mt-8 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--theme-primary)]">
+              <span className="h-px w-16 bg-[var(--theme-primary)]" />
+              <span>{t('profileSignal')}</span>
             </div>
-          </div>
+          </header>
+
+          <AboutScrollStory items={storyItems} sectionLabel={t('story.sectionLabel')} prompt={t('story.prompt')} traceLabel={t('story.traceLabel')} />
+
+          <section className="relative py-20" aria-labelledby="expertise-title">
+            <div className="mb-10 flex flex-col justify-between gap-4 border-b border-[var(--border)] pb-6 md:flex-row md:items-end">
+              <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-[var(--theme-primary)]">{t('stackStatus', { count: repos.length })}</p>
+                <h2 id="expertise-title" className="mt-3 font-[var(--font-solo-heading)] text-3xl font-bold uppercase tracking-[0.08em] text-[var(--text-primary)] md:text-5xl">{t('expertise')}</h2>
+              </div>
+            </div>
+            <InteractiveExpertiseGrid groups={expertiseGroups} moduleLabel={t('story.moduleLabel')} />
+          </section>
         </div>
       </main>
     </>

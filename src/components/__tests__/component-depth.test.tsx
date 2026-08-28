@@ -85,6 +85,20 @@ test('covers SoloLevelingProjectCard preview, metadata, links, and fallback path
   render(<SoloLevelingProjectCard repo={{ ...repo, language: null, previewImage: undefined }} index={4} />);
 });
 
+test('opens README callback from project card', () => {
+  const onReadme = jest.fn();
+  render(<SoloLevelingProjectCard repo={repo} index={0} onReadme={onReadme} />);
+
+  fireEvent.click(screen.getByText('depth-project'));
+  expect(onReadme).toHaveBeenCalledWith(repo);
+
+  fireEvent.click(screen.getByRole('button', { name: /README: depth-project/i }));
+  expect(onReadme).toHaveBeenCalledTimes(2);
+
+  fireEvent.click(screen.getByRole('link', { name: /Archive/i }));
+  expect(onReadme).toHaveBeenCalledTimes(2);
+});
+
 test('covers boot overlay reveal, reduced-motion completion, and cleanup', () => {
   const onComplete = jest.fn();
   Object.defineProperty(window, 'Audio', {

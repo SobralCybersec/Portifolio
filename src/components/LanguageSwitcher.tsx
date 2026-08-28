@@ -1,9 +1,10 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import { Globe } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useHydrated } from '@/hooks/useHydrated';
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -21,6 +22,8 @@ export default function LanguageSwitcher() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mounted = useHydrated();
+  const t = useTranslations('nav');
 
   const currentLanguage = languages.find((lang) => lang.code === locale) || languages[0];
 
@@ -49,15 +52,16 @@ export default function LanguageSwitcher() {
     setIsOpen(false);
   };
 
-  const isDark = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
+  const isDark = mounted && document.documentElement.classList.contains('dark');
   const primary = isDark ? '#a855f7' : '#005B8C';
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${primary}40`, background: isDark ? 'rgba(4,8,16,0.6)' : 'rgba(255,255,255,0.6)', borderRadius: '2px', cursor: 'pointer', transition: 'all .18s' }}
-        aria-label="Select language"
+        className="nav-icon-button"
+        style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${primary}40`, background: isDark ? 'rgba(4,8,16,0.6)' : 'rgba(255,255,255,0.6)', borderRadius: '10px', cursor: 'pointer', transition: 'all .18s' }}
+        aria-label={t('selectLanguage')}
       >
         <Globe style={{ width: '15px', height: '15px', color: isDark ? '#8fa5bf' : '#5a6b7f' }} />
       </button>

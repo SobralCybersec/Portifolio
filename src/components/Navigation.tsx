@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Github, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useTranslations } from 'next-intl';
@@ -134,35 +135,18 @@ export default function Navigation() {
                 textDecoration: 'none',
               }}
             >
-              <svg
-                viewBox="0 0 34 34"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+              <Image
+                src={isDark ? '/images/icons/igris.png' : '/images/icons/beru.png'}
+                alt={isDark ? 'Igris' : 'Beru'}
+                width={32}
+                height={32}
+                className="object-contain"
                 style={{
                   width: '32px',
                   height: '32px',
                   flexShrink: 0,
                 }}
-              >
-                <polygon
-                  points="17,1 32,9 32,25 17,33 2,25 2,9"
-                  stroke={primary}
-                  strokeWidth="1"
-                  fill={`${primary}1a`}
-                />
-                <polygon
-                  points="17,5 28,11 28,23 17,29 6,23 6,11"
-                  stroke={`${primary}4d`}
-                  strokeWidth="0.5"
-                  fill="none"
-                />
-                <path
-                  d="M17 9 L21 17 L17 25 L13 17 Z"
-                  fill={primary}
-                  opacity="0.9"
-                />
-                <circle cx="17" cy="17" r="2.5" fill={`${primary}dd`} />
-              </svg>
+              />
 
               <span
                 style={{
@@ -218,7 +202,7 @@ export default function Navigation() {
                       border: `1px solid ${
                         active ? `${primary}73` : 'transparent'
                       }`,
-                      borderRadius: '2px',
+                      borderRadius: '8px',
                       transition:
                         'color .18s, background .18s, border-color .18s',
                       textDecoration: 'none',
@@ -236,7 +220,7 @@ export default function Navigation() {
                           inset: 0,
                           background: `${primary}0d`,
                           border: `1px solid ${primary}40`,
-                          borderRadius: '2px',
+                          borderRadius: '8px',
                           zIndex: -1,
                         }}
                         transition={{
@@ -278,7 +262,8 @@ export default function Navigation() {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex"
+                className="nav-icon-button hidden md:flex"
+                aria-label="GitHub"
                 style={{
                   width: '32px',
                   height: '32px',
@@ -289,7 +274,7 @@ export default function Navigation() {
                   background: isDark
                     ? 'rgba(4,8,16,0.6)'
                     : 'rgba(255,255,255,0.6)',
-                  borderRadius: '2px',
+                  borderRadius: '10px',
                   transition: 'border-color .18s',
                   flexShrink: 0,
                 }}
@@ -316,9 +301,9 @@ export default function Navigation() {
               {/* Mobile menu button */}
               <button
                 onClick={() => setMobileMenuOpen((o) => !o)}
-                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-label={mobileMenuOpen ? t('closeMenu') : t('openMenu')}
                 aria-expanded={mobileMenuOpen}
-                className="lg:hidden"
+                className="nav-icon-button lg:hidden"
                 style={{
                   width: '32px',
                   height: '32px',
@@ -327,7 +312,7 @@ export default function Navigation() {
                   justifyContent: 'center',
                   border: `1px solid ${primary}4d`,
                   background: 'transparent',
-                  borderRadius: '2px',
+                  borderRadius: '10px',
                   cursor: 'pointer',
                   flexShrink: 0,
                 }}
@@ -423,6 +408,8 @@ export default function Navigation() {
                       href="https://github.com"
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="nav-icon-button"
+                      aria-label="GitHub"
                       style={{
                         width: '32px',
                         height: '32px',
@@ -433,7 +420,7 @@ export default function Navigation() {
                         background: isDark
                           ? 'rgba(4,8,16,0.6)'
                           : 'rgba(255,255,255,0.6)',
-                        borderRadius: '2px',
+                        borderRadius: '10px',
                       }}
                     >
                       <Github

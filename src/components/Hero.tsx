@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import LetterGlitch from './LetterGlitch';
 import { useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing';
 import MetricsTicker from './MetricsTicker';
+import MagneticButton from './MagneticButton';
+import ScrollVelocityRibbon from './ScrollVelocityRibbon';
 
 interface HeroProps {
   animateSection?: string;
@@ -122,13 +124,13 @@ export default function Hero({ animateSection }: HeroProps) {
 
             <AnimatedText delay={0.5}>
               <div className="hero-cta-row" suppressHydrationWarning>
-                <Link href="/projects" className="hero-btn-primary">
+                <MagneticButton href="/projects" className="hero-btn-primary">
                   {t('cta.viewProjects')}
                   <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link href="/chat" className="hero-btn-secondary">
+                </MagneticButton>
+                <MagneticButton href="/chat" variant="outline" className="hero-btn-secondary">
                   {t('cta.readBlog')}
-                </Link>
+                </MagneticButton>
                 <a 
                   href={locale === 'pt' ? '/cv/cv.pdf' : '/cv/cven.pdf'}
                   download
@@ -215,6 +217,12 @@ export default function Hero({ animateSection }: HeroProps) {
             </AnimatedText>
           </div>
 
+        </div>
+
+        <div className="mt-10 border-y border-[var(--border)] bg-[var(--bg-card)]/[0.35] py-2 text-[var(--theme-primary)]" aria-label={t('scrollCapabilities')}>
+          <ScrollVelocityRibbon className="font-mono text-[10px] uppercase tracking-[0.22em]" baseVelocity={0.7}>
+            {highlights.join('  •  ')}
+          </ScrollVelocityRibbon>
         </div>
 
         {/* Metrics Ticker - Below Stats */}

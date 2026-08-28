@@ -5,6 +5,8 @@ import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { AnimatedText } from './AnimatedText';
 import { useTranslations } from 'next-intl';
+import MagneticButton from './MagneticButton';
+import ScrollReveal from './ScrollReveal';
 
 const ParticleBackground = dynamic(() => import('./ParticleBackground'), { ssr: false });
 
@@ -12,14 +14,13 @@ interface ContactProps {
   animateSection?: string;
 }
 
-const socials = [
-  { icon: Github,   label: 'GitHub',   href: 'https://github.com/SobralCybersec' },
-  { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/matheus-sobral-b17a5b1b9/' },
-  { icon: Mail,     label: 'Email',    href: 'mailto:matheussobrallinkedin@gmail.com' },
-];
-
 export default function Contact({ animateSection }: ContactProps) {
   const t = useTranslations('contact');
+  const socials = [
+    { icon: Github, label: t('github'), href: 'https://github.com/SobralCybersec' },
+    { icon: Linkedin, label: t('linkedin'), href: 'https://www.linkedin.com/in/matheus-sobral-b17a5b1b9/' },
+    { icon: Mail, label: t('email'), href: 'mailto:matheussobrallinkedin@gmail.com' },
+  ];
   
   return (
     <section className="contact-section relative overflow-hidden">
@@ -41,16 +42,16 @@ export default function Contact({ animateSection }: ContactProps) {
           </AnimatedText>
           
           <AnimatedText delay={0.2}>
-            <p className="contact-desc">
+            <ScrollReveal textClassName="contact-desc" containerClassName="max-w-[600px]">
               {t('description')}
-            </p>
+            </ScrollReveal>
           </AnimatedText>
 
           <AnimatedText delay={0.3}>
-            <a href="mailto:matheussobrallinkedin@gmail.com" className="contact-cta animate-clip-in-delay">
+            <MagneticButton href="mailto:matheussobrallinkedin@gmail.com" variant="outline" className="contact-cta animate-clip-in-delay">
               <Mail className="w-4 h-4" />
               matheussobrallinkedin@gmail.com
-            </a>
+            </MagneticButton>
           </AnimatedText>
 
           <div className="contact-socials">

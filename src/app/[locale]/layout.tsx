@@ -1,15 +1,17 @@
 import '../globals.css';
 import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono, Rajdhani, Codystar } from 'next/font/google';
 import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import DynamicFavicon from '@/components/DynamicFavicon';
 import { BackgroundMusic } from '@/components/BackgroundMusic';
 import { Analytics } from '@vercel/analytics/react';
+import { OPEN_GRAPH_LOCALES, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 const geistSans = Inter({
   variable: '--font-geist-sans',
@@ -43,13 +45,50 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+
   return {
-    title: 'M.S Creative Technologist',
-    description: 'Portfolio of a creative technologist specializing in full-stack development, architecture, and modern web technologies.',
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: t('title'),
+      template: `%s | ${t('title')}`,
+    },
+    description: t('description'),
     keywords: ['portfolio', 'developer', 'full-stack', 'TypeScript', 'Next.js', 'React'],
+    alternates: {
+      canonical: `/${locale}`,
+      languages: Object.fromEntries(
+        routing.locales.map((supportedLocale) => [supportedLocale, `/${supportedLocale}`]),
+      ),
+    },
+    openGraph: {
+      type: 'website',
+      siteName: SITE_NAME,
+      locale: OPEN_GRAPH_LOCALES[locale] || locale,
+      url: `/${locale}`,
+      title: t('title'),
+      description: t('description'),
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: t('title') }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('description'),
+      images: [OG_IMAGE],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     icons: {
       icon: '/images/favicon/Ahjin.svg',
     },
@@ -74,12 +113,28 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
   const messages = await getMessages({ locale });
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: 'Matheus Sobral',
+      jobTitle: 'Full-Stack Developer & Cybersecurity Analyst',
+      url: SITE_URL,
+      sameAs: [
+        'https://github.com/SobralCybersec',
+        'https://br.linkedin.com/in/matheusdecyber',
+      ],
+      knowsAbout: ['Cybersecurity', 'Full-Stack Development', 'Java', 'Spring Boot', 'Next.js', 'React', 'AWS', 'Redis'],
+    },
+  };
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <link rel="icon" type="image/svg+xml" href="/images/favicon/Ahjin.svg" />
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${soloHeading.variable} ${eternal.variable} ${codystar.variable} antialiased`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>

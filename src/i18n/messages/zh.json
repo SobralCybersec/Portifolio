@@ -6,14 +6,18 @@
     "certifications": "认证",
     "chat": "聊天",
     "contact": "联系",
-    "github": "GITHUB"
+    "github": "GITHUB",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "selectLanguage": "选择语言",
+    "toggleTheme": "切换主题"
   },
   "hero": {
     "location": "巴西",
     "availability": "开放实习机会",
     "title": "全栈开发者和网络安全分析师",
     "greeting": "",
-    "description": "全栈开发者和网络安全分析师，拥有超过2年的自主项目经验，开发的Java系统在生产环境中拥有超过100万次下载。在UNESA学习计算机科学，在Centro Universitario FIAP学习网络安全，专注于软件架构、性能、安全和API集成。",
+    "description": "全栈开发者和网络安全分析师，拥有 2 年以上经验，开发的 Java 系统在生产环境中下载量超过 100 万。在 UNESA 学习计算机科学，在 Centro Universitario FIAP 学习网络安全，专注于软件架构、性能、安全和 API 集成。",
     "highlights": {
       "fullstack": "Java & Spring Boot",
       "architecture": "Clean Code & REST API",
@@ -31,7 +35,8 @@
       "experience": "经验",
       "commits": "提交"
     },
-    "ticker": "免费 • 开源 • 24/7在线 • 可重用代码 • 零成本 • 自动化 • 安全 • 可扩展 • 每日维护 • DOCKER就绪 • CI/CD活跃 • 快速响应"
+    "ticker": "JAVA • SPRING BOOT • REST API • AWS • REDIS • DOCKER • CI/CD • 开源",
+    "scrollCapabilities": "响应滚动的能力展示"
   },
   "skills": {
     "title": "技能",
@@ -46,21 +51,49 @@
     },
     "devops": {
       "title": "DevOps"
-    }
+    },
+    "capabilityMap": "能力地图",
+    "hoverModule": "悬停 / 点击模块",
+    "liveStackSignal": "技术栈",
+    "clickInspect": "点击 / 检查"
   },
   "projects": {
     "title": "最新项目",
     "work": "作品",
+    "description": "展示我近期完成的系统、界面和实验项目。",
     "code": "代码",
     "demo": "演示",
     "loading": "加载项目中...",
     "techStack": "技术栈",
-    "noDescription": "没有可用的描述"
+    "noDescription": "没有可用的描述",
+    "filters": {
+      "allProjects": "所有项目",
+      "allTechnologies": "所有技术",
+      "language": "语言",
+      "technology": "技术",
+      "search": "搜索项目..."
+    },
+    "showing": "显示",
+    "of": "共",
+    "projectUnit": "个项目",
+    "noResults": "没有符合条件的项目。",
+    "languageIcon": "语言图标",
+    "archive": "归档",
+    "deploy": "部署",
+    "file": "文件",
+    "imageNumber": "前往图片 {number}",
+    "inspectReadme": "README",
+    "readme": "README",
+    "readmeLoading": "正在加载 README...",
+    "readmeEmpty": "此仓库没有 README。",
+    "readmeError": "README 加载失败。",
+    "closeReadme": "关闭 README",
+    "openOnGithub": "在 GitHub 打开"
   },
   "blog": {
     "title": "最新新闻",
     "eyebrow": "博客",
-    "subtitle": "一个网络安全和开发初学者的日常博客。",
+    "subtitle": "一名网络安全与开发初学者的笔记。",
     "readTime": "分钟阅读",
     "backToBlog": "返回博客",
     "createPost": "创建文章",
@@ -108,60 +141,98 @@
     "title": "联系我",
     "eyebrow": "联系",
     "getInTouch": "联系我",
-    "description": "全栈开发者和网络安全分析师，擅长Java、Spring Boot、React和Next.js。开放软件开发和网络安全实习机会。",
+    "description": "全栈开发者和网络安全分析师，使用 Java、Spring Boot、React 和 Next.js。正在寻找软件开发与网络安全实习机会。",
     "email": "邮箱",
     "github": "GitHub",
     "linkedin": "LinkedIn",
-    "footer": "© 2026 Matheus Sobral. 保留所有权利。"
+    "footer": "© 2026 Matheus Sobral. 保留所有权利。",
+    "signal": "联系",
+    "transmission": "传输 / 01",
+    "identity": "身份",
+    "namePlaceholder": "你的名字",
+    "projectBrief": "项目简介",
+    "projectBriefPlaceholder": "你正在构建什么？",
+    "validationError": "请填写姓名、有效邮箱和项目简介。",
+    "draftReady": "邮件草稿已准备好。",
+        "openMailChannel": "打开邮件频道",
+    "draftReadyButton": "草稿就绪",
+    "directChannel": "直接频道",
+    "responseWindow": "响应时间",
+    "opportunities": "正在寻找软件开发与网络安全实习机会。"
   },
   "certifications": {
     "eyebrow": "成就",
     "title": "认证",
-    "description": "专业认证和成就，展示在现代软件开发、云基础设施和网络安全方面的专业知识。",
+    "description": "涵盖软件开发、云基础设施、网络安全和 AI 的认证。",
     "filters": {
       "all": "所有认证",
       "aws": "AWS",
       "google": "Google",
       "fiap": "FIAP",
       "uci": "UCI",
-      "udemy": "Udemy"
+      "udemy": "Udemy",
+      "community": "社区",
+      "anthropic": "Anthropic",
+      "openai": "OpenAI"
     },
     "showing": "显示",
     "of": "的",
     "certifications": "认证",
     "certs": {
-      "awsSolutionsArchitect": { "name": "AWS Certified Solutions Architect", "description": "展示在AWS上设计分布式系统的专业知识，包括计算、网络、存储和数据库服务。", "skills": "AWS,云架构,EC2,S3,RDS,Lambda,VPC,IAM,CloudFormation" },
-      "awsMigration": { "name": "Migrating to the AWS Cloud", "description": "全面的AWS迁移课程，涵盖三阶段流程：评估、动员和迁移。", "skills": "AWS Migration Hub,Application Migration Service,Database Migration Service,迁移策略,云评估" },
+      "awsSolutionsArchitect": { "name": "AWS Certified Solutions Architect", "description": "涵盖 AWS 分布式系统设计，包括计算、网络、存储和数据库。", "skills": "AWS,云架构,EC2,S3,RDS,Lambda,VPC,IAM,CloudFormation" },
+      "awsMigration": { "name": "Migrating to the AWS Cloud", "description": "AWS 迁移课程，涵盖评估、调动和迁移三个阶段，以及 AWS Migration Hub、Application Migration Service 和 Database Migration Service。", "skills": "AWS Migration Hub,Application Migration Service,Database Migration Service,迁移策略,云评估" },
       "fiapJava": { "name": "FIAP Java Development", "description": "Java基础纳米课程（80小时），涵盖面向对象编程、IDE、变量、数据库访问和设计模式。", "skills": "Java,面向对象编程,JDBC,集合,设计模式,异常处理" },
-      "fiapCyber": { "name": "FIAP Cybersecurity Skills", "description": "全面的网络安全纳米课程，涵盖安全基础、威胁分析和防御策略。", "skills": "网络安全,威胁分析,网络安全,事件响应,漏洞评估" },
-      "fiapDotnet": { "name": "FIAP .NET Development", "description": ".NET开发纳米课程，涵盖C#、ASP.NET和现代.NET框架开发实践。", "skills": "C#,ASP.NET,.NET Framework,MVC,Entity Framework" },
+      "fiapCyber": { "name": "FIAP Cybersecurity Skills", "description": "网络安全基础、威胁分析和防御策略。", "skills": "网络安全,威胁分析,网络安全,事件响应,漏洞评估" },
+      "fiapDotnet": { "name": "FIAP .NET Development", "description": "涵盖 C#、ASP.NET 和当前 .NET 框架开发的 .NET 课程。", "skills": "C#,ASP.NET,.NET Framework,MVC,Entity Framework" },
       "fiapBlockchain": { "name": "FIAP Blockchain", "description": "区块链技术纳米课程，涵盖分布式账本技术、智能合约和加密货币基础。", "skills": "Blockchain,智能合约,分布式账本技术,加密货币,Web3" },
       "fiapLogic": { "name": "FIAP Programming Logic", "description": "编程逻辑基础纳米课程，涵盖算法、数据结构和计算思维。", "skills": "算法,数据结构,编程逻辑,问题解决,计算思维" },
       "fiapAlgorithms": { "name": "FIAP Algorithms", "description": "高级算法纳米课程，涵盖排序、搜索、图算法和复杂度分析。", "skills": "算法,排序,搜索,图,复杂度分析,优化" },
       "googleNetwork": { "name": "Connect and Protect: Networks and Network Security", "description": "Google网络安全专业证书的一部分。涵盖网络架构、操作、入侵策略和安全加固。", "skills": "网络安全,TCP/IP,防火墙,VPN,系统加固,云安全,入侵检测" },
       "googleCyber": { "name": "Google Cybersecurity Foundations", "description": "基础网络安全概念，包括风险管理、威胁分析和安全框架。", "skills": "网络安全基础,风险管理,威胁分析,安全框架,合规" },
-      "uciPM": { "name": "Project Management", "description": "全面的项目管理专业课程，涵盖项目领导力、端到端规划、风险和利益相关者管理。", "skills": "项目管理,领导力,风险管理,利益相关者管理,资源规划,敏捷方法" },
-      "udemyPython": { "name": "The Complete Python Bootcamp From Zero to Hero", "description": "完整的Python训练营（22.5小时），涵盖Python基础、面向对象编程、网络爬虫和数据分析。", "skills": "Python,面向对象编程,网络爬虫,数据分析,Pandas,NumPy,装饰器,生成器" },
-      "udemyFullstack": { "name": "完整Web开发 - 20门课程 + 20个项目", "description": "完整的Web开发课程（20门课程 + 20个项目），涵盖HTML5、CSS3、SASS、Bootstrap 5、JavaScript ES6/ES7、PHP 7、OOP、MySQL、jQuery、MVC、API、IONIC、WordPress和Git。构建真实的Web和移动应用程序，从前端到后端，包括数据库集成。", "skills": "HTML5,CSS3,SASS,Bootstrap 5,JavaScript ES6/ES7,PHP 7,OOP,MySQL,jQuery,MVC,REST API,IONIC,WordPress,Git" }
-    }
+      "uciPM": { "name": "Project Management", "description": "项目管理专业课程，涵盖领导力、规划、风险、利益相关者、资源和多项目管理。符合 PMI PMP 考试教育要求。", "skills": "项目管理,领导力,风险管理,利益相关者管理,资源规划,敏捷方法" },
+      "udemyPython": { "name": "The Complete Python Bootcamp From Zero to Hero", "description": "Python 训练营（22.5 小时），涵盖基础、面向对象编程、网络爬虫、数据分析和高级 Python。560K+ 名学员评分为 4.6/5。", "skills": "Python,面向对象编程,网络爬虫,数据分析,Pandas,NumPy,装饰器,生成器" },
+      "udemyFullstack": { "name": "完整Web开发 - 20门课程 + 20个项目", "description": "完整的Web开发课程（20门课程 + 20个项目），涵盖HTML5、CSS3、SASS、Bootstrap 5、JavaScript ES6/ES7、PHP 7、OOP、MySQL、jQuery、MVC、API、IONIC、WordPress和Git。构建真实的Web和移动应用程序，从前端到后端，包括数据库集成。", "skills": "HTML5,CSS3,SASS,Bootstrap 5,JavaScript ES6/ES7,PHP 7,OOP,MySQL,jQuery,MVC,REST API,IONIC,WordPress,Git" },
+      "curseForgeHighCrafter": { "name": "CurseForge Legends: High Crafter", "milestone": "1,000,000 次下载", "description": "在 CurseForge 达到 100 万次下载后获得的成就。", "skills": "社区贡献,项目下载,创作者成就" },
+      "curseForgeRisingBuilder": { "name": "CurseForge Legends: Rising Builder", "milestone": "500,000 次下载", "description": "在 CurseForge 达到 50 万次下载后获得的成就。", "skills": "社区贡献,项目下载,创作者成就" },
+      "curseForgeForgeborn": { "name": "CurseForge Legends: Forgeborn", "milestone": "100,000 次下载", "description": "在 CurseForge 达到 10 万次下载后获得的成就。", "skills": "社区贡献,项目下载,创作者成就" },
+      "claudeApi": { "name": "Building with the Claude API", "description": "Claude Academy关于使用Claude API构建应用的认证。", "skills": "Claude API,Claude Code,生成式AI,API集成" },
+      "openaiAgents": { "name": "智能体与工作流", "date": "2026年8月28日", "description": "OpenAI Academy课程结业证书：智能体与工作流。", "skills": "AI智能体,Codex,工作流" },
+      "openaiFoundations": { "name": "AI基础", "date": "2026年8月28日", "description": "OpenAI Academy课程结业证书：AI基础。", "skills": "AI基础,ChatGPT,OpenAI" },
+      "openaiAppliedFoundations": { "name": "应用AI基础", "date": "2026年8月28日", "description": "OpenAI Academy课程结业证书：应用AI基础。", "skills": "应用AI,ChatGPT,OpenAI API" }
+    },
+    "filter": "筛选",
+    "noResults": "没有符合条件的认证。",
+    "type": "认证",
+    "skillsCovered": "涵盖技能",
+    "viewCredential": "查看凭证",
+    "closeDetails": "关闭认证详情"
   },
   "liveCoding": {
     "title": "实时编码",
-    "description": "从我的开发工作流程自动录制的实时编码会话",
+    "description": "来自开发工作流的实时编码。",
     "loading": "加载最新会话...",
     "lastUpdated": "最后更新",
     "viewOnGithub": "在GitHub上查看",
-    "autoRecorded": "自动录制的实时编码会话",
     "refresh": "刷新",
     "tryAgain": "重试",
-    "fileName": "实时编码会话.gif"
+    "fileName": "实时编码会话.gif",
+    "feedEyebrow": "实时编码",
+    "runtimeSignal": "运行时 / 录制会话",
+    "sourceChannel": "来源频道",
+    "lastTransmission": "最后传输",
+    "snapshotSynced": "快照已同步",
+    "awaitingSnapshot": "等待下一次快照",
+    "imageAlt": "实时编码会话",
+    "readmeError": "获取README失败",
+    "gifMissingError": "README中未找到GIF URL",
+    "unknownError": "未知错误"
   },
   "about": {
     "title": "关于我",
     "eyebrow": "关于",
     "background": "背景",
-    "backgroundText1": "全栈开发者和网络安全分析师，拥有超过2年的自主项目经验，开发的Java系统在生产环境中拥有超过100万次下载。在UNESA学习计算机科学，在Centro Universitário FIAP学习网络安全。",
-    "backgroundText2": "专注于软件架构、性能、安全和API集成。拥有Java和Spring Boot经验，使用Redis、SQL和AWS，应用Clean Code等最佳实践以及组织和可扩展性原则构建REST API。",
+    "backgroundText1": "我是一名全栈开发者和网络安全分析师，拥有 2 年以上经验，开发的 Java 系统在生产环境中下载量超过 100 万。我在 UNESA 学习计算机科学，在 Centro Universitario FIAP 学习网络安全。",
+    "backgroundText2": "我专注于软件架构、性能、安全和 API 集成。使用 Java、Spring Boot、Redis、SQL 和 AWS，采用 Clean Code 与可扩展结构构建 REST API。",
     "expertise": "技能",
     "security": "语言 & 后端",
     "development": "前端",
@@ -170,8 +241,81 @@
     "securityTools": "安全工具",
     "devtools": "DevOps & Cloud",
     "aiTools": "AI & LLM",
+    "execution": "执行",
     "philosophy": "经验",
-    "philosophyText1": "自主 - 专注于Java的软件开发者（2023年）：开发和维护大型 Java 应用程序，在生产环境中拥有超过100万次下载。负责完整的开发周期，包括实现、测试、调试和错误修复。",
-    "philosophyText2": "Bungo Stray ERP - 专注于后端的全栈开发者（2026年）：使用Java 17和Spring Boot开发可扩展的多租户ERP系统。使用Spring Security进行JWT身份验证、RBAC以及使用BCrypt和Argon2id进行密码哈希。使用Apache Cassandra进行数据持久化，使用Redis作为缓存层。"
+    "philosophyText1": "自主 · 专注 Java 的软件开发者（2023 年）。开发和维护大型 Java 应用程序，生产环境下载量超过 100 万。负责实现、测试、调试和错误修复等完整开发周期。",
+    "philosophyText2": "Bungo Stray ERP · 专注后端的全栈开发者（2026 年）。使用 Java 17 和 Spring Boot 开发多租户 ERP 系统。实现 Spring Security JWT 身份验证、RBAC、BCrypt 与 Argon2id 密码哈希、Cassandra 持久化和 Redis 缓存。",
+    "profileSignal": "个人资料",
+        "stackStatus": "技术栈状态 / {count, plural, =0 {同步中} other {# 个仓库}}",
+    "story": {
+      "backgroundLabel": "01 / 背景",
+      "backgroundSignal": "2年以上 / 100万+下载",
+      "backgroundDetail": "软件架构 / 性能 / API集成",
+    "expertiseLabel": "02 / 重点",
+      "expertiseBody": "我负责安全系统、界面、数据、云基础设施和 AI 辅助工作流。",
+      "expertiseSignal": "7个领域 / 1个系统",
+      "expertiseDetail": "语言 / 前端 / 数据 / 安全 / 云 / AI",
+      "experienceLabel": "03 / 经历",
+      "experienceSignal": "构建 / 测试 / 加固",
+      "experienceDetail": "生产环境Java / 多租户ERP / 身份验证 / 缓存",
+      "sectionLabel": "现场笔记 / 01",
+      "prompt": "滚动以追踪系统",
+      "traceLabel": "滚动 / 追踪 / 构建",
+      "moduleLabel": "/ 模块"
+    }
+  }
+,
+  "notFound": {
+    "description": "页面未找到",
+    "home": "返回首页"
+  },
+  "chat": {
+    "title": "实时聊天",
+    "signOut": "退出登录",
+    "signInGithub": "使用GitHub登录",
+    "emptyState": "还没有消息。成为第一个发言的人吧！",
+    "inputPlaceholder": "输入消息…（按Enter发送）",
+    "send": "发送",
+    "joinConversation": "加入对话"
+  },
+  "metadata": {
+    "title": "M.S Creative Technologist",
+    "description": "涵盖 Java、架构、云基础设施和开源项目的全栈开发与网络安全作品集。",
+    "about": {
+      "title": "关于我",
+      "description": "网络安全与全栈开发领域的经历、技能和背景。"
+    },
+    "projects": {
+      "title": "项目",
+      "description": "Java、Web、网络安全和开源项目。"
+    },
+    "certifications": {
+      "title": "认证",
+      "description": "网络安全、软件开发、云和 AI 认证。"
+    },
+    "contact": {
+      "title": "联系",
+      "description": "欢迎联系我，讨论软件开发和网络安全工作。"
+    },
+    "chat": {
+      "title": "实时聊天",
+      "description": "用于交流项目和作品集的实时聊天。"
+    }
+  },
+  "tech": {
+    "inspect": "查看",
+    "signalEyebrow": "技术栈",
+    "signalTitle": "技术",
+    "capabilityMap": "能力地图",
+    "closeDetails": "关闭技术详情",
+    "category": "类别",
+    "keyFeatures": "主要功能",
+    "learnMore": "了解更多"
+  },
+  "boot": {
+    "authLine": "访问 :: 已授权",
+    "statusAria": "暗影君王授权序列",
+    "authorization": "玩家授权",
+    "systemOnline": "系统 // 在线"
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import SafeImage from './SafeImage';
 
 interface ImageSlideshowProps {
@@ -11,6 +12,7 @@ interface ImageSlideshowProps {
 }
 
 export default function ImageSlideshow({ images, alt, interval = 5000, fallbackSrc = '/icons/github.png' }: ImageSlideshowProps) {
+  const t = useTranslations('projects');
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Re-runs when images identity or interval changes; safeIndex clamps any
@@ -59,7 +61,7 @@ export default function ImageSlideshow({ images, alt, interval = 5000, fallbackS
                 background: index === safeIndex ? '#a855f7' : 'rgba(168, 85, 247, 0.3)',
                 boxShadow: index === safeIndex ? '0 0 8px #a855f7' : 'none',
               }}
-              aria-label={`Go to image ${index + 1}`}
+              aria-label={t('imageNumber', { number: index + 1 })}
             />
           ))}
         </div>

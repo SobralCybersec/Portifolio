@@ -6,14 +6,18 @@
     "certifications": "認定資格",
     "chat": "チャット",
     "contact": "お問い合わせ",
-    "github": "GITHUB"
+    "github": "GITHUB",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "selectLanguage": "言語を選択",
+    "toggleTheme": "テーマを切り替え"
   },
   "hero": {
     "location": "ブラジル",
     "availability": "インターンシップ募集中",
     "title": "フルスタック開発者・サイバーセキュリティアナリスト",
     "greeting": "",
-    "description": "フルスタック開発者・サイバーセキュリティアナリスト。2年以上の自律プロジェクト経験を持ち、100万以上のダウンロードを持つJavaシステムを開発。UNESAでコンピュータサイエンス、FIAPでサイバーセキュリティを学び、ソフトウェアアーキテクチャ、パフォーマンス、セキュリティ、API統合に焦点を当てています。",
+    "description": "フルスタック開発者・サイバーセキュリティアナリスト。2年以上にわたり、100万以上のダウンロード実績を持つJavaシステムを開発しています。UNESAでコンピュータサイエンス、FIAPでサイバーセキュリティを学び、ソフトウェアアーキテクチャ、性能、セキュリティ、API統合に取り組んでいます。",
     "highlights": {
       "fullstack": "Java & Spring Boot",
       "architecture": "Clean Code & REST API",
@@ -31,7 +35,8 @@
       "experience": "経験",
       "commits": "コミット"
     },
-    "ticker": "無料 • オープンソース • 24/7稼働 • 再利用可能コード • ゼロコスト • 自動化 • セキュア • スケーラブル • 毎日メンテナンス • DOCKER対応 • CI/CDアクティブ • 高速レスポンス"
+    "ticker": "JAVA • SPRING BOOT • REST API • AWS • REDIS • DOCKER • CI/CD • オープンソース",
+    "scrollCapabilities": "スクロール対応の機能"
   },
   "skills": {
     "title": "スキル",
@@ -46,21 +51,49 @@
     },
     "devops": {
       "title": "DevOps"
-    }
+    },
+    "capabilityMap": "能力マップ",
+    "hoverModule": "モジュールにホバー / タップ",
+    "liveStackSignal": "スタック",
+    "clickInspect": "クリック / 検査"
   },
   "projects": {
     "title": "最新プロジェクト",
     "work": "作品",
+    "description": "最近取り組んだシステム、インターフェース、実験を紹介します。",
     "code": "コード",
     "demo": "デモ",
     "loading": "プロジェクトを読み込み中...",
     "techStack": "技術スタック",
-    "noDescription": "説明はありません"
+    "noDescription": "説明はありません",
+    "filters": {
+      "allProjects": "すべてのプロジェクト",
+      "allTechnologies": "すべての技術",
+      "language": "言語",
+      "technology": "技術",
+      "search": "プロジェクトを検索..."
+    },
+    "showing": "表示中",
+    "of": "/",
+    "projectUnit": "件",
+    "noResults": "条件に一致するプロジェクトはありません。",
+    "languageIcon": "言語アイコン",
+    "archive": "アーカイブ",
+    "deploy": "デプロイ",
+    "file": "ファイル",
+    "imageNumber": "画像{number}へ移動",
+    "inspectReadme": "README",
+    "readme": "README",
+    "readmeLoading": "READMEを読み込み中...",
+    "readmeEmpty": "このリポジトリにREADMEはありません。",
+    "readmeError": "READMEを読み込めませんでした。",
+    "closeReadme": "READMEを閉じる",
+    "openOnGithub": "GitHubで開く"
   },
   "blog": {
     "title": "最新ニュース",
     "eyebrow": "ブログ",
-    "subtitle": "サイバーセキュリティと開発の初心者の日々のブログ。",
+    "subtitle": "サイバーセキュリティと開発を学ぶ初心者の記録。",
     "readTime": "分で読む",
     "backToBlog": "ブログに戻る",
     "createPost": "投稿を作成",
@@ -108,60 +141,98 @@
     "title": "お問い合わせ",
     "eyebrow": "お問い合わせ",
     "getInTouch": "お問い合わせ",
-    "description": "フルスタック開発者・サイバーセキュリティアナリスト。Java、Spring Boot、React、Next.jsの専門知識を持ち、ソフトウェア開発とサイバーセキュリティのインターンシップ機会を募集中。",
+    "description": "Java、Spring Boot、React、Next.jsを扱うフルスタック開発者・サイバーセキュリティアナリストです。ソフトウェア開発とサイバーセキュリティのインターンシップを募集しています。",
     "email": "メール",
     "github": "GitHub",
     "linkedin": "LinkedIn",
-    "footer": "© 2026 Matheus Sobral. 全著作権所有。"
+    "footer": "© 2026 Matheus Sobral. 全著作権所有。",
+    "signal": "お問い合わせ",
+    "transmission": "送信 / 01",
+    "identity": "プロフィール",
+    "namePlaceholder": "お名前",
+    "projectBrief": "プロジェクト概要",
+    "projectBriefPlaceholder": "何を作っていますか？",
+    "validationError": "名前、有効なメール、プロジェクト概要を入力してください。",
+    "draftReady": "メールの下書きができました。",
+        "openMailChannel": "メールチャンネルを開く",
+    "draftReadyButton": "下書き準備完了",
+    "directChannel": "直接連絡",
+    "responseWindow": "返信目安",
+    "opportunities": "ソフトウェア開発とサイバーセキュリティのインターンシップを募集しています。"
   },
   "certifications": {
     "eyebrow": "実績",
     "title": "認定資格",
-    "description": "現代的なソフトウェア開発、クラウドインフラ、サイバーセキュリティにおける専門知識を証明するプロフェッショナル認定資格と実績。",
+    "description": "ソフトウェア開発、クラウド基盤、サイバーセキュリティ、AIに関する資格です。",
     "filters": {
       "all": "すべての認定資格",
       "aws": "AWS",
       "google": "Google",
       "fiap": "FIAP",
       "uci": "UCI",
-      "udemy": "Udemy"
+      "udemy": "Udemy",
+      "community": "コミュニティ",
+      "anthropic": "Anthropic",
+      "openai": "OpenAI"
     },
     "showing": "表示",
     "of": "の",
     "certifications": "認定資格",
     "certs": {
-      "awsSolutionsArchitect": { "name": "AWS Certified Solutions Architect", "description": "コンピューティング、ネットワーク、ストレージ、データベースサービスを含むAWS上の分散システム設計における専門知識を証明。", "skills": "AWS,クラウドアーキテクチャ,EC2,S3,RDS,Lambda,VPC,IAM,CloudFormation" },
-      "awsMigration": { "name": "Migrating to the AWS Cloud", "description": "評価、動員、移行の3段階プロセスをカバーする包括的なAWS移行コース。", "skills": "AWS Migration Hub,Application Migration Service,Database Migration Service,移行戦略,クラウド評価" },
+      "awsSolutionsArchitect": { "name": "AWS Certified Solutions Architect", "description": "AWS上の分散システム設計を扱い、コンピューティング、ネットワーク、ストレージ、データベースを含みます。", "skills": "AWS,クラウドアーキテクチャ,EC2,S3,RDS,Lambda,VPC,IAM,CloudFormation" },
+      "awsMigration": { "name": "Migrating to the AWS Cloud", "description": "評価・動員・移行の3段階、AWS Migration Hub、Application Migration Service、Database Migration Serviceを扱うAWS移行コース。", "skills": "AWS Migration Hub,Application Migration Service,Database Migration Service,移行戦略,クラウド評価" },
       "fiapJava": { "name": "FIAP Java Development", "description": "オブジェクト指向プログラミング、IDE、変数、データベースアクセス、デザインパターンをカバーするJava基礎ナノコース（80時間）。", "skills": "Java,オブジェクト指向プログラミング,JDBC,コレクション,デザインパターン,例外処理" },
-      "fiapCyber": { "name": "FIAP Cybersecurity Skills", "description": "セキュリティの基礎、脅威分析、防御戦略をカバーする包括的なサイバーセキュリティナノコース。", "skills": "サイバーセキュリティ,脅威分析,ネットワークセキュリティ,インシデント対応,脆弱性評価" },
-      "fiapDotnet": { "name": "FIAP .NET Development", "description": "C#、ASP.NET、最新の.NETフレームワーク開発実践をカバーする.NET開発ナノコース。", "skills": "C#,ASP.NET,.NET Framework,MVC,Entity Framework" },
+      "fiapCyber": { "name": "FIAP Cybersecurity Skills", "description": "サイバーセキュリティの基礎、脅威分析、防御戦略。", "skills": "サイバーセキュリティ,脅威分析,ネットワークセキュリティ,インシデント対応,脆弱性評価" },
+      "fiapDotnet": { "name": "FIAP .NET Development", "description": "C#、ASP.NET、現在の.NETフレームワーク開発を扱う.NETコース。", "skills": "C#,ASP.NET,.NET Framework,MVC,Entity Framework" },
       "fiapBlockchain": { "name": "FIAP Blockchain", "description": "分散台帳技術、スマートコントラクト、暗号通貨の基礎をカバーするブロックチェーン技術ナノコース。", "skills": "Blockchain,スマートコントラクト,分散台帳技術,暗号通貨,Web3" },
       "fiapLogic": { "name": "FIAP Programming Logic", "description": "アルゴリズム、データ構造、計算思考をカバーするプログラミングロジック基礎ナノコース。", "skills": "アルゴリズム,データ構造,プログラミングロジック,問題解決,計算思考" },
       "fiapAlgorithms": { "name": "FIAP Algorithms", "description": "ソート、検索、グラフアルゴリズム、複雑度分析をカバーする高度なアルゴリズムナノコース。", "skills": "アルゴリズム,ソート,検索,グラフ,複雑度分析,最適化" },
       "googleNetwork": { "name": "Connect and Protect: Networks and Network Security", "description": "Google Cybersecurity Professional Certificateの一部。ネットワークアーキテクチャ、運用、侵入戦術、セキュリティ強化をカバー。", "skills": "ネットワークセキュリティ,TCP/IP,ファイアウォール,VPN,システム強化,クラウドセキュリティ,侵入検知" },
       "googleCyber": { "name": "Google Cybersecurity Foundations", "description": "リスク管理、脅威分析、セキュリティフレームワークを含む基礎的なサイバーセキュリティ概念。", "skills": "サイバーセキュリティ基礎,リスク管理,脅威分析,セキュリティフレームワーク,コンプライアンス" },
-      "uciPM": { "name": "Project Management", "description": "プロジェクトリーダーシップ、エンドツーエンド計画、リスクとステークホルダー管理をカバーする包括的なプロジェクト管理専門課程。", "skills": "プロジェクト管理,リーダーシップ,リスク管理,ステークホルダー管理,リソース計画,アジャイル手法" },
-      "udemyPython": { "name": "The Complete Python Bootcamp From Zero to Hero", "description": "Python基礎、オブジェクト指向プログラミング、Webスクレイピング、データ分析をカバーする完全なPythonブートキャンプ（22.5時間）。", "skills": "Python,オブジェクト指向プログラミング,Webスクレイピング,データ分析,Pandas,NumPy,デコレータ,ジェネレータ" },
-      "udemyFullstack": { "name": "完全なWeb開発 - 20コース + 20プロジェクト", "description": "HTML5、CSS3、SASS、Bootstrap 5、JavaScript ES6/ES7、PHP 7、OOP、MySQL、jQuery、MVC、API、IONIC、WordPress、Gitをカバーする完全なWeb開発コース（20コース + 20プロジェクト）。フロントエンドからバックエンドまで、データベース統合を含む実際のWebおよびモバイルアプリケーションを構築。", "skills": "HTML5,CSS3,SASS,Bootstrap 5,JavaScript ES6/ES7,PHP 7,OOP,MySQL,jQuery,MVC,REST API,IONIC,WordPress,Git" }
-    }
+      "uciPM": { "name": "Project Management", "description": "リーダーシップ、計画、リスク、ステークホルダー、リソース、複数プロジェクトを扱うプロジェクト管理専門課程。PMI PMP試験の教育要件に対応。", "skills": "プロジェクト管理,リーダーシップ,リスク管理,ステークホルダー管理,リソース計画,アジャイル手法" },
+      "udemyPython": { "name": "The Complete Python Bootcamp From Zero to Hero", "description": "Pythonブートキャンプ（22.5時間）。基礎、オブジェクト指向プログラミング、Webスクレイピング、データ分析、高度なPythonを扱います。56万人以上が受講し、評価は4.6/5です。", "skills": "Python,オブジェクト指向プログラミング,Webスクレイピング,データ分析,Pandas,NumPy,デコレータ,ジェネレータ" },
+      "udemyFullstack": { "name": "完全なWeb開発 - 20コース + 20プロジェクト", "description": "HTML5、CSS3、SASS、Bootstrap 5、JavaScript ES6/ES7、PHP 7、OOP、MySQL、jQuery、MVC、API、IONIC、WordPress、Gitをカバーする完全なWeb開発コース（20コース + 20プロジェクト）。フロントエンドからバックエンドまで、データベース統合を含む実際のWebおよびモバイルアプリケーションを構築。", "skills": "HTML5,CSS3,SASS,Bootstrap 5,JavaScript ES6/ES7,PHP 7,OOP,MySQL,jQuery,MVC,REST API,IONIC,WordPress,Git" },
+      "curseForgeHighCrafter": { "name": "CurseForge Legends: High Crafter", "milestone": "1,000,000 ダウンロード", "description": "CurseForgeで100万ダウンロードを達成した記念実績。", "skills": "コミュニティへの貢献,プロジェクトのダウンロード,クリエイター実績" },
+      "curseForgeRisingBuilder": { "name": "CurseForge Legends: Rising Builder", "milestone": "500,000 ダウンロード", "description": "CurseForgeで50万ダウンロードを達成した記念実績。", "skills": "コミュニティへの貢献,プロジェクトのダウンロード,クリエイター実績" },
+      "curseForgeForgeborn": { "name": "CurseForge Legends: Forgeborn", "milestone": "100,000 ダウンロード", "description": "CurseForgeで10万ダウンロードを達成した記念実績。", "skills": "コミュニティへの貢献,プロジェクトのダウンロード,クリエイター実績" },
+      "claudeApi": { "name": "Building with the Claude API", "description": "Claude Academyによる、Claude APIを使ったアプリケーション開発の認定。", "skills": "Claude API,Claude Code,生成AI,API連携" },
+      "openaiAgents": { "name": "エージェントとワークフロー", "date": "2026年8月28日", "description": "OpenAI Academyのコース修了証：エージェントとワークフロー。", "skills": "AIエージェント,Codex,ワークフロー" },
+      "openaiFoundations": { "name": "AIの基礎", "date": "2026年8月28日", "description": "OpenAI Academyのコース修了証：AIの基礎。", "skills": "AIの基礎,ChatGPT,OpenAI" },
+      "openaiAppliedFoundations": { "name": "応用AIの基礎", "date": "2026年8月28日", "description": "OpenAI Academyのコース修了証：応用AIの基礎。", "skills": "応用AI,ChatGPT,OpenAI API" }
+    },
+    "filter": "絞り込み",
+    "noResults": "条件に一致する認定資格はありません。",
+    "type": "認定資格",
+    "skillsCovered": "対象スキル",
+    "viewCredential": "資格を表示",
+    "closeDetails": "認定資格の詳細を閉じる"
   },
   "liveCoding": {
     "title": "ライブコーディング",
-    "description": "開発ワークフローから自動録画されたライブコーディングセッション",
+    "description": "開発ワークフローのライブコーディング。",
     "loading": "最新のセッションを読み込み中...",
     "lastUpdated": "最終更新",
     "viewOnGithub": "GitHubで見る",
-    "autoRecorded": "自動録画されたライブコーディングセッション",
     "refresh": "更新",
     "tryAgain": "再試行",
-    "fileName": "ライブコーディングセッション.gif"
+    "fileName": "ライブコーディングセッション.gif",
+    "feedEyebrow": "ライブコーディング",
+    "runtimeSignal": "ランタイム / 録画セッション",
+    "sourceChannel": "ソースチャンネル",
+    "lastTransmission": "最終送信",
+    "snapshotSynced": "スナップショット同期済み",
+    "awaitingSnapshot": "次のスナップショットを待機中",
+    "imageAlt": "ライブコーディングセッション",
+    "readmeError": "READMEの取得に失敗しました",
+    "gifMissingError": "READMEにGIF URLがありません",
+    "unknownError": "不明なエラー"
   },
   "about": {
     "title": "私について",
     "eyebrow": "について",
     "background": "背景",
-    "backgroundText1": "フルスタック開発者・サイバーセキュリティアナリスト。2年以上の自律プロジェクト経験を持ち、100万以上のダウンロードを持つJavaシステムを開発。UNESAでコンピュータサイエンス、Centro Universitário FIAPでサイバーセキュリティを学んでいます。",
-    "backgroundText2": "ソフトウェアアーキテクチャ、パフォーマンス、セキュリティ、API統合に焦点を当てています。JavaとSpring Bootの経験があり、Redis、SQL、AWSを使用し、Clean Codeなどのベストプラクティスと、REST API構築のための組織化とスケーラビリティの原則を適用しています。",
+    "backgroundText1": "フルスタック開発者・サイバーセキュリティアナリストとして、2年以上にわたり100万以上のダウンロード実績を持つJavaシステムを開発しています。UNESAでコンピュータサイエンス、Centro Universitário FIAPでサイバーセキュリティを学んでいます。",
+    "backgroundText2": "ソフトウェアアーキテクチャ、性能、セキュリティ、API統合に取り組んでいます。Java、Spring Boot、Redis、SQL、AWSを使い、Clean Codeと拡張しやすい構成でREST APIを開発します。",
     "expertise": "スキル",
     "security": "言語 & バックエンド",
     "development": "フロントエンド",
@@ -170,8 +241,81 @@
     "securityTools": "セキュリティツール",
     "devtools": "DevOps & Cloud",
     "aiTools": "AI & LLM",
+    "execution": "実行",
     "philosophy": "経験",
-    "philosophyText1": "自律 - Java重視のソフトウェア開発者（2023年）：100万以上のダウンロードを持つ大規模Javaアプリケーションの開発と保守。実装、テスト、デバッグ、バグ修正を含む完全な開発サイクルを担当。",
-    "philosophyText2": "Bungo Stray ERP - バックエンド重視のフルスタック開発者（2026年）：Java 17とSpring Bootを使用したスケーラブルなマルチテナントERPシステムの開発。Spring SecurityによるJWT認証、RBAC、BCryptとArgon2idを使用したパスワードハッシュ。Apache Cassandraを使用したデータ永続化とRedisによるキャッシュレイヤー。"
+    "philosophyText1": "自律 · Javaを中心としたソフトウェア開発者（2023年）。100万以上のダウンロード実績を持つ大規模Javaアプリケーションを開発・保守。実装、テスト、デバッグ、バグ修正まで開発サイクル全体を担当しました。",
+    "philosophyText2": "Bungo Stray ERP · バックエンドを中心としたフルスタック開発者（2026年）。Java 17とSpring BootでマルチテナントERPシステムを開発。Spring SecurityによるJWT認証、RBAC、BCryptとArgon2idによるパスワードハッシュ、Cassandra永続化、Redisキャッシュを実装しました。",
+    "profileSignal": "プロフィール",
+        "stackStatus": "スタック状態 / {count, plural, =0 {同期中} other {# リポジトリ}}",
+    "story": {
+      "backgroundLabel": "01 / 背景",
+      "backgroundSignal": "2年以上 / 100万以上のダウンロード",
+      "backgroundDetail": "ソフトウェアアーキテクチャ / パフォーマンス / API統合",
+    "expertiseLabel": "02 / 注力分野",
+      "expertiseBody": "安全なシステム、インターフェース、データ、クラウド基盤、AI支援ワークフローを扱っています。",
+      "expertiseSignal": "7領域 / 1システム",
+      "expertiseDetail": "言語 / フロントエンド / データ / セキュリティ / クラウド / AI",
+      "experienceLabel": "03 / 経験",
+      "experienceSignal": "構築 / テスト / 強化",
+      "experienceDetail": "本番Java / マルチテナントERP / 認証 / キャッシュ",
+      "sectionLabel": "フィールドノート / 01",
+      "prompt": "スクロールしてシステムを追跡",
+      "traceLabel": "スクロール / 追跡 / 構築",
+      "moduleLabel": "/ モジュール"
+    }
+  }
+,
+  "notFound": {
+    "description": "ページが見つかりません",
+    "home": "ホームへ"
+  },
+  "chat": {
+    "title": "ライブチャット",
+    "signOut": "サインアウト",
+    "signInGithub": "GitHubでサインイン",
+    "emptyState": "まだメッセージはありません。最初のメッセージを送りましょう！",
+    "inputPlaceholder": "メッセージを入力…（Enterで送信）",
+    "send": "送信",
+    "joinConversation": "会話に参加するには"
+  },
+  "metadata": {
+    "title": "M.S Creative Technologist",
+    "description": "Java、アーキテクチャ、クラウド基盤、オープンソースを扱うフルスタック開発とサイバーセキュリティのポートフォリオ。",
+    "about": {
+      "title": "私について",
+      "description": "サイバーセキュリティとフルスタック開発の経験、スキル、経歴。"
+    },
+    "projects": {
+      "title": "プロジェクト",
+      "description": "Java、Web、サイバーセキュリティ、オープンソースのプロジェクト。"
+    },
+    "certifications": {
+      "title": "認定資格",
+      "description": "サイバーセキュリティ、ソフトウェア開発、クラウド、AIの資格。"
+    },
+    "contact": {
+      "title": "お問い合わせ",
+      "description": "ソフトウェア開発やサイバーセキュリティの仕事についてお問い合わせください。"
+    },
+    "chat": {
+      "title": "ライブチャット",
+      "description": "プロジェクトやポートフォリオについて話せるライブチャット。"
+    }
+  },
+  "tech": {
+    "inspect": "確認",
+    "signalEyebrow": "スタック",
+    "signalTitle": "技術",
+    "capabilityMap": "能力マップ",
+    "closeDetails": "技術詳細を閉じる",
+    "category": "カテゴリ",
+    "keyFeatures": "主な機能",
+    "learnMore": "詳しく見る"
+  },
+  "boot": {
+    "authLine": "アクセス :: 許可",
+    "statusAria": "シャドウモナーク認証シーケンス",
+    "authorization": "プレイヤー認証",
+    "systemOnline": "システム // オンライン"
   }
 }

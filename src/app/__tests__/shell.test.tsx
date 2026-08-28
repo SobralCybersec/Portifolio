@@ -3,6 +3,13 @@ import { render, screen } from '@testing-library/react';
 import RootLayout from '../layout';
 import RootPage from '../page';
 import LocaleLayout, { generateMetadata, generateStaticParams } from '../[locale]/layout';
+import { generateMetadata as generateAboutMetadata } from '../[locale]/about/layout';
+import { generateMetadata as generateProjectsMetadata } from '../[locale]/projects/layout';
+import { generateMetadata as generateCertificationsMetadata } from '../[locale]/certifications/layout';
+import { generateMetadata as generateContactMetadata } from '../[locale]/contact/layout';
+import { generateMetadata as generateChatMetadata } from '../[locale]/chat/layout';
+import sitemap from '../sitemap';
+import robots from '../robots';
 import LocaleNotFound from '../[locale]/not-found';
 import CatchAllNotFound from '../[locale]/[...not-found]/page';
 import ChatPage from '../[locale]/chat/page';
@@ -22,6 +29,7 @@ jest.mock('next-intl', () => ({
 }));
 jest.mock('next-intl/server', () => ({
   getMessages: jest.fn(async () => ({ hello: 'world' })),
+  getTranslations: jest.fn(async () => (key: string) => key),
   setRequestLocale: jest.fn(),
   getRequestConfig: (callback: unknown) => callback,
 }));
@@ -69,12 +77,44 @@ test('covers root redirects, shell pages, and auth route exports', async () => {
   expect(authGet).toBe('GET_HANDLER');
   expect(authPost).toBe('POST_HANDLER');
   expect(generateStaticParams()).toHaveLength(routing.locales.length);
-  expect(await generateMetadata({ params: Promise.resolve({ locale: 'en' }) })).toEqual(expect.objectContaining({ title: expect.any(String) }));
+  const rootMetadata = await generateMetadata({ params: Promise.resolve({ locale: 'en' }) });
+  expect(rootMetadata).toEqual(expect.objectContaining({
+    title: expect.objectContaining({ default: expect.any(String), template: expect.stringContaining('%s') }),
+  }));
   const layout = await LocaleLayout({ children: <span>child</span>, params: Promise.resolve({ locale: 'en' }) });
   expect(layout).toBeDefined();
   expect(LocaleNotFound()).toBeDefined();
   expect(() => CatchAllNotFound()).toThrow('not found');
   await expect(ChatPage()).resolves.toBeDefined();
+});
+
+test('generates page metadata, sitemap, and robots directives', async () => {
+  const pageMetadata = await Promise.all([
+    generateAboutMetadata({ params: Promise.resolve({ locale: 'pt' }) }),
+    generateProjectsMetadata({ params: Promise.resolve({ locale: 'pt' }) }),
+    generateCertificationsMetadata({ params: Promise.resolve({ locale: 'pt' }) }),
+    generateContactMetadata({ params: Promise.resolve({ locale: 'pt' }) }),
+    generateChatMetadata({ params: Promise.resolve({ locale: 'pt' }) }),
+  ]);
+
+  expect(pageMetadata.map((metadata) => metadata.alternates?.canonical)).toEqual([
+    '/pt/about',
+    '/pt/projects',
+    '/pt/certifications',
+    '/pt/contact',
+    '/pt/chat',
+  ]);
+  expect(pageMetadata[0].openGraph).toEqual(expect.objectContaining({
+    type: 'website',
+    siteName: expect.any(String),
+    locale: 'pt_BR',
+    images: expect.any(Array),
+  }));
+  expect(sitemap()).toHaveLength(42);
+  expect(robots()).toEqual(expect.objectContaining({
+    sitemap: expect.stringContaining('/sitemap.xml'),
+    rules: [{ userAgent: '*', allow: '/', disallow: ['/api/'] }],
+  }));
 });
 
 test('uses default locale for invalid request locale and preserves valid locale', async () => {

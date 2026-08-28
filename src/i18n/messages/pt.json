@@ -6,14 +6,18 @@
     "certifications": "CERTIFICAÇÕES",
     "chat": "CHAT",
     "contact": "CONTATO",
-    "github": "GITHUB"
+    "github": "GITHUB",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "selectLanguage": "Selecionar idioma",
+    "toggleTheme": "Alternar tema"
   },
   "hero": {
     "location": "Brasil",
     "availability": "Aberto a estagios",
     "title": "Desenvolvedor Full-Stack e Analista de Cibersegurança",
     "greeting": "",
-    "description": "Desenvolvedor Full-Stack e Analista de Cibersegurança em formação com mais de 2 anos de experiência em projetos autônomos, atuando no desenvolvimento de sistemas Java com mais de 1 milhão de downloads em produção. Cursando Ciência da Computação na UNESA e Cibersegurança no Centro Universitário FIAP, com foco em arquitetura de software, performance, segurança e integração de APIs.",
+    "description": "Desenvolvedor Full-Stack e Analista de Cibersegurança com mais de 2 anos construindo sistemas Java com mais de 1 milhão de downloads em produção. Estudo Ciência da Computação na UNESA e Cibersegurança no Centro Universitário FIAP, com foco em arquitetura de software, performance, segurança e integração de APIs.",
     "highlights": {
       "fullstack": "Java & Spring Boot",
       "architecture": "Clean Code & APIs REST",
@@ -31,7 +35,8 @@
       "experience": "Experiência",
       "commits": "Commits"
     },
-    "ticker": "GRÁTIS • CÓDIGO ABERTO • DISPONÍVEL 24/7 • CÓDIGO REUTILIZÁVEL • CUSTO ZERO • AUTOMATIZADO • SEGURO • ESCALÁVEL • MANTIDO DIARIAMENTE • DOCKER PRONTO • CI/CD ATIVO • RESPOSTA RÁPIDA"
+    "ticker": "JAVA • SPRING BOOT • APIs REST • AWS • REDIS • DOCKER • CI/CD • OPEN SOURCE",
+    "scrollCapabilities": "Capacidades responsivas ao scroll"
   },
   "skills": {
     "title": "HABILIDADES",
@@ -46,21 +51,49 @@
     },
     "devops": {
       "title": "DevOps"
-    }
+    },
+    "capabilityMap": "Mapa de capacidades",
+    "hoverModule": "Passe o cursor / toque no módulo",
+    "liveStackSignal": "Stack",
+    "clickInspect": "Clique / inspecione"
   },
   "projects": {
     "title": "Ultimos Projetos",
     "work": "TRABALHO",
+    "description": "Sistemas, interfaces e experimentos do meu trabalho recente.",
     "code": "Código",
     "demo": "Demo",
     "loading": "Carregando projetos...",
     "techStack": "Stack Tecnológico",
-    "noDescription": "Nenhuma descrição disponível"
+    "noDescription": "Nenhuma descrição disponível",
+    "filters": {
+      "allProjects": "Todos os projetos",
+      "allTechnologies": "Todas as tecnologias",
+      "language": "Linguagem",
+      "technology": "Tecnologia",
+      "search": "Buscar projetos..."
+    },
+    "showing": "Mostrando",
+    "of": "de",
+    "projectUnit": "projetos",
+    "noResults": "Nenhum projeto encontrado com esses critérios.",
+    "languageIcon": "Ícone da linguagem",
+    "archive": "Arquivo",
+    "deploy": "Implantar",
+    "file": "ARQUIVO",
+    "imageNumber": "Ir para a imagem {number}",
+    "inspectReadme": "README",
+    "readme": "README",
+    "readmeLoading": "Carregando README...",
+    "readmeEmpty": "Nenhum README encontrado para este repositório.",
+    "readmeError": "Não foi possível carregar o README.",
+    "closeReadme": "Fechar README",
+    "openOnGithub": "Abrir no GitHub"
   },
   "blog": {
     "title": "Ultimas Noticias",
     "eyebrow": "BLOG",
-    "subtitle": "Um blog diario de um iniciante em Ciberseguranca e Desenvolvimento.",
+    "subtitle": "Notas de um iniciante em cibersegurança e desenvolvimento.",
     "readTime": "min de leitura",
     "backToBlog": "Voltar ao blog",
     "createPost": "Criar Post",
@@ -108,23 +141,39 @@
     "title": "ENTRE EM CONTATO",
     "eyebrow": "CONTATO",
     "getInTouch": "Entre em Contato",
-    "description": "Desenvolvedor Full-Stack e Analista de Cibersegurança com expertise em Java, Spring Boot, React e Next.js. Aberto a oportunidades de estágio em desenvolvimento de software e cibersegurança.",
+    "description": "Desenvolvedor Full-Stack e Analista de Cibersegurança que trabalha com Java, Spring Boot, React e Next.js. Disponível para estágios em desenvolvimento de software e cibersegurança.",
     "email": "Email",
     "github": "GitHub",
     "linkedin": "LinkedIn",
-    "footer": "© 2026 Matheus Sobral. Todos os direitos reservados."
+    "footer": "© 2026 Matheus Sobral. Todos os direitos reservados.",
+    "signal": "Contato",
+    "transmission": "TRANSMISSÃO / 01",
+    "identity": "IDENTIDADE",
+    "namePlaceholder": "Seu nome",
+    "projectBrief": "RESUMO DO PROJETO",
+    "projectBriefPlaceholder": "O que você está construindo?",
+    "validationError": "Preencha nome, e-mail válido e resumo do projeto.",
+    "draftReady": "Rascunho de e-mail pronto.",
+        "openMailChannel": "ABRIR CANAL DE E-MAIL",
+    "draftReadyButton": "RASCUNHO PRONTO",
+    "directChannel": "CANAL DIRETO",
+    "responseWindow": "TEMPO DE RESPOSTA",
+    "opportunities": "Disponível para estágios em desenvolvimento de software e cibersegurança."
   },
   "certifications": {
     "eyebrow": "CONQUISTAS",
     "title": "Certificacoes",
-    "description": "Certificacoes profissionais e conquistas demonstrando expertise em desenvolvimento de software moderno, infraestrutura em nuvem e ciberseguranca.",
+    "description": "Credenciais em desenvolvimento de software, infraestrutura em nuvem, cibersegurança e IA.",
     "filters": {
       "all": "Todas Certificacoes",
       "aws": "AWS",
       "google": "Google",
       "fiap": "FIAP",
       "uci": "UCI",
-      "udemy": "Udemy"
+      "udemy": "Udemy",
+      "community": "Comunidade",
+      "anthropic": "Anthropic",
+      "openai": "OpenAI"
     },
     "showing": "Mostrando",
     "of": "de",
@@ -132,12 +181,12 @@
     "certs": {
       "awsSolutionsArchitect": {
         "name": "AWS Certified Solutions Architect",
-        "description": "Demonstra expertise em projetar sistemas distribuídos na AWS, incluindo serviços de computação, rede, armazenamento e banco de dados.",
+        "description": "Aborda o design de sistemas distribuídos na AWS, incluindo computação, rede, armazenamento e bancos de dados.",
         "skills": "AWS,Arquitetura em Nuvem,EC2,S3,RDS,Lambda"
       },
       "awsMigration": {
         "name": "Migrating to the AWS Cloud",
-        "description": "Curso abrangente sobre migração AWS cobrindo o processo de três fases: avaliar, mobilizar e migrar. Aprenda AWS Migration Hub, Application Migration Service, Database Migration Service e melhores práticas de migração em nuvem.",
+        "description": "Curso de migração para a AWS sobre avaliar, mobilizar e migrar, além do AWS Migration Hub, Application Migration Service e Database Migration Service.",
         "skills": "Migração AWS,Migração em Nuvem,AWS Migration Hub,Migração de Banco de Dados,Migração de Aplicações"
       },
       "fiapJava": {
@@ -147,12 +196,12 @@
       },
       "fiapCyber": {
         "name": "FIAP Cybersecurity Skills",
-        "description": "Nano curso abrangente de cibersegurança cobrindo fundamentos de segurança, análise de ameaças e estratégias defensivas.",
+        "description": "Fundamentos de cibersegurança, análise de ameaças e estratégias defensivas.",
         "skills": "Cibersegurança,Análise de Ameaças,Fundamentos de Segurança,Segurança Defensiva"
       },
       "fiapDotnet": {
         "name": "FIAP .NET Development",
-        "description": "Nano curso de desenvolvimento .NET cobrindo C#, ASP.NET e práticas modernas de desenvolvimento do framework .NET.",
+        "description": "Desenvolvimento .NET com C#, ASP.NET e práticas atuais do framework .NET.",
         "skills": "C#,.NET,ASP.NET,Desenvolvimento Web"
       },
       "fiapBlockchain": {
@@ -182,38 +231,94 @@
       },
       "uciPM": {
         "name": "Project Management",
-        "description": "Especialização abrangente em gerenciamento de projetos cobrindo liderança de projetos, planejamento de ponta a ponta, gerenciamento de riscos e stakeholders, planejamento de recursos e gerenciamento de múltiplos projetos. Satisfaz os requisitos educacionais do exame PMI PMP.",
+        "description": "Especialização em gerenciamento de projetos sobre liderança, planejamento, riscos, stakeholders, recursos e múltiplos projetos. Atende aos requisitos educacionais do exame PMI PMP.",
         "skills": "Gerenciamento de Projetos,Planejamento de Projetos,Gerenciamento de Riscos,Gerenciamento de Stakeholders,Planejamento de Recursos,PMBOK"
       },
       "udemyPython": {
         "name": "The Complete Python Bootcamp From Zero to Hero",
-        "description": "Bootcamp completo de Python (22,5 horas) cobrindo fundamentos de Python, programação orientada a objetos, web scraping, análise de dados e conceitos avançados de Python. Avaliado 4.6/5 com mais de 560K alunos.",
+        "description": "Bootcamp de Python (22,5 horas) sobre fundamentos, programação orientada a objetos, web scraping, análise de dados e Python avançado. Avaliado em 4,6/5 por mais de 560 mil alunos.",
         "skills": "Python,Programação Orientada a Objetos,Web Scraping,Análise de Dados,Python Avançado"
       },
       "udemyFullstack": {
         "name": "Desenvolvimento Web Completo - 20 Cursos + 20 Projetos",
         "description": "Curso completo de Desenvolvimento Web (20 cursos + 20 projetos) cobrindo HTML5, CSS3, SASS, Bootstrap 5, JavaScript ES6/ES7, PHP 7, POO, MySQL, jQuery, MVC, APIs, IONIC, WordPress e Git. Construa aplicações web e mobile do mundo real, do frontend ao backend com integração de banco de dados.",
         "skills": "HTML5,CSS3,JavaScript,PHP,MySQL,Bootstrap,jQuery,MVC,APIs,IONIC,WordPress,Git,SASS"
+      },
+      "curseForgeHighCrafter": {
+        "name": "CurseForge Legends: High Crafter",
+        "milestone": "1.000.000 downloads",
+        "description": "Conquista recebida ao alcançar 1 milhão de downloads no CurseForge.",
+        "skills": "Contribuição para a comunidade,Downloads do projeto,Conquista de criador"
+      },
+      "curseForgeRisingBuilder": {
+        "name": "CurseForge Legends: Rising Builder",
+        "milestone": "500.000 downloads",
+        "description": "Conquista recebida ao alcançar 500 mil downloads no CurseForge.",
+        "skills": "Contribuição para a comunidade,Downloads do projeto,Conquista de criador"
+      },
+      "curseForgeForgeborn": {
+        "name": "CurseForge Legends: Forgeborn",
+        "milestone": "100.000 downloads",
+        "description": "Conquista recebida ao alcançar 100 mil downloads no CurseForge.",
+        "skills": "Contribuição para a comunidade,Downloads do projeto,Conquista de criador"
+      },
+      "claudeApi": {
+        "name": "Building with the Claude API",
+        "description": "Certificação da Claude Academy sobre como criar aplicações com a API do Claude.",
+        "skills": "API do Claude,Claude Code,IA generativa,Integração de API"
+      },
+      "openaiAgents": {
+        "name": "Agentes e Workflows",
+        "date": "28 de agosto de 2026",
+        "description": "Certificado de conclusão da OpenAI Academy: Agentes e Workflows.",
+        "skills": "Agentes de IA,Codex,Workflows"
+      },
+      "openaiFoundations": {
+        "name": "Fundamentos de IA",
+        "date": "28 de agosto de 2026",
+        "description": "Certificado de conclusão da OpenAI Academy: Fundamentos de IA.",
+        "skills": "Fundamentos de IA,ChatGPT,OpenAI"
+      },
+      "openaiAppliedFoundations": {
+        "name": "Fundamentos de IA Aplicada",
+        "date": "28 de agosto de 2026",
+        "description": "Certificado de conclusão da OpenAI Academy: Fundamentos de IA Aplicada.",
+        "skills": "IA aplicada,ChatGPT,API da OpenAI"
       }
-    }
+    },
+    "filter": "Filtrar",
+    "noResults": "Nenhuma certificação encontrada com esses critérios.",
+    "type": "Certificação",
+    "skillsCovered": "Habilidades cobertas",
+    "viewCredential": "Ver credencial",
+    "closeDetails": "Fechar detalhes da certificação"
   },
   "liveCoding": {
     "title": "CODIFICAÇÃO AO VIVO",
-    "description": "Sessões de codificação ao vivo gravadas automaticamente do meu fluxo de trabalho de desenvolvimento",
+    "description": "Codificação ao vivo do meu fluxo de desenvolvimento.",
     "loading": "Carregando última sessão...",
     "lastUpdated": "Última atualização",
     "viewOnGithub": "Ver no GitHub",
-    "autoRecorded": "Sessão de codificação ao vivo gravada automaticamente",
     "refresh": "Atualizar",
     "tryAgain": "Tentar novamente",
-    "fileName": "sessao-codificacao-ao-vivo.gif"
+    "fileName": "sessao-codificacao-ao-vivo.gif",
+    "feedEyebrow": "Codificação ao vivo",
+    "runtimeSignal": "Execução / Sessão gravada",
+    "sourceChannel": "CANAL DE ORIGEM",
+    "lastTransmission": "ÚLTIMA TRANSMISSÃO",
+    "snapshotSynced": "Snapshot sincronizado",
+    "awaitingSnapshot": "Aguardando próximo snapshot",
+    "imageAlt": "Sessão de codificação ao vivo",
+    "readmeError": "Falha ao buscar README",
+    "gifMissingError": "URL do GIF não encontrada no README",
+    "unknownError": "Erro desconhecido"
   },
   "about": {
     "title": "Sobre Mim",
     "eyebrow": "SOBRE",
     "background": "Histórico",
-    "backgroundText1": "Desenvolvedor Full-Stack e Analista de Cibersegurança em formação com mais de 2 anos de experiência em projetos autônomos, atuando no desenvolvimento de sistemas Java com mais de 1 milhão de downloads em produção. Cursando Ciência da Computação na UNESA e Cibersegurança no Centro Universitário FIAP.",
-    "backgroundText2": "Foco em arquitetura de software, performance, seguranca e integracao de APIs. Experiencia com Java e Spring Boot, utilizando Redis, SQL e AWS, aplicando boas praticas como Clean Code e principios de organizacao e escalabilidade para construcao de APIs REST.",
+    "backgroundText1": "Sou Desenvolvedor Full-Stack e Analista de Cibersegurança, com mais de 2 anos construindo sistemas Java com mais de 1 milhão de downloads em produção. Estudo Ciência da Computação na UNESA e Cibersegurança no Centro Universitário FIAP.",
+    "backgroundText2": "Foco em arquitetura de software, performance, segurança e integração de APIs. Uso Java, Spring Boot, Redis, SQL e AWS para construir APIs REST com Clean Code e espaço para escalar.",
     "expertise": "Habilidades",
     "security": "Linguagens & Back-end",
     "development": "Front-end",
@@ -222,8 +327,81 @@
     "securityTools": "Ferramentas de Segurança",
     "devtools": "DevOps & Cloud",
     "aiTools": "IA & LLMs",
+    "execution": "Execução",
     "philosophy": "Experiência",
-    "philosophyText1": "Autonomo - Desenvolvedor de Software com enfase em Java (2023): Desenvolvimento e manutencao de aplicacoes Java de grande escala, com mais de 1 milhao de downloads em producao. Responsavel pelo ciclo completo de desenvolvimento, incluindo implementacao, testes, debugging e correcao de bugs.",
-    "philosophyText2": "Bungo Stray ERP - Desenvolvedor Full-Stack com foco em Back-end (2026): Desenvolvimento de um sistema ERP multi-tenant escalavel, utilizando Java 17 e Spring Boot. Autenticacao JWT com Spring Security, RBAC e hash de senha utilizando BCrypt e Argon2id. Persistencia de dados utilizando Apache Cassandra e camada de cache com Redis."
+    "philosophyText1": "Autônomo · Desenvolvedor de software com foco em Java (2023). Desenvolvi e mantive aplicações Java de grande escala com mais de 1 milhão de downloads em produção. Atuei em implementação, testes, debugging e correção de bugs durante todo o ciclo de desenvolvimento.",
+    "philosophyText2": "Bungo Stray ERP · Desenvolvedor Full-Stack com foco em back-end (2026). Desenvolvi um sistema ERP multi-tenant com Java 17 e Spring Boot. Implementei autenticação JWT com Spring Security, RBAC, hash de senhas com BCrypt e Argon2id, persistência no Cassandra e cache com Redis.",
+    "profileSignal": "Perfil",
+        "stackStatus": "Status do stack / {count, plural, =0 {SINCRONIZANDO} other {# REPOS}}",
+    "story": {
+      "backgroundLabel": "01 / TRAJETÓRIA",
+      "backgroundSignal": "2+ ANOS / 1M+ DOWNLOADS",
+      "backgroundDetail": "Arquitetura de software / performance / integração de APIs",
+    "expertiseLabel": "02 / FOCO",
+      "expertiseBody": "Trabalho com sistemas seguros, interfaces, dados, infraestrutura cloud e fluxos assistidos por IA.",
+      "expertiseSignal": "7 DOMÍNIOS / 1 SISTEMA",
+      "expertiseDetail": "Linguagens / front-end / dados / segurança / cloud / IA",
+      "experienceLabel": "03 / EXPERIÊNCIA",
+      "experienceSignal": "CONSTRUIR / TESTAR / FORTALECER",
+      "experienceDetail": "Java em produção / ERP multi-tenant / autenticação / cache",
+      "sectionLabel": "NOTAS DE CAMPO / 01",
+      "prompt": "Role para rastrear o sistema",
+      "traceLabel": "ROLAR / RASTREAR / CONSTRUIR",
+      "moduleLabel": "/ módulo"
+    }
+  }
+,
+  "notFound": {
+    "description": "Página não encontrada",
+    "home": "Ir para o início"
+  },
+  "chat": {
+    "title": "Chat ao vivo",
+    "signOut": "Sair",
+    "signInGithub": "Entrar com GitHub",
+    "emptyState": "Ainda não há mensagens. Seja o primeiro a dizer algo!",
+    "inputPlaceholder": "Digite uma mensagem… (Enter para enviar)",
+    "send": "Enviar",
+    "joinConversation": "para entrar na conversa"
+  },
+  "metadata": {
+    "title": "M.S Creative Technologist",
+    "description": "Portfólio de desenvolvimento full-stack e cibersegurança, com Java, arquitetura, infraestrutura cloud e projetos open source.",
+    "about": {
+      "title": "Sobre",
+      "description": "Experiência, habilidades e trajetória em cibersegurança e desenvolvimento full-stack."
+    },
+    "projects": {
+      "title": "Projetos",
+      "description": "Projetos em Java, web, cibersegurança e open source."
+    },
+    "certifications": {
+      "title": "Certificações",
+      "description": "Credenciais em cibersegurança, desenvolvimento de software, cloud e IA."
+    },
+    "contact": {
+      "title": "Contato",
+      "description": "Fale comigo sobre trabalho em desenvolvimento de software e cibersegurança."
+    },
+    "chat": {
+      "title": "Chat ao vivo",
+      "description": "Chat ao vivo para conversar sobre projetos e portfólio."
+    }
+  },
+  "tech": {
+    "inspect": "Inspecionar",
+    "signalEyebrow": "Stack",
+    "signalTitle": "Tecnologias",
+    "capabilityMap": "Mapa de capacidades",
+    "closeDetails": "Fechar detalhes da tecnologia",
+    "category": "Categoria",
+    "keyFeatures": "Principais recursos",
+    "learnMore": "Saiba mais"
+  },
+  "boot": {
+    "authLine": "ACESSO :: CONCEDIDO",
+    "statusAria": "Sequência de autorização do Monarca das Sombras",
+    "authorization": "Autorização do jogador",
+    "systemOnline": "SISTEMA // ONLINE"
   }
 }

@@ -1,13 +1,23 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Github, ExternalLink, Star, GitFork } from 'lucide-react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
+import { useRef, useState } from 'react';
+import { Github, ExternalLink, FileText, Star, GitFork } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/useHydrated';
 import SafeImage from './SafeImage';
 import ImageSlideshow from './ImageSlideshow';
 import { safeGithubUrl, safeExternalUrl } from '@/lib/url';
 import { getLanguageImage } from '@/lib/languageIcon';
+import { useTranslations } from 'next-intl';
 
 interface Repo {
   id: number;
@@ -22,11 +32,16 @@ interface Repo {
   previewImage?: string;
   isVideo?: boolean;
   techStack?: string[];
+  owner?: {
+    login: string;
+  };
 }
 
 interface SoloLevelingProjectCardProps {
   repo: Repo;
   index: number;
+  onReadme?: (repo: Repo) => void;
+  featured?: boolean;
 }
 
 const LANG_COLORS: Record<string, string> = {
@@ -78,9 +93,29 @@ function langColor(lang: string | null, colors: typeof DARK_COLORS): string {
 export default function SoloLevelingProjectCard({
   repo,
   index,
+  onReadme,
+  featured = false,
 }: SoloLevelingProjectCardProps) {
   const mounted = useHydrated();
+  const t = useTranslations('projects');
   const { resolvedTheme } = useTheme();
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const mouseXSpring = useSpring(mouseX, { stiffness: 260, damping: 28 });
+  const mouseYSpring = useSpring(mouseY, { stiffness: 260, damping: 28 });
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const rotateX = useSpring(
+    useTransform(pointerY, [-0.5, 0.5], shouldReduceMotion ? [0, 0] : [5, -5]),
+    { stiffness: 300, damping: 30 },
+  );
+  const rotateY = useSpring(
+    useTransform(pointerX, [-0.5, 0.5], shouldReduceMotion ? [0, 0] : [-5, 5]),
+    { stiffness: 300, damping: 30 },
+  );
 
   // Pick palette based on resolved theme; default to dark until hydrated
   const C = mounted && resolvedTheme === 'light' ? LIGHT_COLORS : DARK_COLORS;
@@ -110,13 +145,72 @@ export default function SoloLevelingProjectCard({
   const isLanguageIcon =
     hasPreview && previewImages[0].startsWith('/icons/');
 
+  const spotlightBackground = useMotionTemplate`
+    radial-gradient(
+      300px circle at ${mouseXSpring}px ${mouseYSpring}px,
+      ${isLight ? 'rgba(59,130,246,0.18)' : 'rgba(168,85,247,0.2)'},
+      transparent 78%
+    )
+  `;
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
+    if (shouldReduceMotion || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = Math.max(-0.5, Math.min(0.5, (event.clientX - rect.left) / rect.width - 0.5));
+    const y = Math.max(-0.5, Math.min(0.5, (event.clientY - rect.top) / rect.height - 0.5));
+    pointerX.set(x);
+    pointerY.set(y);
+    mouseX.set(event.clientX - rect.left);
+    mouseY.set(event.clientY - rect.top);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    pointerX.set(0);
+    pointerY.set(0);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  const handleCardClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (!onReadme) return;
+    const target = event.target;
+    if (target instanceof Element && target.closest('a, button, video')) return;
+    onReadme(repo);
+  };
+
+  const handleCardKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (!onReadme || event.target !== event.currentTarget) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onReadme(repo);
+    }
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+    <motion.article
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 40, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.7, delay: index * 0.06 }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.7, delay: shouldReduceMotion ? 0 : index * 0.06 }}
+      whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
+      ref={cardRef}
+      aria-labelledby={`project-title-${repo.id}`}
+      role={onReadme ? 'button' : undefined}
+      tabIndex={onReadme ? 0 : undefined}
       className="group relative overflow-hidden"
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+      onMouseEnter={event => {
+        setIsHovered(true);
+        handleMouseMove(event);
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
+        rotateX,
+        rotateY,
+        transformPerspective: 1000,
+        transformStyle: 'preserve-3d',
         clipPath: `
           polygon(
             0 0,
@@ -139,6 +233,27 @@ export default function SoloLevelingProjectCard({
         `,
       }}
     >
+      <AnimatePresence>
+        {!shouldReduceMotion && isHovered && (
+          <motion.span
+            layoutId="project-card-hover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.15 } }}
+            exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.1 } }}
+            className="pointer-events-none absolute inset-0 z-20"
+            style={{ background: `${C.primaryBright}0d` }}
+          />
+        )}
+      </AnimatePresence>
+
+      {!shouldReduceMotion && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-px z-30 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{ background: spotlightBackground }}
+        />
+      )}
+
       {/* BACKGROUND NOISE */}
       <div
         className="absolute inset-0 opacity-[0.045] pointer-events-none"
@@ -164,8 +279,8 @@ export default function SoloLevelingProjectCard({
       {/* KAGUNE GLOW — purple/blue tint only outside image area */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        animate={{ opacity: [0.15, 0.28, 0.15], scale: [1, 1.03, 1] }}
-        transition={{ duration: 5, repeat: Infinity }}
+        animate={shouldReduceMotion ? { opacity: 0.15, scale: 1 } : { opacity: [0.15, 0.28, 0.15], scale: [1, 1.03, 1] }}
+        transition={shouldReduceMotion ? { duration: 0 } : { duration: 5, repeat: Infinity }}
         style={{
           background: `radial-gradient(circle at 50% 120%, ${C.glow}, transparent 55%)`,
           // NO mixBlendMode here — keeps glow on the card bg, never touches image pixels
@@ -173,16 +288,18 @@ export default function SoloLevelingProjectCard({
       />
 
       {/* GLITCH SWEEP */}
-      <motion.div
-        className="absolute inset-y-0 -left-[40%] w-[30%] pointer-events-none"
-        animate={{ x: ['0%', '420%'] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-        style={{
-          background: `linear-gradient(90deg, transparent, ${isLight ? 'rgba(30,100,240,0.1)' : 'rgba(120,0,255,0.12)'}, transparent)`,
-          transform: 'skewX(-20deg)',
-          filter: 'blur(8px)',
-        }}
-      />
+      {!shouldReduceMotion && (
+        <motion.div
+          className="absolute inset-y-0 -left-[40%] w-[30%] pointer-events-none"
+          animate={{ x: ['0%', '420%'] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+          style={{
+            background: `linear-gradient(90deg, transparent, ${isLight ? 'rgba(30,100,240,0.1)' : 'rgba(120,0,255,0.12)'}, transparent)`,
+            transform: 'skewX(-20deg)',
+            filter: 'blur(8px)',
+          }}
+        />
+      )}
 
       {/* CORNERS */}
       <div
@@ -219,7 +336,8 @@ export default function SoloLevelingProjectCard({
          
 
             <h2
-              className="truncate text-[18px] font-black uppercase tracking-[0.24em]"
+              id={`project-title-${repo.id}`}
+              className={`truncate font-black uppercase tracking-[0.24em] ${featured ? 'text-[20px] md:text-[22px]' : 'text-[18px]'}`}
               style={{
                 fontFamily: 'var(--font-eternal)',
                 color: C.white,
@@ -231,8 +349,8 @@ export default function SoloLevelingProjectCard({
           </div>
 
           <motion.div
-            animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.08, 1] }}
-            transition={{ duration: 2.4, repeat: Infinity }}
+            animate={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: [0.4, 1, 0.4], scale: [1, 1.08, 1] }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 2.4, repeat: Infinity }}
             className="relative flex h-11 w-11 items-center justify-center"
             style={{
               border: `1px solid ${C.primary}33`,
@@ -264,7 +382,7 @@ export default function SoloLevelingProjectCard({
           <div
             className="relative mb-5 overflow-hidden"
             style={{
-              aspectRatio: isLanguageIcon ? '1 / 1' : '16 / 9',
+              aspectRatio: isLanguageIcon ? '1 / 1' : featured ? '21 / 9' : '16 / 9',
               clipPath: `
                 polygon(
                   0 0,
@@ -293,8 +411,8 @@ export default function SoloLevelingProjectCard({
             {/* DISTORTION LINES — opacity-only, NO mixBlendMode */}
             <motion.div
               className="absolute inset-0 z-10 pointer-events-none"
-              animate={{ opacity: [0.05, 0.10, 0.05] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={shouldReduceMotion ? { opacity: 0.05 } : { opacity: [0.05, 0.10, 0.05] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 2, repeat: Infinity }}
               style={{
                 background: `repeating-linear-gradient(
                   90deg,
@@ -321,7 +439,7 @@ export default function SoloLevelingProjectCard({
               <div className="flex h-full w-full items-center justify-center p-10">
                 <SafeImage
                   src={previewImages[0]}
-                  alt={repo.language ?? 'Language icon'}
+                  alt={repo.language ?? t('languageIcon')}
                   width={140}
                   height={140}
                   className="object-contain"
@@ -347,7 +465,7 @@ export default function SoloLevelingProjectCard({
           className="relative mb-5 text-sm leading-relaxed"
           style={{ fontFamily: 'var(--font-body)', color: C.muted }}
         >
-          {repo.description || 'No description available'}
+          {repo.description || t('noDescription')}
         </p>
 
         {/* STATS */}
@@ -402,6 +520,23 @@ export default function SoloLevelingProjectCard({
 
         {/* BUTTONS */}
         <div className="flex gap-3">
+          {onReadme && (
+            <button
+              type="button"
+              onClick={() => onReadme(repo)}
+              className="group/button relative flex flex-1 items-center justify-center gap-2 overflow-hidden px-4 py-3 text-xs uppercase tracking-[0.2em] transition-all duration-300"
+              style={{
+                clipPath: 'polygon(0 0,100% 0,92% 100%,0 100%)',
+                border: `1px solid ${C.primary}59`,
+                background: `${C.primary}14`,
+                color: C.primaryBright,
+              }}
+              aria-label={`${t('inspectReadme')}: ${repo.name}`}
+            >
+              <FileText className="relative z-10 h-4 w-4" />
+              <span className="relative z-10">{t('inspectReadme')}</span>
+            </button>
+          )}
           <a
             href={safeGithubUrl(repo.html_url) ?? '#'}
             target="_blank"
@@ -421,7 +556,7 @@ export default function SoloLevelingProjectCard({
               }}
             />
             <Github className="relative z-10 h-4 w-4" />
-            <span className="relative z-10">Archive</span>
+            <span className="relative z-10">{t('archive')}</span>
           </a>
 
           {safeExternalUrl(repo.homepage) && (
@@ -444,7 +579,7 @@ export default function SoloLevelingProjectCard({
                 }}
               />
               <ExternalLink className="relative z-10 h-4 w-4" />
-              <span className="relative z-10">Deploy</span>
+              <span className="relative z-10">{t('deploy')}</span>
             </a>
           )}
         </div>
@@ -482,18 +617,13 @@ export default function SoloLevelingProjectCard({
                 boxShadow: `0 0 10px ${C.primary}e6`,
                 clipPath: 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
               }}
-              animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1, 0.7] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay }}
+              animate={shouldReduceMotion ? { opacity: 0.7, scale: 1 } : { opacity: [0.2, 1, 0.2], scale: [0.7, 1, 0.7] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 1.5, repeat: Infinity, delay }}
             />
           ))}
         </div>
       </div>
 
-      <style jsx>{`
-        .group:hover {
-          transform: translateY(-4px);
-        }
-      `}</style>
-    </motion.div>
+    </motion.article>
   );
 }

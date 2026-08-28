@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { InfiniteMarquee } from './InfiniteMarquee';
 
 export default function MetricsTicker() {
   const t = useTranslations('hero');
@@ -21,9 +22,11 @@ export default function MetricsTicker() {
 
   return (
     <div className="metrics-ticker-wrapper">
-      <div className="metrics-ticker">
-        <span className="scroll-text">{text}</span>
-      </div>
+      <InfiniteMarquee
+        items={[<span key={text} className="scroll-text">{text}</span>]}
+        speed={28}
+        className="metrics-ticker"
+      />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Teko, Rajdhani, Noto_Sans_KR } from 'next/font/google';
 import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
 import { useHydrated } from '@/hooks/useHydrated';
 
 interface SoloLevelingBootProps {
@@ -42,9 +43,6 @@ const PANEL_EASE = [0.78, 0, 0.2, 1] as const;
 const REVEAL_MS = 1300;
 const FINISH_MS = 2600;
 const REDUCED_FINISH_MS = 700;
-
-// Boot log that types out before the gate opens.
-const AUTH_LINE = 'ACCESS :: GRANTED';
 
 /**
  * Matrix-style glyph rain, painted on a canvas so it never triggers React
@@ -171,6 +169,7 @@ function useTypewriter(text: string, start: boolean, reduceMotion: boolean) {
  * panels slide apart (the shadow wipe) before the overlay fades and unmounts.
  */
 export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) {
+  const t = useTranslations('boot');
   const [revealed, setRevealed] = useState(false);
   const [visible, setVisible] = useState(true);
   const reduceMotion = useReducedMotion();
@@ -186,7 +185,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  const typed = useTypewriter(AUTH_LINE, visible, Boolean(reduceMotion));
+  const typed = useTypewriter(t('authLine'), visible, Boolean(reduceMotion));
 
   useEffect(() => {
     // revealed/visible already initialise to false/true via useState, so no
@@ -232,7 +231,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
         <motion.div
           key="solo-leveling-intro"
           role="status"
-          aria-label="Shadow Monarch authorization sequence"
+          aria-label={t('statusAria')}
           aria-live="polite"
           className={`${systemFont.className} sl-intro ${isLight ? 'sl-theme-light' : ''} fixed inset-0 z-[9999] overflow-hidden text-white`}
           initial={{ opacity: 1 }}
@@ -304,7 +303,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
                 <div aria-hidden="true" className="sl-corner sl-corner-br" />
 
                 <p className="sl-system-label mb-3 flex items-center justify-center gap-2 text-[9px] font-semibold uppercase tracking-[0.34em] sm:text-[10px]">
-                  <span>Player authorization</span>
+                  <span>{t('authorization')}</span>
                   <span className={`${koreanFont.className} sl-kr`}>각성</span>
                 </p>
 
@@ -326,7 +325,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
                   <span className="sl-status-dot" />
                   <span className="sl-status-line" />
                   <span className="sl-status-code text-[8px] font-medium tracking-[0.28em] sm:text-[9px]">
-                    SYSTEM // ONLINE
+                    {t('systemOnline')}
                   </span>
                   <span className="sl-status-line sl-status-line-reverse" />
                   <span className="sl-status-dot" />

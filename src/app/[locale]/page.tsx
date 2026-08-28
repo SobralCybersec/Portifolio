@@ -16,8 +16,8 @@ const KeyboardNav = dynamic(() => import('@/components/KeyboardNav'), { ssr: fal
 const Skills = dynamic(() => import('@/components/Skills'), { ssr: false });
 const GitHubProjects = dynamic(() => import('@/components/GitHubProjects'), { ssr: false });
 const Contact = dynamic(() => import('@/components/Contact'), { ssr: false });
-const TechCarousel = dynamic(() => import('@/components/TechCarousel'), { ssr: false });
 const LivePreview = dynamic(() => import('@/components/LivePreview'), { ssr: false });
+const TechCarousel = dynamic(() => import('@/components/TechCarousel'), { ssr: false });
 
 interface Repo {
   id: number;
@@ -92,17 +92,13 @@ export default function Page() {
               <Hero />
             </div>
             
-            <div className="page-section" id="live">
+          <div className="page-section" id="live">
               <LivePreview />
             </div>
 
 
             <div className="page-section" id="skills">
-             <Skills repos={repos} />
-            </div>
-
-            <div className="page-section" id="tech">
-              <TechCarousel />
+              <Skills repos={repos} techSignal={<TechCarousel compact />} />
             </div>
 
             <div className="page-section" id="contact">

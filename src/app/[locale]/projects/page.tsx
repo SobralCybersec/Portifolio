@@ -4,12 +4,17 @@ import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import { AnimatedText, GradientText } from '@/components/AnimatedText';
 import { useClickSound } from '@/hooks/useClickSound';
-import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 import SoloLevelingProjectCard from '@/components/SoloLevelingProjectCard';
 import FilterDropdown from '@/components/FilterDropdown';
 import ScrollEffect from '@/components/ScrollEffect';
+import ScrollProgress from '@/components/ScrollProgress';
+import ScrollReveal from '@/components/ScrollReveal';
+import ProjectReadmeModal from '@/components/ProjectReadmeModal';
 
 const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
@@ -17,10 +22,10 @@ const ParticleBackground = dynamic(() => import('@/components/ParticleBackground
 interface Repo {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   html_url: string;
   homepage: string | null;
-  language: string;
+  language: string | null;
   stargazers_count: number;
   forks_count: number;
   topics: string[];
@@ -28,20 +33,25 @@ interface Repo {
   allLanguages?: string[];
   isVideo?: boolean;
   techStack?: string[];
+  owner?: {
+    login: string;
+  };
 }
 
 export default function ProjectsPage() {
   useClickSound();
   const { theme } = useTheme();
   const t = useTranslations('projects');
+  const shouldReduceMotion = useReducedMotion();
   const [projects, setProjects] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedTech, setSelectedTech] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProject, setSelectedProject] = useState<Repo | null>(null);
 
   const filters = [
-    { id: 'all', label: 'All Projects' },
+    { id: 'all', label: t('filters.allProjects') },
     { id: 'java', label: 'Java', icon: '/icons/java.png' },
     { id: 'typescript', label: 'TypeScript', icon: '/icons/typescript.png' },
     { id: 'javascript', label: 'JavaScript', icon: '/icons/javascript.png' },
@@ -57,7 +67,7 @@ export default function ProjectsPage() {
   ];
 
   const techFilters = [
-    { id: 'all', label: 'All Technologies' },
+    { id: 'all', label: t('filters.allTechnologies') },
     { id: 'react', label: 'React', icon: '/icons/react.png' },
     { id: 'nextjs', label: 'Next.js', icon: '/icons/nextjs.png' },
     { id: 'spring', label: 'Spring', icon: '/icons/spring.png' },
@@ -73,25 +83,40 @@ export default function ProjectsPage() {
     { id: 'cuda', label: 'Cuda', icon: '/icons/cuda.png' },
   ];
 
-  const filteredProjects = projects.filter(project => {
-  const matchesLanguage = selectedFilter === 'all' ||
-    project.allLanguages?.includes(selectedFilter.toLowerCase()) ||
-    project.language?.toLowerCase() === selectedFilter.toLowerCase();
+  const filteredProjects = useMemo(() => projects.filter(project => {
+    const matchesLanguage = selectedFilter === 'all' ||
+      project.allLanguages?.includes(selectedFilter.toLowerCase()) ||
+      project.language?.toLowerCase() === selectedFilter.toLowerCase();
 
-  const matchesTech = selectedTech === 'all' ||
-    project.topics?.some(topic =>
-      topic.toLowerCase().split(/[-_\s]/).includes(selectedTech.toLowerCase())
-    ) ||
-    project.techStack?.some(tech =>
-      tech.toLowerCase().split(/[-_\s]/).includes(selectedTech.toLowerCase())
-    );
+    const matchesTech = selectedTech === 'all' ||
+      project.topics?.some(topic =>
+        topic.toLowerCase().split(/[-_\s]/).includes(selectedTech.toLowerCase())
+      ) ||
+      project.techStack?.some(tech =>
+        tech.toLowerCase().split(/[-_\s]/).includes(selectedTech.toLowerCase())
+      );
 
-  const matchesSearch = searchQuery === '' ||
-    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = searchQuery === '' ||
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-  return matchesLanguage && matchesTech && matchesSearch;
-});
+    return matchesLanguage && matchesTech && matchesSearch;
+  }), [projects, searchQuery, selectedFilter, selectedTech]);
+
+  const projectMetrics = useMemo(() => {
+    const languages = new Set<string>();
+
+    projects.forEach(project => {
+      (project.allLanguages?.length ? project.allLanguages : project.language ? [project.language] : [])
+        .forEach(language => languages.add(language.toLowerCase()));
+    });
+
+    return {
+      languages: languages.size,
+      stars: projects.reduce((total, project) => total + project.stargazers_count, 0),
+      previews: projects.filter(project => project.previewImage && !project.previewImage.startsWith('/icons/')).length,
+    };
+  }, [projects]);
 
   useEffect(() => {
     async function fetchProjects() {
@@ -112,13 +137,23 @@ export default function ProjectsPage() {
     return (
       <>
         <Navigation />
-        <main className={`min-h-screen pt-20 ${theme === 'dark' ? 'bg-[#09090b]' : 'bg-white'}`}>
-          <div className="container mx-auto px-4 py-16">
-            <div className="max-w-6xl mx-auto text-center">
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>{t('loading')}</p>
-              <div className="mt-4 w-64 h-1 mx-auto bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-                <div className={`h-full animate-pulse ${theme === 'dark' ? 'bg-purple-500' : 'bg-blue-500'}`} style={{ width: '60%' }}></div>
-              </div>
+        <main className="min-h-[100dvh] pt-20">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24">
+            <div className="mb-12 max-w-3xl">
+              <div className={`mb-5 h-3 w-28 bg-[var(--theme-primary)]/20 ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+              <div className={`h-16 w-3/4 bg-[var(--bg-card)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+              <div className={`mt-5 h-5 w-full max-w-2xl bg-[var(--bg-card)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[0, 1, 2].map(index => (
+                <div key={index} className={`h-[430px] border border-[var(--border)] bg-[var(--bg-card)]/50 ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+              ))}
+            </div>
+            <div className="mt-8 flex items-center justify-center gap-3 text-sm text-[var(--text-muted)]">
+              <span>{t('loading')}</span>
+              <span className="h-1 w-20 overflow-hidden bg-[var(--border)]">
+                <span className={`block h-full w-3/5 bg-[var(--theme-primary)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+              </span>
             </div>
           </div>
         </main>
@@ -129,82 +164,181 @@ export default function ProjectsPage() {
   return (
     <>
       <Navigation />
+      {shouldReduceMotion !== true && <ScrollProgress />}
       <div className="page-grid-overlay" />
       {theme === 'dark' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
-          <HexagonGrid 
-            cellSize={60} 
-            glowColor="rgba(168, 85, 247, 0.6)" 
+          <HexagonGrid
+            cellSize={60}
+            glowColor="rgba(168, 85, 247, 0.6)"
             lineColor="rgba(168, 85, 247, 0.08)"
             glowInterval={150}
             maxSimultaneous={6}
           />
         </div>
       )}
-      <main className="min-h-screen pt-20 relative">
+      <main className="relative min-h-[100dvh] pt-20">
         <ScrollEffect />
         <ParticleBackground />
-        <div className="container mx-auto px-4 py-16 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <AnimatedText className="mb-4">
-              <p className="text-sm uppercase tracking-wider text-[var(--text-muted)] font-semibold" style={{ fontFamily: 'var(--font-eternal)' }}>{t('work')}</p>
-            </AnimatedText>
-            
-            <AnimatedText delay={0.1} className="mb-12">
-              <h1 className="text-5xl font-bold" style={{ fontFamily: 'var(--font-eternal)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                <GradientText>{t('title')}</GradientText>
-              </h1>
-            </AnimatedText>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <section className="relative overflow-hidden border-b border-[var(--border)] py-14 md:py-20">
+            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[var(--theme-primary)]/10 blur-3xl" />
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end">
+              <div>
+                <AnimatedText className="mb-5">
+                  <div className="flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--theme-primary)]">
+                    <span aria-hidden="true" className="h-px w-8 bg-[var(--theme-primary)]" />
+                    <span className="text-[var(--text-muted)]/60">/ {String(projects.length).padStart(2, '0')}</span>
+                  </div>
+                </AnimatedText>
 
-            {/* Filters and Search */}
-            <AnimatedText delay={0.2} className="mb-8">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-                  <FilterDropdown
-                    options={filters}
-                    selected={selectedFilter}
-                    onChange={setSelectedFilter}
-                    placeholder="Language"
-                  />
-                  <FilterDropdown
-                    options={techFilters}
-                    selected={selectedTech}
-                    onChange={setSelectedTech}
-                    placeholder="Technology"
-                  />
+                <AnimatedText delay={0.08}>
+                  <h1 className="max-w-4xl text-6xl font-black uppercase leading-[0.88] tracking-[-0.06em] text-[var(--text-primary)] sm:text-7xl md:text-8xl">
+                    <GradientText>{t('title')}</GradientText>
+                  </h1>
+                </AnimatedText>
+
+                <ScrollReveal
+                  containerClassName="mt-8 max-w-2xl"
+                  textClassName="text-base text-[var(--text-muted)] md:text-lg"
+                >
+                  {t('description')}
+                </ScrollReveal>
+              </div>
+
+              <motion.aside
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.6, delay: shouldReduceMotion ? 0 : 0.18 }}
+                className="relative overflow-hidden border border-[var(--theme-primary)]/30 bg-[var(--bg-card)]/65 p-5 backdrop-blur-sm sm:p-6"
+                aria-label={t('title')}
+              >
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--theme-primary)] to-transparent" />
+                <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
+                </div>
+                <div className="py-7 text-center">
+                  <div className="text-center">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{t('projectUnit')}</p>
+                    <p className="mt-2 text-6xl font-black tracking-[-0.08em] text-[var(--text-primary)]">{String(projects.length).padStart(2, '0')}</p>
+                  </div>
+                </div>
+                <dl className="grid grid-cols-3 gap-3 border-t border-[var(--border)] pt-4">
+                  <div>
+                    <dt className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--text-muted)]">LANG</dt>
+                    <dd className="mt-1 text-xl font-bold text-[var(--text-primary)]">{projectMetrics.languages || '--'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--text-muted)]">STARS</dt>
+                    <dd className="mt-1 text-xl font-bold text-[var(--text-primary)]">{projectMetrics.stars}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--text-muted)]">MEDIA</dt>
+                    <dd className="mt-1 text-xl font-bold text-[var(--text-primary)]">{projectMetrics.previews}</dd>
+                  </div>
+                </dl>
+              </motion.aside>
+            </div>
+          </section>
+
+          <section id="project-archive" className="scroll-mt-24 py-12 md:py-20">
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.26em] text-[var(--theme-primary)]">PROJECT ARCHIVE</p>
+                <h2 className="text-3xl font-black uppercase tracking-[-0.04em] text-[var(--text-primary)] md:text-5xl">{t('title')}</h2>
+              </div>
+              <p className="font-mono text-xs uppercase tracking-[0.15em] text-[var(--text-muted)]">
+                {t('showing')} <span className="text-[var(--text-primary)]">{filteredProjects.length}</span> {t('of')} {projects.length}
+              </p>
+            </div>
+
+            <div className="sticky top-16 z-30 mb-10 border border-[var(--border)] bg-[var(--bg-dark)]/90 shadow-[0_18px_60px_rgba(0,0,0,0.16)] backdrop-blur-xl">
+              <div className="flex flex-col gap-3 border-b border-[var(--border)] p-3 md:flex-row md:items-center md:justify-between md:px-4">
+                <div className="flex items-center gap-3">
+                  <SlidersHorizontal className="h-4 w-4 text-[var(--theme-primary)]" aria-hidden="true" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--text-muted)]">FILTERS</span>
+                  {(selectedFilter !== 'all' || selectedTech !== 'all' || searchQuery) && (
+                    <span className="border border-[var(--theme-primary)]/30 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--theme-primary)]">ACTIVE</span>
+                  )}
+                </div>
+                <div className="relative w-full md:w-72">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" aria-hidden="true" />
+                  <label htmlFor="project-search" className="sr-only">{t('filters.search')}</label>
                   <input
-                    type="text"
-                    placeholder="Search projects..."
+                    id="project-search"
+                    type="search"
+                    placeholder={t('filters.search')}
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--theme-primary)] transition-colors w-full md:flex-1"
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    className="w-full border border-[var(--border)] bg-[var(--bg-card)]/60 py-2.5 pl-10 pr-10 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--theme-primary)]"
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
+                      aria-label="Clear search"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  )}
                 </div>
               </div>
-            </AnimatedText>
-
-            {/* Results Count */}
-            <AnimatedText delay={0.25} className="mb-6">
-              <p className="text-sm text-[var(--text-muted)]">
-                Showing {filteredProjects.length} of {projects.length} projects
-              </p>
-            </AnimatedText>
-
-            {/* Project Cards Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.length > 0 ? (
-                filteredProjects.map((project, idx) => (
-                  <SoloLevelingProjectCard key={project.id} repo={project} index={idx} />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-[var(--text-muted)] text-lg">No projects found matching your criteria.</p>
-                </div>
-              )}
+              <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center md:px-4">
+                <FilterDropdown
+                  options={filters}
+                  selected={selectedFilter}
+                  onChange={setSelectedFilter}
+                  placeholder={t('filters.language')}
+                />
+                <FilterDropdown
+                  options={techFilters}
+                  selected={selectedTech}
+                  onChange={setSelectedTech}
+                  placeholder={t('filters.technology')}
+                />
+              </div>
             </div>
-          </div>
+
+            {filteredProjects.length > 0 ? (
+              <motion.div layout className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-12">
+                {filteredProjects.map((project, idx) => (
+                  <motion.div
+                    key={project.id}
+                    layout
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.45, delay: shouldReduceMotion ? 0 : Math.min(idx * 0.04, 0.2) }}
+                    className={filteredProjects.length === 1 ? 'lg:col-span-12' : idx === 0 ? 'lg:col-span-7' : idx === 1 ? 'lg:col-span-5' : 'lg:col-span-4'}
+                  >
+                    <SoloLevelingProjectCard
+                      repo={project}
+                      index={idx}
+                      onReadme={setSelectedProject}
+                      featured={idx === 0}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="border border-dashed border-[var(--border)] px-6 py-20 text-center"
+              >
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{t('noResults')}</p>
+              </motion.div>
+            )}
+          </section>
         </div>
       </main>
+      {selectedProject && (
+        <ProjectReadmeModal
+          owner={selectedProject.owner?.login ?? 'SobralCybersec'}
+          repoName={selectedProject.name}
+          githubUrl={selectedProject.html_url}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
     </>
   );
 }

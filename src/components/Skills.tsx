@@ -1,164 +1,34 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Code2, Database, Layers, Cpu, Zap } from 'lucide-react';
+import { Code2, Database, Cpu, Zap } from 'lucide-react';
 import { AnimatedText } from './AnimatedText';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
-
-interface Repo {
-  language: string | null;
-  topics: string[];
-  techStack?: string[];
-  allLanguages?: string[];
-}
+import type { ReactNode } from 'react';
+import Image from 'next/image';
+import CapabilityRail from './CapabilityRail';
+import BongoCat from './BongoCat';
+import { deriveSkills, type Repo } from '@/lib/deriveSkills';
 
 interface SkillsProps {
   animateSection?: string;
   repos?: Repo[];
+  techSignal?: ReactNode;
 }
 
-// ─── Mirrors the EXACT ids from ProjectsPage filters ──────────────────────────
 
-const LANGUAGE_TO_DISPLAY: Record<string, string> = {
-  java: 'Java',
-  typescript: 'TypeScript',
-  javascript: 'JavaScript',
-  python: 'Python',
-  c: 'C',
-  'c++': 'C++',
-  'c#': 'C#',
-  php: 'PHP',
-  ruby: 'Ruby',
-  rust: 'Rust',
-  batchfile: 'Bash',
-  assembly: 'Assembly',
-  go: 'Go',
-  kotlin: 'Kotlin',
-  swift: 'Swift',
-  shell: 'Shell',
-  html: 'HTML',
-  css: 'CSS',
-};
-
-const TECH_TO_DISPLAY: Record<string, string> = {
-  react: 'React',
-  nextjs: 'Next.js',
-  spring: 'Spring',
-  docker: 'Docker',
-  aws: 'AWS',
-  postgresql: 'PostgreSQL',
-  redis: 'Redis',
-  kafka: 'Kafka',
-  cassandra: 'Cassandra',
-  microservice: 'Microservices',
-  flask: 'Flask',
-  tailwind: 'Tailwind CSS',
-  cuda: 'CUDA',
-};
-
-// ─── Which bucket each item belongs to ───────────────────────────────────────
-
-const LANG_BUCKET: Record<string, 'frontend' | 'backend' | 'systems'> = {
-  typescript: 'frontend', javascript: 'frontend', html: 'frontend', css: 'frontend',
-  java: 'backend', python: 'backend', php: 'backend', ruby: 'backend', go: 'backend', kotlin: 'backend',
-  rust: 'systems', c: 'systems', 'c++': 'systems', 'c#': 'systems', assembly: 'systems',
-  batchfile: 'systems', shell: 'systems', swift: 'systems',
-};
-
-const TECH_BUCKET: Record<string, 'frontend' | 'backend' | 'devops'> = {
-  react: 'frontend', nextjs: 'frontend', tailwind: 'frontend',
-  spring: 'backend', flask: 'backend', postgresql: 'backend',
-  redis: 'backend', kafka: 'backend', cassandra: 'backend', cuda: 'backend',
-  docker: 'devops', aws: 'devops', microservice: 'devops',
-};
-
-// ─── Defaults (shown even with no repos) ─────────────────────────────────────
-
-const DEFAULTS: Record<string, string[]> = {
-  frontend: ['TypeScript', 'Next.js', 'React', 'Tailwind CSS'],
-  backend:  ['Node.js', 'Python', 'PostgreSQL', 'Redis'],
-  systems:  ['Rust', 'C++', 'C', 'Assembly'],
-  devops:   ['Docker', 'AWS', 'Kafka', 'Microservices'],
-};
-
-function deriveSkills(repos: Repo[]) {
-  const buckets: Record<string, Set<string>> = {
-    frontend: new Set(DEFAULTS.frontend),
-    backend:  new Set(DEFAULTS.backend),
-    systems:  new Set(DEFAULTS.systems),
-    devops:   new Set(DEFAULTS.devops),
-  };
-
-  for (const repo of repos) {
-    // allLanguages + primary language
-    const langs = [
-      ...(repo.allLanguages ?? []),
-      repo.language?.toLowerCase() ?? '',
-    ].filter(Boolean);
-
-    for (const raw of langs) {
-      const key = raw.toLowerCase();
-      const bucket = LANG_BUCKET[key];
-      const display = LANGUAGE_TO_DISPLAY[key];
-      if (bucket && display) buckets[bucket].add(display);
-    }
-
-    // topics (GitHub slugs, e.g. "next-js", "spring-boot")
-    for (const topic of repo.topics ?? []) {
-      // normalise: strip dashes/underscores and match
-      const key = topic.toLowerCase().replace(/[-_]/g, '');
-      // try direct match first, then substring match
-      const techKey = Object.keys(TECH_BUCKET).find(
-        k => k === key || key.includes(k) || k.includes(key)
-      );
-      if (techKey) {
-        const bucket = TECH_BUCKET[techKey];
-        const display = TECH_TO_DISPLAY[techKey];
-        if (display) buckets[bucket].add(display);
-      }
-
-      const langKey = Object.keys(LANG_BUCKET).find(
-        k => k === key || key.includes(k)
-      );
-      if (langKey) {
-        const bucket = LANG_BUCKET[langKey];
-        const display = LANGUAGE_TO_DISPLAY[langKey];
-        if (display) buckets[bucket].add(display);
-      }
-    }
-
-    // explicit techStack array (already normalised by your API)
-    for (const tech of repo.techStack ?? []) {
-      const key = tech.toLowerCase().replace(/[-_\s]/g, '');
-      const techKey = Object.keys(TECH_BUCKET).find(
-        k => k === key || key.includes(k) || k.includes(key)
-      );
-      if (techKey) {
-        const bucket = TECH_BUCKET[techKey];
-        const display = TECH_TO_DISPLAY[techKey];
-        if (display) buckets[bucket].add(display);
-      }
-    }
-  }
-
-  // Cap each bucket to keep cards compact
-  return Object.fromEntries(
-    Object.entries(buckets).map(([k, v]) => [k, [...v].slice(0, 10)])
-  );
-}
-
-export default function Skills({ animateSection, repos = [] }: SkillsProps) {
+export default function Skills({ animateSection, repos = [], techSignal }: SkillsProps) {
   const t = useTranslations('skills');
 
   const derived = useMemo(() => deriveSkills(repos), [repos]);
 
   const skills = [
-    { category: t('frontend.title'),     icon: Code2,    key: 'frontend' },
-    { category: t('backend.title'),      icon: Database, key: 'backend'  },
-    { category: t('architecture.title'), icon: Cpu,   key: 'systems'  },
-    { category: t('devops.title'),       icon: Zap,      key: 'devops'   },
-  ];
+    { category: t('frontend.title'),     icon: Code2,    key: 'frontend', background: '/images/gifs/jinwoogf.gif',  portrait: '/images/jinwoo.png' },
+    { category: t('backend.title'),      icon: Database, key: 'backend',  background: '/images/gifs/jinwoogf2.gif', portrait: '/images/jinwoo2.png' },
+    { category: t('architecture.title'), icon: Cpu,      key: 'systems',  background: '/images/gifs/jinwoogf3.gif', portrait: '/images/jinwoo3.png' },
+    { category: t('devops.title'),       icon: Zap,      key: 'devops',   background: '/images/gifs/jinwoogf4.gif', portrait: '/images/jinwoo2.png' },
+  ] as const;
 
   return (
     <section className="skills-section">
@@ -182,26 +52,97 @@ export default function Skills({ animateSection, repos = [] }: SkillsProps) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.3 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="skill-card"
+                className="skill-card group relative overflow-hidden"
                 suppressHydrationWarning
               >
-                <div className="skill-card-header">
-                  <div className="skill-icon">
-                    <Icon className="w-5 h-5" />
+                <Image
+                  src={skill.background}
+                  alt=""
+                  fill
+                  unoptimized
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="theme-ambient-media pointer-events-none absolute inset-0 z-0 object-cover opacity-20 mix-blend-screen transition duration-700 group-hover:scale-105 group-hover:opacity-30"
+                />
+                <Image
+                  src={skill.portrait}
+                  alt=""
+                  fill
+                  sizes="180px"
+                  className="theme-portrait-media pointer-events-none absolute inset-y-0 right-0 left-auto z-0 w-2/3 object-contain object-right-bottom opacity-20 mix-blend-screen transition duration-700 group-hover:scale-105 group-hover:opacity-30"
+                />
+                <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-[var(--bg-card)]/[0.95] via-[var(--bg-card)]/[0.82] to-transparent" />
+                <div className="relative z-10">
+                  <div className="skill-card-header">
+                    <div className="skill-icon">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <h3 className="skill-category">{skill.category}</h3>
                   </div>
-                  <h3 className="skill-category">{skill.category}</h3>
+                  <ul className="skill-list">
+                    {items.map((item) => (
+                      <li key={item} className="skill-item">
+                        <span className="skill-dot" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="skill-list">
-                  {items.map((item) => (
-                    <li key={item} className="skill-item">
-                      <span className="skill-dot" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
             );
           })}
+        </div>
+
+        <div className="mt-10 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.42fr)]">
+          <div className="relative min-w-0 overflow-hidden border border-[var(--border)] bg-[var(--bg-card)]/[0.35]">
+            <Image
+              src="/images/gifs/jinwoogf5.gif"
+              alt=""
+              fill
+              unoptimized
+              sizes="(max-width: 1024px) 100vw, 65vw"
+              className="theme-ambient-media pointer-events-none absolute inset-0 z-0 object-cover opacity-[0.08] mix-blend-screen"
+            />
+            <div className="relative z-10 flex items-center justify-between border-b border-[var(--border)] px-4 py-3 md:px-6">
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{t('capabilityMap')}</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--theme-primary)]">{t('hoverModule')}</span>
+            </div>
+            <CapabilityRail
+              items={skills.map((skill) => ({
+                id: skill.key,
+                label: skill.category,
+                eyebrow: `${skill.key} / active stack`,
+                items: derived[skill.key],
+                image: skill.key === 'frontend'
+                  ? '/icons/typescript.png'
+                  : skill.key === 'backend'
+                  ? '/icons/java.png'
+                  : skill.key === 'systems'
+                  ? '/icons/rust.png'
+                  : '/icons/docker.png',
+              }))}
+            />
+          </div>
+
+          <div className="min-w-0 space-y-6">
+            {techSignal && (
+              <div className="relative min-w-0 overflow-hidden border border-[var(--border)] bg-[var(--bg-card)]/[0.35]">
+                <Image
+                  src="/images/gifs/jinwoogf6.gif"
+                  alt=""
+                  fill
+                  unoptimized
+                  sizes="(max-width: 1024px) 100vw, 35vw"
+                  className="theme-ambient-media pointer-events-none absolute inset-0 z-0 object-cover opacity-[0.08] mix-blend-screen"
+                />
+                <div className="relative z-10 flex items-center justify-between gap-3 border-b border-[var(--border)] px-4 py-3">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{t('liveStackSignal')}</span>
+                  <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-[var(--theme-primary)]">{t('clickInspect')}</span>
+                </div>
+                <div className="relative z-10">{techSignal}</div>
+              </div>
+            )}
+            <BongoCat />
+          </div>
         </div>
       </div>
     </section>

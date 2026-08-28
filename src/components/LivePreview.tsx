@@ -3,12 +3,15 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { AnimatedText } from './AnimatedText';
-import { Play, RefreshCw } from 'lucide-react';
+import { Activity, ArrowUpRight, Play, RefreshCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 export default function LivePreview() {
   const t = useTranslations('liveCoding');
+  const readmeError = t('readmeError');
+  const gifMissingError = t('gifMissingError');
+  const unknownError = t('unknownError');
   const [gifUrl, setGifUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +27,7 @@ export default function LivePreview() {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch README');
+        throw new Error(readmeError);
       }
 
       const text = await response.text();
@@ -42,15 +45,15 @@ export default function LivePreview() {
           setLastUpdated(dateStr);
         }
       } else {
-        throw new Error('GIF URL not found in README');
+        throw new Error(gifMissingError);
       }
     } catch (err) {
       if (guard?.cancelled) return;
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : unknownError);
     } finally {
       if (!guard?.cancelled) setLoading(false);
     }
-  }, []);
+  }, [gifMissingError, readmeError, unknownError]);
 
   useEffect(() => {
     const guard = { cancelled: false };
@@ -60,18 +63,22 @@ export default function LivePreview() {
   }, [fetchGifUrl]);
 
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
+    <section className="relative overflow-hidden px-4 py-20 md:px-8 md:py-24">
+      <div className="mx-auto w-full max-w-7xl">
+        <div className="mb-10 flex flex-col items-start justify-between gap-6 border-b border-[var(--border)] pb-8 lg:flex-row lg:items-end">
+          <div className="max-w-3xl">
           <AnimatedText delay={0.1}>
-            <h2 className="section-title">{t('title')}</h2>
+              <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--theme-primary)]">{t('feedEyebrow')}</p>
+              <h2 className="section-title mb-0">{t('title')}</h2>
           </AnimatedText>
           
           <AnimatedText delay={0.2}>
-            <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
+              <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--text-muted)] md:text-lg">
               {t('description')}
             </p>
           </AnimatedText>
+          </div>
+
         </div>
 
         <motion.div
@@ -79,10 +86,20 @@ export default function LivePreview() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="relative"
+          className="relative grid w-full gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.65fr)] lg:gap-8"
         >
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
-            <div className="bg-[var(--bg-card)] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between">
+          <div
+            className="group relative overflow-hidden border border-[var(--border)] bg-[var(--bg-card)]/[0.84] shadow-[0_30px_100px_rgba(0,0,0,0.2)] [background-image:radial-gradient(440px_circle_at_var(--live-x,50%)_var(--live-y,50%),rgba(168,85,247,0.13),transparent_72%)]"
+            onPointerMove={(event) => {
+              if (event.pointerType === 'touch') return;
+              const rect = event.currentTarget.getBoundingClientRect();
+              event.currentTarget.style.setProperty('--live-x', `${event.clientX - rect.left}px`);
+              event.currentTarget.style.setProperty('--live-y', `${event.clientY - rect.top}px`);
+            }}
+          >
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--theme-primary)]/[0.08] via-transparent to-[var(--theme-accent)]/[0.06]" />
+            <div className="pointer-events-none absolute left-0 top-0 h-px w-1/3 bg-[var(--theme-primary)] shadow-[0_0_18px_var(--theme-primary)]" />
+            <div className="relative z-10 flex items-center justify-between border-b border-[var(--border)] px-4 py-4 sm:px-6">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -96,23 +113,23 @@ export default function LivePreview() {
                 onClick={() => fetchGifUrl()}
                 disabled={loading}
                 className="flex items-center gap-2 px-3 py-1 text-sm text-[var(--text-muted)] hover:text-[var(--theme-primary)] transition-colors disabled:opacity-50"
-                aria-label="Refresh"
+                aria-label={t('refresh')}
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                 {t('refresh')}
               </button>
             </div>
 
-            <div className="p-8">
+            <div className="relative z-10 p-3 sm:p-5 md:p-6">
               {loading && (
-                <div className="flex flex-col items-center justify-center py-20">
+                <div className="flex min-h-[220px] flex-col items-center justify-center sm:min-h-[360px] md:min-h-[560px]">
                   <div className="w-16 h-16 border-4 border-[var(--theme-primary)] border-t-transparent rounded-full animate-spin mb-4" />
                   <p className="text-[var(--text-muted)] font-mono text-sm">{t('loading')}</p>
                 </div>
               )}
 
               {error && (
-                <div className="flex flex-col items-center justify-center py-20">
+                <div className="flex min-h-[220px] flex-col items-center justify-center sm:min-h-[360px] md:min-h-[560px]">
                   <div className="text-red-500 mb-4">
                     <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -129,25 +146,25 @@ export default function LivePreview() {
               )}
 
               {!loading && !error && gifUrl && (
-                <div className="space-y-4">
-                  <div className="relative rounded-lg overflow-hidden bg-black aspect-video">
+                <div className="space-y-5">
+                  <div className="relative aspect-video min-h-0 w-full overflow-hidden rounded-lg bg-black sm:aspect-[16/10] sm:min-h-[360px] md:min-h-[560px]">
                     <Image
                       src={gifUrl}
-                      alt="Live Coding Session"
+                      alt={t('imageAlt')}
                       fill
                       className="object-contain"
                       loading="lazy"
                       unoptimized
                     />
                     
-                    <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                       <div className="w-20 h-20 rounded-full bg-[var(--theme-primary)]/80 flex items-center justify-center">
                         <Play className="w-10 h-10 text-white ml-1" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col items-start justify-between gap-3 text-sm sm:flex-row sm:items-center">
                     <p className="text-[var(--text-muted)] font-mono" suppressHydrationWarning>
                       {lastUpdated && (
                         <>
@@ -169,13 +186,40 @@ export default function LivePreview() {
                     </a>
                   </div>
 
-                  <p className="text-center text-[var(--text-muted)] text-sm italic">
-                    {t('autoRecorded')}
-                  </p>
                 </div>
               )}
             </div>
           </div>
+
+          <aside className="flex flex-col gap-4">
+            <div className="border border-[var(--border)] bg-[var(--bg-card)]/[0.55] p-6">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{t('sourceChannel')}</p>
+              <a
+                href="https://github.com/SobralCybersec/SobralCybersec"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center justify-between gap-3 text-sm text-[var(--theme-primary)] transition-colors hover:text-[var(--text-primary)]"
+              >
+                <span className="break-all">github.com/SobralCybersec</span>
+                <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+              </a>
+            </div>
+
+            <div className="border border-[var(--border)] bg-[var(--bg-card)]/[0.55] p-6">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{t('lastTransmission')}</p>
+              <div className="group mt-5 overflow-hidden border border-[var(--border)] bg-black/30 p-2 transition-colors hover:border-[var(--theme-primary)]/50">
+                <Image
+                  src="/images/CurseForgeProfile.png"
+                  alt="CurseForge profile"
+                  width={512}
+                  height={701}
+                  loading="lazy"
+                  sizes="(min-width: 1024px) 20vw, 90vw"
+                  className="h-auto max-h-[40rem] w-full object-contain object-top transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+                />
+              </div>
+            </div>
+          </aside>
         </motion.div>
       </div>
     </section>

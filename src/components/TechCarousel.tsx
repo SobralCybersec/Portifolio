@@ -2,7 +2,10 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { ArrowUpRight, X } from 'lucide-react';
+import { Link } from '@/i18n/routing';
+import { InfiniteMarquee } from './InfiniteMarquee';
+import { useTranslations } from 'next-intl';
 
 interface TechItem {
   name: string;
@@ -75,76 +78,152 @@ const techStack: TechItem[] = [
   { name: 'Omarchy', icon: '/icons/omarchy.png', description: 'Hybrid architecture combining monolithic core with microservice extensions. Balances simplicity with scalability for evolving systems.', link: '#', category: 'Architecture', features: ['Monolithic Core', 'Microservice Extensions', 'Gradual Migration', 'Hybrid Scalability'] },
 ];
 
-export default function TechCarousel() {
+interface TechCarouselProps {
+  /** Render only the reusable track when embedded in another section. */
+  embedded?: boolean;
+  /** Render the compact signal rail without the full card carousel. */
+  compact?: boolean;
+}
+
+function SignalMarquee({ onSelect, inspectLabel }: { onSelect: (tech: TechItem) => void; inspectLabel: string }) {
+  return (
+    <InfiniteMarquee
+      speed={34}
+      className="border-y border-[var(--border)] bg-[var(--bg-card)]/[0.24] py-1"
+      itemClassName="mr-2 py-2"
+      items={techStack.slice(0, 16).map((tech) => (
+        <button
+          key={`signal-${tech.name}`}
+          type="button"
+          onClick={() => onSelect(tech)}
+          className="group/signal inline-flex items-center gap-2 border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors hover:border-[var(--theme-primary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-primary)]"
+          aria-label={`${inspectLabel} ${tech.name}`}
+        >
+          <Image
+            src={tech.icon}
+            alt=""
+            width={18}
+            height={18}
+            loading="lazy"
+            className="h-[18px] w-[18px] object-contain transition-transform duration-300 group-hover/signal:scale-110"
+          />
+          {tech.name}
+        </button>
+      ))}
+    />
+  );
+}
+
+function CarouselTracks({ onSelect, inspectLabel }: { onSelect: (tech: TechItem) => void; inspectLabel: string }) {
+  return (
+    <div className="carousel-wrapper">
+      <div className="carousel-row">
+        <div className="carousel-track carousel-track-right">
+          {[...Array(2)].map((_, setIndex) => (
+            <div key={setIndex} className="carousel-set">
+              {techStack.slice(0, Math.ceil(techStack.length / 2)).map((tech, i) => (
+                <div key={`${setIndex}-${i}`} className="carousel-item">
+                  <div
+                    className="tech-card-wrapper group cursor-pointer"
+                    onClick={() => onSelect(tech)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') onSelect(tech);
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${inspectLabel} ${tech.name}`}
+                  >
+                    <div className="tech-card-neon">
+                      <div className="tech-card-content">
+                        <Image
+                          src={tech.icon}
+                          alt={tech.name}
+                          width={64}
+                          height={64}
+                          loading="lazy"
+                          className="tech-icon-img transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="tech-name">{tech.name}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="carousel-row">
+        <div className="carousel-track carousel-track-left">
+          {[...Array(2)].map((_, setIndex) => (
+            <div key={setIndex} className="carousel-set">
+              {techStack.slice(Math.ceil(techStack.length / 2)).map((tech, i) => (
+                <div key={`${setIndex}-${i}`} className="carousel-item">
+                  <div
+                    className="tech-card-wrapper group cursor-pointer"
+                    onClick={() => onSelect(tech)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') onSelect(tech);
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${inspectLabel} ${tech.name}`}
+                  >
+                    <div className="tech-card-neon">
+                      <div className="tech-card-content">
+                        <Image
+                          src={tech.icon}
+                          alt={tech.name}
+                          width={64}
+                          height={64}
+                          loading="lazy"
+                          className="tech-icon-img transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="tech-name">{tech.name}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function TechCarousel({ embedded = false, compact = false }: TechCarouselProps) {
+  const t = useTranslations('tech');
   const [selectedTech, setSelectedTech] = useState<TechItem | null>(null);
 
   return (
     <>
-      <section className="tech-carousel-section" suppressHydrationWarning>
-        <div className="carousel-wrapper">
-          <div className="carousel-row">
-            <div className="carousel-track carousel-track-right">
-              {[...Array(2)].map((_, setIndex) => (
-                <div key={setIndex} className="carousel-set">
-                  {techStack.slice(0, Math.ceil(techStack.length / 2)).map((tech, i) => (
-                    <div key={`${setIndex}-${i}`} className="carousel-item">
-                      <div 
-                        className="tech-card-wrapper group cursor-pointer"
-                        onClick={() => setSelectedTech(tech)}
-                      >
-                        <div className="tech-card-neon">
-                          <div className="tech-card-content">
-                            <Image
-                              src={tech.icon}
-                              alt={tech.name}
-                              width={64}
-                              height={64}
-                              loading="lazy"
-                              className="tech-icon-img transition-transform duration-300 group-hover:scale-110"
-                            />
-                            <div className="tech-name">{tech.name}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
+      {embedded ? (
+        <CarouselTracks onSelect={setSelectedTech} inspectLabel={t('inspect')} />
+      ) : compact ? (
+        <section className="overflow-hidden" suppressHydrationWarning>
+          <SignalMarquee onSelect={setSelectedTech} inspectLabel={t('inspect')} />
+        </section>
+      ) : (
+        <section className="tech-carousel-section" suppressHydrationWarning>
+          <div className="mx-auto mb-7 flex max-w-7xl items-end justify-between gap-4 px-5 md:px-10">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--theme-primary)]">{t('signalEyebrow')}</p>
+              <h2 className="mt-2 font-[var(--font-eternal)] text-2xl uppercase tracking-[0.08em] text-[var(--text-primary)] md:text-3xl">{t('signalTitle')}</h2>
             </div>
+            <Link href="/about" className="group inline-flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)] transition-colors hover:text-[var(--theme-primary)]">
+              {t('capabilityMap')}
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
           </div>
-
-          <div className="carousel-row">
-            <div className="carousel-track carousel-track-left">
-              {[...Array(2)].map((_, setIndex) => (
-                <div key={setIndex} className="carousel-set">
-                  {techStack.slice(Math.ceil(techStack.length / 2)).map((tech, i) => (
-                    <div key={`${setIndex}-${i}`} className="carousel-item">
-                      <div 
-                        className="tech-card-wrapper group cursor-pointer"
-                        onClick={() => setSelectedTech(tech)}
-                      >
-                        <div className="tech-card-neon">
-                          <div className="tech-card-content">
-                            <Image
-                              src={tech.icon}
-                              alt={tech.name}
-                              width={64}
-                              height={64}
-                              loading="lazy"
-                              className="tech-icon-img transition-transform duration-300 group-hover:scale-110"
-                            />
-                            <div className="tech-name">{tech.name}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+          <div className="mb-8">
+            <SignalMarquee onSelect={setSelectedTech} inspectLabel={t('inspect')} />
           </div>
-        </div>
-      </section>
+          <CarouselTracks onSelect={setSelectedTech} inspectLabel={t('inspect')} />
+        </section>
+      )}
 
       {/* Modal */}
       {selectedTech && (
@@ -159,6 +238,7 @@ export default function TechCarousel() {
             <button
               onClick={() => setSelectedTech(null)}
               className="absolute top-4 right-4 p-2 hover:bg-[var(--theme-primary)]/10 rounded-lg transition-colors"
+              aria-label={t('closeDetails')}
             >
               <X className="w-6 h-6" />
             </button>
@@ -178,7 +258,7 @@ export default function TechCarousel() {
                   {selectedTech.name}
                 </h2>
                 <span className="inline-block px-3 py-1 bg-[var(--theme-primary)]/10 border border-[var(--theme-primary)]/30 rounded-full text-sm text-[var(--theme-primary)] font-medium">
-                  {selectedTech.category}
+                  {t('category')}: {selectedTech.category}
                 </span>
               </div>
             </div>
@@ -189,7 +269,7 @@ export default function TechCarousel() {
 
             {selectedTech.features && selectedTech.features.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-[var(--theme-primary)] mb-3 uppercase tracking-wider">Key Features</h3>
+                <h3 className="text-sm font-semibold text-[var(--theme-primary)] mb-3 uppercase tracking-wider">{t('keyFeatures')}</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {selectedTech.features.map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
@@ -222,7 +302,7 @@ export default function TechCarousel() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-accent)] text-white rounded-lg font-semibold hover:scale-105 transition-transform"
             >
-              Learn More
+              {t('learnMore')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
