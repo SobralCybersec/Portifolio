@@ -1,23 +1,23 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import Navigation from '@/components/Navigation';
-import { AnimatedText, GradientText } from '@/components/AnimatedText';
-import { useClickSound } from '@/hooks/useClickSound';
+import Navigation from '@/components/layout/Navigation';
+import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
+import { useClickSound } from '@/hooks/audio/useClickSound';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import SoloLevelingProjectCard from '@/components/SoloLevelingProjectCard';
-import FilterDropdown from '@/components/FilterDropdown';
-import ScrollEffect from '@/components/ScrollEffect';
-import ScrollProgress from '@/components/ScrollProgress';
-import ScrollReveal from '@/components/ScrollReveal';
-import ProjectReadmeModal from '@/components/ProjectReadmeModal';
+import SoloLevelingProjectCard from '@/components/projects/SoloLevelingProjectCard';
+import FilterDropdown from '@/components/ui/FilterDropdown';
+import ScrollEffect from '@/components/effects/ScrollEffect';
+import ScrollProgress from '@/components/effects/ScrollProgress';
+import ScrollReveal from '@/components/effects/ScrollReveal';
+import ProjectReadmeModal from '@/components/projects/ProjectReadmeModal';
 
-const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
-const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 
 interface Repo {
   id: number;

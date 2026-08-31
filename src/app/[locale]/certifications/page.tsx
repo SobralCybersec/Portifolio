@@ -1,21 +1,22 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import Navigation from '@/components/Navigation';
-import { AnimatedText, GradientText } from '@/components/AnimatedText';
-import { useClickSound } from '@/hooks/useClickSound';
+import Navigation from '@/components/layout/Navigation';
+import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
+import { useClickSound } from '@/hooks/audio/useClickSound';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import ScrollEffect from '@/components/ScrollEffect';
+import ScrollEffect from '@/components/effects/ScrollEffect';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowUpRight, Award, CheckCircle2, Layers3, ShieldCheck, X } from 'lucide-react';
-import FilterDropdown from '@/components/FilterDropdown';
+import FilterDropdown from '@/components/ui/FilterDropdown';
 import { useReducedMotion } from 'framer-motion';
+import { useHydrated } from '@/hooks/browser/useHydrated';
 import type { CSSProperties } from 'react';
 
-const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
-const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 
 interface Certification {
   name: string;
@@ -120,6 +121,7 @@ function tFallback(key: 'record' | 'verified' | 'inspect') {
 
 export default function CertificationsPage() {
   useClickSound();
+  const mounted = useHydrated();
   const { theme } = useTheme();
   const t = useTranslations('certifications');
   const reduceMotion = useReducedMotion() ?? false;
@@ -364,7 +366,7 @@ export default function CertificationsPage() {
     <>
       <Navigation />
       <div className="page-grid-overlay" />
-      {theme === 'dark' && (
+      {mounted && theme === 'dark' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
           <HexagonGrid 
             cellSize={60} 

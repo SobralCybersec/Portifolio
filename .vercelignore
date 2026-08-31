@@ -12,6 +12,9 @@ __tests__
 *.spec.tsx
 jest.config.js
 jest.setup.js
+anime-effects-react
+repository
+resources
 
 # Next.js
 .next

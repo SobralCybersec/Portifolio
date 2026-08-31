@@ -1,0 +1,81 @@
+name: Frontend QA
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+
+jobs:
+  frontend-qa:
+    name: Frontend QA suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
+      - name: Jest and Testing Library
+        run: pnpm run test:jest -- --no-coverage
+
+      - name: Vitest jsdom
+        run: pnpm run test:vitest
+
+      - name: Vitest Browser Mode
+        run: pnpm run test:browser
+
+      - name: Build application
+        run: pnpm run build
+        env:
+          NODE_ENV: production
+
+      - name: Playwright browser suite
+        run: pnpm run test:playwright
+
+      - name: Build Storybook
+        run: pnpm run build-storybook
+
+      - name: Lighthouse CI
+        run: pnpm exec lhci autorun
+
+      - name: Upload QA artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-qa-artifacts
+          path: |
+            playwright-report
+            test-results
+            .lighthouseci
+            storybook-static
+          if-no-files-found: ignore
+          retention-days: 7

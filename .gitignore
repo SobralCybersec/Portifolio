@@ -4,11 +4,15 @@
 .pnp.js
 .yarn/install-state.gz
 .claude-token-cleanup-backup-20260825
-
+resources
 # testing
 /coverage
 *.lcov
 /.quality-venv/
+/playwright-report/
+/test-results/
+/.lighthouseci/
+/storybook-static/
 
 # next.js
 /.next/

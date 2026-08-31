@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { pusher, redis } from '@/lib/chat';
-import { chatLimit } from '@/lib/ratelimit';
+import { auth } from '@/lib/auth/auth';
+import { pusher, redis } from '@/lib/chat/chat';
+import { chatLimit } from '@/lib/chat/ratelimit';
 
 const CHAT_KEY = 'chat:messages';
 const MAX_MESSAGES = 100;

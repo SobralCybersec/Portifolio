@@ -190,7 +190,7 @@ jest.mock('framer-motion', () => ({
 }));
 
 // Mock next-intl routing
-jest.mock('@/i18n/routing', () => ({
+jest.mock('@/i18n/config/routing', () => ({
   routing: {
     locales: ['en', 'pt', 'es', 'fr', 'de', 'ja', 'zh'],
     defaultLocale: 'en',

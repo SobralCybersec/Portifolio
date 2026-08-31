@@ -1,8 +1,8 @@
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth/auth';
 import { SessionProvider } from 'next-auth/react';
-import Navigation from '@/components/Navigation';
-import { HexagonGrid, ClientChatRoom } from '@/components/ClientOnlyComponents';
-import ChatEffects from '@/components/ChatEffects';
+import Navigation from '@/components/layout/Navigation';
+import { HexagonGrid, ClientChatRoom } from '@/components/runtime/ClientOnlyComponents';
+import ChatEffects from '@/components/chat/ChatEffects';
 
 export default async function ChatPage() {
   const session = await auth();

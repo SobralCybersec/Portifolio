@@ -199,6 +199,15 @@ export const SOURCE_FILENAMES = new Set([
   "WORKSPACE",
 ]);
 
+// Dependency lockfiles are generated data, not hand-maintained source files.
+export const DEFAULT_IGNORED_FILES = new Set([
+  "bun.lock",
+  "bun.lockb",
+  "package-lock.json",
+  "pnpm-lock.yaml",
+  "yarn.lock",
+]);
+
 export const DEFAULT_IGNORED_DIRECTORIES = new Set([
   ".cache",
   ".agents",

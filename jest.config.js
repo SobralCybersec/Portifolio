@@ -13,7 +13,8 @@ const customJestConfig = {
     '^next/font/google$': '<rootDir>/test-mocks/next-font-google.js',
     '^next/font/local$': '<rootDir>/test-mocks/next-font-local.js',
   },
-  testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
+  testMatch: ['**/tests/**/*.test.[jt]s?(x)'],
+  modulePathIgnorePatterns: ['<rootDir>/.next/'],
   reporters: [
     'default',
     ['jest-junit', {
@@ -24,13 +25,13 @@ const customJestConfig = {
   coverageDirectory: '<rootDir>/coverage',
   coverageReporters: ['text', 'lcov', 'json-summary'],
   coverageThreshold: {
-    global: { lines: 90 },
+    global: { lines: 95 },
   },
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
     '!src/**/*.stories.{js,jsx,ts,tsx}',
-    '!src/components/__tests__/setup.ts',
+    '!src/components/tests/setup.ts',
   ],
 };
 

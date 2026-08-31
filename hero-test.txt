@@ -32,7 +32,7 @@
       at node_modules/@testing-library/react/dist/act-compat.js:46:25
       at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
       at render (node_modules/@testing-library/react/dist/pure.js:291:10)
-      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+      at Object.<anonymous> (src/components/tests/Hero.test.tsx:6:33)
 
   console.warn
     Image with src "/images/badges/badge1.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
@@ -64,7 +64,7 @@
       at node_modules/@testing-library/react/dist/act-compat.js:46:25
       at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
       at render (node_modules/@testing-library/react/dist/pure.js:291:10)
-      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+      at Object.<anonymous> (src/components/tests/Hero.test.tsx:6:33)
 
   console.warn
     Image with src "/images/badges/badge2.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
@@ -96,7 +96,7 @@
       at node_modules/@testing-library/react/dist/act-compat.js:46:25
       at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
       at render (node_modules/@testing-library/react/dist/pure.js:291:10)
-      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+      at Object.<anonymous> (src/components/tests/Hero.test.tsx:6:33)
 
   console.warn
     Image with src "/images/badges/badge3.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
@@ -128,7 +128,7 @@
       at node_modules/@testing-library/react/dist/act-compat.js:46:25
       at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
       at render (node_modules/@testing-library/react/dist/pure.js:291:10)
-      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
+      at Object.<anonymous> (src/components/tests/Hero.test.tsx:6:33)
 
   console.warn
     Image with src "/images/JinWoo-render.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
@@ -160,5 +160,4 @@
       at node_modules/@testing-library/react/dist/act-compat.js:46:25
       at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
       at render (node_modules/@testing-library/react/dist/pure.js:291:10)
-      at Object.<anonymous> (src/components/__tests__/Hero.test.tsx:6:33)
-
+      at Object.<anonymous> (src/components/tests/Hero.test.tsx:6:33)

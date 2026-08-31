@@ -32,6 +32,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
+    "**/*.mts",
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
@@ -41,7 +42,7 @@
     ".next",
     "dist",
     "coverage",
-    "__tests__",
+    "tests",
     "resources"
   ]
 }

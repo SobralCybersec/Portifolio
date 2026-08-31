@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   DEFAULT_IGNORED_DIRECTORIES,
+  DEFAULT_IGNORED_FILES,
   DEFAULT_REPO_ROOT,
   HARD_LIMIT,
   REVIEW_LIMIT,
@@ -14,6 +15,7 @@ import {
 } from "./file-size-policy.mjs";
 export {
   DEFAULT_IGNORED_DIRECTORIES,
+  DEFAULT_IGNORED_FILES,
   DEFAULT_REPO_ROOT,
   HARD_LIMIT,
   REVIEW_LIMIT,
@@ -67,6 +69,7 @@ export async function sourceFiles(
     repoRoot = process.cwd(),
     extraExtensions = [],
     ignoredDirectories = DEFAULT_IGNORED_DIRECTORIES,
+    ignoredFiles = DEFAULT_IGNORED_FILES,
     filenames = SOURCE_FILENAMES,
   } = {},
 ) {
@@ -92,6 +95,7 @@ export async function sourceFiles(
         continue;
       }
       if (!entry.isFile()) continue;
+      if (ignoredFiles.has(entry.name)) continue;
       if (await isSourceFile(absolutePath, { extensions, filenames })) files.push(absolutePath);
     }
   }
@@ -143,6 +147,7 @@ export async function checkFileSizes({
   reviewLimit = REVIEW_LIMIT,
   extraExtensions = [],
   ignoredDirectories = DEFAULT_IGNORED_DIRECTORIES,
+  ignoredFiles = DEFAULT_IGNORED_FILES,
 } = {}) {
   if (!Number.isInteger(reviewLimit) || reviewLimit < 1) {
     throw new Error("reviewLimit must be a positive integer");
@@ -154,7 +159,7 @@ export async function checkFileSizes({
   const discovered = (
     await Promise.all(
       roots.map((root) =>
-        sourceFiles(root, { repoRoot, extraExtensions, ignoredDirectories }),
+        sourceFiles(root, { repoRoot, extraExtensions, ignoredDirectories, ignoredFiles }),
       ),
     )
   ).flat();

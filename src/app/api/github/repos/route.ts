@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getLanguageImage } from '@/lib/languageIcon';
+import { getLanguageImage } from '@/lib/github/languageIcon';
 
 const GITHUB_USERNAMES = ['SobralCybersec', 'MatheusSobralCSharp'];
 const SORT_BY = 'updated';

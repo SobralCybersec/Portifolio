@@ -6,12 +6,13 @@ import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { routing } from '@/i18n/routing';
-import { ThemeProvider } from '@/components/ThemeProvider';
-import DynamicFavicon from '@/components/DynamicFavicon';
-import { BackgroundMusic } from '@/components/BackgroundMusic';
+import { routing } from '@/i18n/config/routing';
+import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import DynamicFavicon from '@/components/layout/DynamicFavicon';
+import { BackgroundMusic } from '@/components/media/BackgroundMusic';
 import { Analytics } from '@vercel/analytics/react';
-import { OPEN_GRAPH_LOCALES, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { OPEN_GRAPH_LOCALES, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
+import { PageTransitionProvider } from '@/components/layout/PageTransition';
 
 const geistSans = Inter({
   variable: '--font-geist-sans',
@@ -134,14 +135,14 @@ export default async function LocaleLayout({
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <link rel="icon" type="image/svg+xml" href="/images/favicon/Ahjin.svg" />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${soloHeading.variable} ${eternal.variable} ${codystar.variable} antialiased`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <DynamicFavicon />
             <BackgroundMusic autoPlay />
-            {children}
+            <PageTransitionProvider>{children}</PageTransitionProvider>
             <Analytics />
           </ThemeProvider>
         </NextIntlClientProvider>

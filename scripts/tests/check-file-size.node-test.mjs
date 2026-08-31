@@ -10,6 +10,7 @@ import {
   isSourceFile,
   sourceFiles,
 } from "./check-file-size.mjs";
+import { HARD_LIMIT } from "./file-size-policy.mjs";
 
 async function fixture(t) {
   const root = await mkdtemp(path.join(os.tmpdir(), "quality-size-"));
@@ -55,6 +56,7 @@ test("source discovery spans ecosystems, special filenames, and shebang scripts"
     "src/tool": "#!/usr/bin/env python3\nprint('ok')\n",
     "src/Makefile": "all:\n\t@true\n",
     "src/notes.md": lines(30),
+    "package-lock.json": lines(2000),
     "node_modules/pkg/huge.js": lines(100),
     "dist/generated.rs": lines(100),
     ".quality-venv/lib/package.py": lines(100),
@@ -79,6 +81,17 @@ test("source discovery spans ecosystems, special filenames, and shebang scripts"
   ]);
   assert.equal(await isSourceFile(path.join(root, "src", "tool")), true);
   assert.equal(await isSourceFile(path.join(root, "src", "notes.md")), false);
+});
+
+test("the 800-line gate ignores generated dependency lockfiles", async (t) => {
+  const root = await fixture(t);
+  await writeFile(path.join(root, "package-lock.json"), lines(HARD_LIMIT + 1));
+
+  const result = await checkFileSizes({ repoRoot: root, roots: ["."] });
+
+  assert.equal(HARD_LIMIT, 800);
+  assert.equal(result.files.some(({ file }) => file === "package-lock.json"), false);
+  assert.equal(result.oversized.length, 0);
 });
 
 test("checkFileSizes is cwd-independent, de-duplicates overlapping roots, and classifies limits", async (t) => {

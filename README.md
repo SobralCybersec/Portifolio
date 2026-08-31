@@ -6,7 +6,7 @@
 
 Modern Next.js portfolio with Solo Leveling theme, featuring dynamic theming, multilingual support, real-time chat, GitHub integration, visitor tracking, and stunning animations.
 
-**English** | [Português](README.pt-BR.md)
+**English**
 
 </div>
 
@@ -56,21 +56,34 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
   <img src="https://go-skill-icons.vercel.app/api/icons?i=nextjs,react,typescript,tailwind,nodejs,redis&size=64" />
 </p>
 
-* **Framework**: Next.js 16.2.6 (App Router, Turbopack)
-* **Language**: TypeScript 5.5+
+* **Framework**: Next.js 16.3.3 (App Router, Turbopack)
+* **Language**: TypeScript 5.9+
 * **Styling**: Tailwind CSS 3.4+
 * **Animations**: Framer Motion 11+ + CSS clip-path animations (Bleach-style)
-* **i18n**: next-intl 4.11+
+* **i18n**: next-intl 4.14+
 * **Theme**: next-themes 0.4+
-* **Real-time**: Pusher 5.2 / pusher-js 8.4
-* **Cache / Rate Limit**: Upstash Redis 1.34.9 + @upstash/ratelimit 2.0
+* **Real-time**: Pusher 5.3 / pusher-js 8.6
+* **Cache / Rate Limit**: Upstash Redis 1.38.3 + @upstash/ratelimit 2.0
 * **Auth**: NextAuth.js 5.0 (beta)
 * **AI Translation**: Groq API
-* **Icons**: Lucide React 0.400+
+* **Icons**: Lucide React 0.577+
 * **Linting**: ESLint 9.39+ with Next.js flat config
-* **Testing**: Jest 29 + React Testing Library 16
+* **Testing**: Jest 30.5 + React Testing Library 16.3
+* **Runtime**: Node.js 22
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel with optimized configuration
+
+### Dependency maintenance
+
+`package.json`, `package-lock.json`, and `pnpm-lock.yaml` are kept synchronized. CI installs with `npm ci`; local pnpm installs use the frozen lockfile:
+
+```bash
+npm ci
+# or
+pnpm install --frozen-lockfile
+```
+
+Dependency updates must pass type checking, linting, tests, and production build. Major-line migrations stay separate from routine patch/minor updates.
 
 ---
 
@@ -149,61 +162,47 @@ npm run test:coverage
 ```
 Portifolio/
 ├── 📁 src/
-│   ├── 📁 app/
-│   │   ├── 📁 [locale]/              # 🌍 Internationalized routes (7 languages)
-│   │   │   ├── 📄 page.tsx           # 🏠 Home page (Hero, Skills, TechCarousel, Contact)
-│   │   │   ├── 📄 layout.tsx         # 🎨 Root layout with theme & i18n
+│   ├── 📁 app/                       # 🌐 Routes, layouts, metadata, API handlers
+│   │   ├── 📁 [locale]/              # 🌍 Internationalized pages (7 languages)
 │   │   │   ├── 📁 about/             # ℹ️ About page
-│   │   │   ├── 📁 certifications/    # 🏅 Certifications showcase
-│   │   │   ├── 📁 chat/              # 💬 Real-time chat room
+│   │   │   ├── 📁 certifications/    # 🏅 Certifications page
+│   │   │   ├── 📁 chat/              # 💬 Chat page
 │   │   │   ├── 📁 contact/           # 📧 Contact page
-│   │   │   └── 📁 projects/          # 💼 Projects showcase
-│   │   ├── 📁 api/                   # 🔌 API routes
-│   │   │   ├── 📁 auth/[...nextauth] # 🔐 NextAuth.js authentication
-│   │   │   ├── 📁 chat/messages/     # 💬 Chat message API (Pusher + Redis)
-│   │   │   ├── 📁 github/
-│   │   │   │   ├── 📁 repos/         # Dual-account repo fetching + README parsing
-│   │   │   │   └── 📁 stats/         # GitHub stats (repos, years, commits)
-│   │   │   ├── 📁 health/            # ❤️ Health check endpoint
-│   │   │   ├── 📁 upload/            # 📤 File upload
-│   │   │   ├── 📁 visitors/          # 👁️ Visitor counter (Redis-backed)
-│   │   │   └── 📁 youtube/config/    # 🎬 YouTube config endpoint
-│   │   └── 📄 globals.css            # 🎨 Global styles + custom scrollbar
-│   ├── 📁 components/                # ⚛️ React components
-│   │   ├── 📄 Hero.tsx               # 🦸 Hero with Bleach animations
-│   │   ├── 📄 Skills.tsx             # 💪 Skills grid with stagger
-│   │   ├── 📄 Navigation.tsx         # 🧭 Main navigation
-│   │   ├── 📄 SoloLevelingBoot.tsx   # 🚀 Boot animation
-│   │   ├── 📄 BackgroundMusic.tsx    # 🎵 Theme-aware music
-│   │   ├── 📄 HexagonGrid.tsx        # 🔷 Animated hexagon grid
-│   │   ├── 📄 ChatRoom.tsx           # 💬 Real-time chat UI
-│   │   ├── 📄 GitHubProjects.tsx     # 💼 GitHub projects + ImageSlideshow
-│   │   ├── 📄 CityMap.tsx            # 🗺️ Visual repo city map
-│   │   ├── 📄 TechCarousel.tsx       # 🎠 Technology carousel
-│   │   ├── 📄 LivePreview.tsx        # 👁️ Live code preview
-│   │   ├── 📄 LetterGlitch.tsx       # ✨ Glitch text effect
-│   │   ├── 📄 MetricsTicker.tsx      # 📊 Animated metrics ticker
-│   │   ├── 📄 SoloLevelingProjectCard.tsx  # 🎴 Project card
-│   │   └── 📄 ...                    # More components
-│   ├── 📁 lib/                       # 🛠️ Utilities
-│   │   ├── 📄 auth.ts                # NextAuth configuration
-│   │   ├── 📄 chat.ts                # Pusher + Redis client
-│   │   ├── 📄 ratelimit.ts           # Upstash rate limiters
-│   │   ├── 📄 image-loader.ts        # Custom image loader
-│   │   └── 📄 translate.ts           # Groq AI translation
-│   ├── 📁 hooks/                     # 🪝 Custom React hooks
-│   │   ├── 📄 useHydrated.ts         # SSR/CSR detection
-│   │   └── 📄 useClickSound.ts       # Click sound effects
-│   └── 📁 i18n/                      # 🌐 Internationalization
-│       ├── 📄 routing.ts             # i18n routing config
-│       ├── 📄 request.ts             # next-intl request config
-│       └── 📁 messages/              # 7 language JSON files (en, pt, es, fr, de, ja, zh)
-├── 📁 __tests__/                     # 🧪 Test suite
-│   ├── 📁 api/                       # API endpoint tests
-│   ├── 📁 docker/                    # Docker config tests
-│   ├── 📁 integration/               # Integration tests
-│   └── 📁 lib/                       # Utility tests
-├── 📁 src/components/__tests__/      # Component tests
+│   │   │   ├── 📁 projects/          # 💼 Projects page
+│   │   │   └── 📁 tests/             # Page tests
+│   │   ├── 📁 api/                   # 🔌 API routes and route tests
+│   │   ├── 📁 tests/                 # App shell tests
+│   │   └── 📄 globals.css            # 🎨 Global styles
+│   ├── 📁 components/                # ⚛️ Components grouped by responsibility
+│   │   ├── 📁 about/                 # About-page sections
+│   │   ├── 📁 chat/                  # Chat UI and effects
+│   │   ├── 📁 contact/               # Contact UI and effects
+│   │   ├── 📁 effects/               # Backgrounds, scroll, particles, glitch
+│   │   ├── 📁 home/                  # Hero, skills, metrics, tech carousel
+│   │   ├── 📁 layout/                # Navigation, theme, transitions
+│   │   ├── 📁 loading-screen/        # Boot screen, loader, loading messages
+│   │   ├── 📁 media/                 # Background music and media UI
+│   │   ├── 📁 projects/              # Project cards, previews, GitHub data
+│   │   ├── 📁 runtime/               # Client-only runtime components
+│   │   ├── 📁 texts/                 # Animated text and typewriter UI
+│   │   ├── 📁 ui/                    # Reusable UI primitives
+│   │   └── 📁 tests/                 # Component tests
+│   ├── 📁 hooks/                     # 🪝 Hooks grouped by audio/browser concern
+│   │   ├── 📁 audio/                 # Click sound hook
+│   │   └── 📁 browser/               # Hydration hook and tests
+│   ├── 📁 i18n/                      # 🌐 Internationalization
+│   │   ├── 📁 config/                # Routing config and tests
+│   │   ├── 📁 messages/              # 7 language JSON files
+│   │   └── 📄 request.ts              # next-intl request config
+│   ├── 📁 lib/                       # 🛠️ Utilities grouped by domain
+│   │   ├── 📁 auth/ chat/ github/ localization/
+│   │   ├── 📁 media/ profile/ security/ seo/
+│   │   └── 📁 tests/                 # Utility and integration tests
+│   ├── 📁 tests/                     # 🧪 Infrastructure tests
+│   └── 📁 types/auth/                # NextAuth type augmentation
+├── 📁 tests/                         # 🧪 API and Docker tests
+│   ├── 📁 api/                       # Health endpoint tests
+│   └── 📁 docker/                    # Docker config tests
 ├── 📁 .github/
 │   └── 📁 workflows/                 # 🔄 CI/CD pipelines
 │       ├── 📄 ci.yml                 # Main CI (lint, test, build)
@@ -379,19 +378,21 @@ npm run test:coverage
 ### Test Structure
 
 ```
-__tests__/
+tests/
 ├── api/
 │   └── health.test.ts        # Health check endpoint
-├── docker/
-│   └── config.test.ts        # Docker configuration
-└── integration/              # Integration tests
-src/components/__tests__/
+└── docker/
+    └── config.test.ts        # Docker configuration
+src/components/tests/
 ├── Contact.test.tsx
 ├── GitHubProjects.test.tsx
-├── Hero.test.tsx
 ├── LivePreview.test.tsx
 ├── Navigation.test.tsx
 └── TechCarousel.test.tsx
+
+Additional tests live beside their responsibility:
+`src/app/**/tests`, `src/hooks/browser/tests`, `src/i18n/config/tests`,
+`src/lib/profile/tests`, and `src/lib/tests/integration`.
 ```
 
 ---
@@ -403,8 +404,8 @@ src/components/__tests__/
 ### GitHub Actions Workflows
 
 **Main CI Pipeline** (`.github/workflows/ci.yml`):
-- **Linting**: ESLint 9 with React 19 strict rules
-- **Type Checking**: TypeScript 5.5+ strict mode
+- **Linting**: ESLint 9.39+ with React 19 strict rules
+- **Type Checking**: TypeScript 5.9+ strict mode
 - Unit and integration tests
 - Security scanning (npm audit, Snyk, Trivy)
 - Multi-platform Docker builds (amd64, arm64)

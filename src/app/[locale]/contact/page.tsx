@@ -5,15 +5,15 @@ import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { Github, Linkedin, Mail } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import { AnimatedText, GradientText } from '@/components/AnimatedText';
+import Navigation from '@/components/layout/Navigation';
+import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
 import ContactCommandForm from '@/components/contact/ContactCommandForm';
-import ScrollEffect from '@/components/ScrollEffect';
-import { useClickSound } from '@/hooks/useClickSound';
-import { useHydrated } from '@/hooks/useHydrated';
+import ScrollEffect from '@/components/effects/ScrollEffect';
+import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useHydrated } from '@/hooks/browser/useHydrated';
 
-const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
-const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 const AboutParticleField = dynamic(() => import('@/components/about/AboutParticleField'), { ssr: false });
 
 export default function ContactPage() {

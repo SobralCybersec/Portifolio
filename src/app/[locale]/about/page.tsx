@@ -4,18 +4,18 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
-import Navigation from '@/components/Navigation';
-import { AnimatedText, GradientText } from '@/components/AnimatedText';
+import Navigation from '@/components/layout/Navigation';
+import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
 import AboutScrollStory, { type AboutStoryItem } from '@/components/about/AboutScrollStory';
 import InteractiveExpertiseGrid, { type ExpertiseGroup } from '@/components/about/InteractiveExpertiseGrid';
-import ScrollEffect from '@/components/ScrollEffect';
-import ScrollReveal from '@/components/ScrollReveal';
-import { useClickSound } from '@/hooks/useClickSound';
-import { useHydrated } from '@/hooks/useHydrated';
-import { deriveSkills, type Repo } from '@/lib/deriveSkills';
+import ScrollEffect from '@/components/effects/ScrollEffect';
+import ScrollReveal from '@/components/effects/ScrollReveal';
+import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useHydrated } from '@/hooks/browser/useHydrated';
+import { deriveSkills, type Repo } from '@/lib/profile/deriveSkills';
 
-const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
-const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 const AboutParticleField = dynamic(() => import('@/components/about/AboutParticleField'), { ssr: false });
 
 export default function AboutPage() {

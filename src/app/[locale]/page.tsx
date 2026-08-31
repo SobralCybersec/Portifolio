@@ -3,21 +3,21 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
-import Hero from '@/components/Hero';
-import Navigation from '@/components/Navigation';
-import ScrollProgress from '@/components/ScrollProgress';
-import { useClickSound } from '@/hooks/useClickSound';
+import Hero from '@/components/home/Hero';
+import Navigation from '@/components/layout/Navigation';
+import ScrollProgress from '@/components/effects/ScrollProgress';
+import { useClickSound } from '@/hooks/audio/useClickSound';
 
-const SoloLevelingBoot = dynamic(() => import('@/components/SoloLevelingBoot'), { ssr: false });
-const MatrixBackground = dynamic(() => import('@/components/MatrixBackground'), { ssr: false });
-const HexagonGrid = dynamic(() => import('@/components/HexagonGrid'), { ssr: false });
-const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
-const KeyboardNav = dynamic(() => import('@/components/KeyboardNav'), { ssr: false });
-const Skills = dynamic(() => import('@/components/Skills'), { ssr: false });
-const GitHubProjects = dynamic(() => import('@/components/GitHubProjects'), { ssr: false });
-const Contact = dynamic(() => import('@/components/Contact'), { ssr: false });
-const LivePreview = dynamic(() => import('@/components/LivePreview'), { ssr: false });
-const TechCarousel = dynamic(() => import('@/components/TechCarousel'), { ssr: false });
+const SoloLevelingBoot = dynamic(() => import('@/components/loading-screen/SoloLevelingBoot'), { ssr: false });
+const MatrixBackground = dynamic(() => import('@/components/effects/MatrixBackground'), { ssr: false });
+const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
+const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
+const KeyboardNav = dynamic(() => import('@/components/ui/KeyboardNav'), { ssr: false });
+const Skills = dynamic(() => import('@/components/home/Skills'), { ssr: false });
+const GitHubProjects = dynamic(() => import('@/components/projects/GitHubProjects'), { ssr: false });
+const Contact = dynamic(() => import('@/components/contact/Contact'), { ssr: false });
+const LivePreview = dynamic(() => import('@/components/projects/LivePreview'), { ssr: false });
+const TechCarousel = dynamic(() => import('@/components/home/TechCarousel'), { ssr: false });
 
 interface Repo {
   id: number;

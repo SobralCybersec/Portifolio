@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { redis } from '@/lib/chat';
+import { redis } from '@/lib/chat/chat';
 
 export const runtime = 'nodejs';
 

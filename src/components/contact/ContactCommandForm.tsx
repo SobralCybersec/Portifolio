@@ -5,7 +5,7 @@ import { ArrowUpRight, CheckCircle2, Clock3, Mail, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent, PointerEvent } from 'react';
-import MagneticButton from '@/components/MagneticButton';
+import MagneticButton from '@/components/ui/MagneticButton';
 import ClickSpark from './ClickSpark';
 
 interface ContactLink {
