@@ -152,8 +152,8 @@ export default function Hero({ animateSection }: HeroProps) {
                         alt={badge.alt}
                         fill
                         className="object-contain"
-                        quality={100}
-                        unoptimized
+                        quality={75}
+                        sizes="74px"
                         style={theme === 'light' && i === 0 ? { filter: 'invert(1)' } : undefined}
                       />
                     </div>
@@ -165,7 +165,7 @@ export default function Hero({ animateSection }: HeroProps) {
 
           {/* Right — image + stats */}
           <div className="hero-right-col">
-            <AnimatedText delay={0.2}>
+            <AnimatedText critical>
               <div className="hero-image-wrapper" suppressHydrationWarning>
                 <div className="hero-image-frame">
                   {/* LetterGlitch Background */}
@@ -180,13 +180,13 @@ export default function Hero({ animateSection }: HeroProps) {
                     />
                   </div>
                   <Image
-                    key={`hero-${theme}`}
-                    src={theme === 'light' ? '/images/JinWoo-BackFacing3.png' : '/images/JinWoo-render.png'}
+                    src={theme === 'light' ? '/images/JinWoo-BackFacing3-768.avif' : '/images/JinWoo-render-768.avif'}
                     alt="Matheus Sobral — Developer"
                     fill
                     className="hero-img"
-                    priority
-                    quality={100}
+                    fetchPriority="high"
+                    loading="eager"
+                    quality={75}
                     sizes="(max-width: 768px) 100vw, 448px"
                   />
                 </div>
@@ -220,7 +220,7 @@ export default function Hero({ animateSection }: HeroProps) {
         </div>
 
         <div className="mt-10 border-y border-[var(--border)] bg-[var(--bg-card)]/[0.35] py-2 text-[var(--theme-primary)]" aria-label={t('scrollCapabilities')}>
-          <ScrollVelocityRibbon className="font-mono text-[10px] uppercase tracking-[0.22em]" baseVelocity={0.7}>
+          <ScrollVelocityRibbon className="font-mono text-xs uppercase tracking-[0.22em]" baseVelocity={0.7}>
             {highlights.join('  •  ')}
           </ScrollVelocityRibbon>
         </div>

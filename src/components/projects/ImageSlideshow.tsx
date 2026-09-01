@@ -51,18 +51,23 @@ export default function ImageSlideshow({ images, alt, interval = 5000, fallbackS
       ))}
       
       {images.length > 1 && (
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-0">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className="w-2 h-2 rounded-full transition-all"
-              style={{
-                background: index === safeIndex ? '#a855f7' : 'rgba(168, 85, 247, 0.3)',
-                boxShadow: index === safeIndex ? '0 0 8px #a855f7' : 'none',
-              }}
+              className="flex h-6 w-6 items-center justify-center rounded-full transition-all"
               aria-label={t('imageNumber', { number: index + 1 })}
-            />
+            >
+              <span
+                aria-hidden="true"
+                className="h-2 w-2 rounded-full"
+                style={{
+                  background: index === safeIndex ? '#a855f7' : 'rgba(168, 85, 247, 0.3)',
+                  boxShadow: index === safeIndex ? '0 0 8px #a855f7' : 'none',
+                }}
+              />
+            </button>
           ))}
         </div>
       )}

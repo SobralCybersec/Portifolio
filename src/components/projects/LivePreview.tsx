@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { AnimatedText } from '@/components/texts/AnimatedText';
 import { Activity, ArrowUpRight, Github, Play, RefreshCw } from 'lucide-react';
@@ -16,6 +16,8 @@ export default function LivePreview() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
+  const sectionRef = useRef<HTMLElement>(null);
+  const loadStartedRef = useRef(false);
 
   const fetchGifUrl = useCallback(async (guard?: { cancelled: boolean }) => {
     setLoading(true);
@@ -57,13 +59,34 @@ export default function LivePreview() {
 
   useEffect(() => {
     const guard = { cancelled: false };
-    async function load() { await fetchGifUrl(guard); }
-    load();
-    return () => { guard.cancelled = true; };
+    const start = () => {
+      if (loadStartedRef.current) return;
+      loadStartedRef.current = true;
+      void fetchGifUrl(guard);
+    };
+
+    const section = sectionRef.current;
+    if (!section || !('IntersectionObserver' in window)) {
+      start();
+      return () => { guard.cancelled = true; };
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        start();
+        observer.disconnect();
+      }
+    }, { rootMargin: '150px' });
+    observer.observe(section);
+
+    return () => {
+      guard.cancelled = true;
+      observer.disconnect();
+    };
   }, [fetchGifUrl]);
 
   return (
-    <section className="relative overflow-hidden px-4 py-20 md:px-8 md:py-24">
+    <section ref={sectionRef} data-lazy-load="live-preview" className="relative overflow-hidden px-4 py-20 md:px-8 md:py-24">
       <div className="mx-auto w-full max-w-7xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-6 border-b border-[var(--border)] pb-8 lg:flex-row lg:items-end">
           <div className="max-w-3xl">

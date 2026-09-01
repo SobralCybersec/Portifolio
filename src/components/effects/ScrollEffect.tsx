@@ -16,27 +16,15 @@ export default function ScrollEffect() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-    resize();
-    window.addEventListener('resize', resize);
-
     const isDark = document.documentElement.classList.contains('dark');
     const primary = isDark ? 'rgba(168, 85, 247, 0.15)' : 'rgba(59, 130, 246, 0.15)';
     const secondary = isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(37, 99, 235, 0.1)';
 
-    let rafId: number;
+    let rafId = 0;
     let scrollY = 0;
     let ticking = false;
 
-    const handleScroll = () => {
-      scrollY = window.scrollY;
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => { ticking = false; });
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    const animate = () => {
+    const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const offset = scrollY * 0.5;
@@ -47,14 +35,36 @@ export default function ScrollEffect() {
 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      rafId = requestAnimationFrame(animate);
     };
-    animate();
+
+    const scheduleDraw = () => {
+      if (ticking) return;
+      ticking = true;
+      rafId = requestAnimationFrame(() => {
+        ticking = false;
+        rafId = 0;
+        draw();
+      });
+    };
+
+    const handleScroll = () => {
+      scrollY = window.scrollY;
+      scheduleDraw();
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    const handleResize = () => {
+      resize();
+      scheduleDraw();
+    };
+
+    window.addEventListener('resize', handleResize);
+    resize();
+    draw();
 
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', resize);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);

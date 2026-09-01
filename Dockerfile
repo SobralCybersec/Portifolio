@@ -9,6 +9,8 @@ FROM node:${NODE_VERSION} AS dependencies
 
 WORKDIR /app
 
+RUN npm install --global pnpm@11.9.0
+
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
@@ -17,13 +19,12 @@ RUN apt-get update \
       g++ \
     && rm -rf /var/lib/apt/lists/*
 
-COPY package.json package-lock.json* ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
 ENV CI=true
 
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci && \
-    npm cache clean --force
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
 
 # ============================================
 # Stage 2: Builder
@@ -32,13 +33,15 @@ FROM node:${NODE_VERSION} AS builder
 
 WORKDIR /app
 
+RUN npm install --global pnpm@11.9.0
+
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN --mount=type=cache,target=/app/.next/cache \
-    npm run build
+    pnpm run build
 
 # ============================================
 # Stage 3: Runner

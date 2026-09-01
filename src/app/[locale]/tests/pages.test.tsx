@@ -8,11 +8,12 @@ import ProjectsPage from '../projects/page';
 
 jest.mock('next/dynamic', () => (loader: () => Promise<unknown>) => {
   void Promise.resolve(loader()).catch(() => undefined);
-  function DynamicMock({ onComplete, onMenuToggle, children }: { onComplete?: () => void; onMenuToggle?: () => void; children?: React.ReactNode }) {
+  function DynamicMock({ onComplete, onMenuToggle, children, repo }: { onComplete?: () => void; onMenuToggle?: () => void; children?: React.ReactNode; repo?: { name: string } }) {
     return (
       <div data-testid="dynamic-component">
         {onComplete && <button onClick={onComplete}>complete boot</button>}
         {onMenuToggle && <button onClick={onMenuToggle}>toggle menu</button>}
+        {repo && <article>{repo.name}</article>}
         {children}
       </div>
     );
@@ -68,7 +69,7 @@ afterEach(() => {
 test('renders home gate, completes boot, and loads projects', async () => {
   global.fetch = jest.fn().mockResolvedValue({ json: async () => [repo] });
   render(<HomePage />);
-  expect(screen.queryByTestId('hero')).not.toBeInTheDocument();
+  expect(screen.getByTestId('hero')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'complete boot' }));
   fireEvent.click(screen.getByRole('button', { name: 'toggle menu' }));
   await waitFor(() => expect(screen.getByTestId('hero')).toBeInTheDocument());

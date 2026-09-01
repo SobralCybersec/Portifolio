@@ -1,7 +1,18 @@
 'use client';
 
 import { useReducedMotion } from 'framer-motion';
-import * as THREE from 'three';
+import {
+  AdditiveBlending,
+  BufferAttribute,
+  BufferGeometry,
+  MathUtils,
+  PerspectiveCamera,
+  Points,
+  Scene,
+  ShaderMaterial,
+  Timer,
+  WebGLRenderer,
+} from 'three';
 import { useEffect, useRef } from 'react';
 
 const vertexShader = /* glsl */ `
@@ -96,7 +107,7 @@ export default function AboutParticleField({
     const container = canvas?.parentElement;
     if (!canvas || !container) return;
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       canvas,
       alpha: true,
       antialias: false,
@@ -105,8 +116,8 @@ export default function AboutParticleField({
     renderer.setClearColor(0, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(15, 1, 0.1, 100);
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(15, 1, 0.1, 100);
     camera.position.set(0, 0, 18);
 
     const positions = new Float32Array(particleCount * 3);
@@ -139,17 +150,17 @@ export default function AboutParticleField({
       colors.set(colorToRgb(safeColors[index % safeColors.length]), index * 3);
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 4));
-    geometry.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new BufferAttribute(positions, 3));
+    geometry.setAttribute('aRandom', new BufferAttribute(randoms, 4));
+    geometry.setAttribute('aColor', new BufferAttribute(colors, 3));
 
-    const material = new THREE.ShaderMaterial({
+    const material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: AdditiveBlending,
       uniforms: {
         uTime: { value: 0 },
         uSpread: { value: particleSpread },
@@ -158,11 +169,11 @@ export default function AboutParticleField({
         uAlphaParticles: { value: 1 },
       },
     });
-    const points = new THREE.Points(geometry, material);
+    const points = new Points(geometry, material);
     points.frustumCulled = false;
     scene.add(points);
 
-    const timer = new THREE.Timer();
+    const timer = new Timer();
     timer.connect(document);
     const pointer = { x: 0, y: 0 };
 
@@ -186,7 +197,21 @@ export default function AboutParticleField({
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
 
     let animationId = 0;
+    let lastFrame = 0;
+    let active = true;
+    const frameInterval = 1000 / 30;
     const render = (time: number) => {
+      if (!active || document.hidden) {
+        animationId = 0;
+        return;
+      }
+
+      if (lastFrame !== 0 && time - lastFrame < frameInterval) {
+        animationId = requestAnimationFrame(render);
+        return;
+      }
+
+      lastFrame = time;
       timer.update(time);
       const elapsed = timer.getElapsed();
       const delta = Math.min(timer.getDelta(), 0.05);
@@ -194,8 +219,8 @@ export default function AboutParticleField({
 
       const targetX = -pointer.x * hoverFactor;
       const targetY = -pointer.y * hoverFactor;
-      points.position.x = THREE.MathUtils.lerp(points.position.x, targetX, Math.min(delta * 3, 1));
-      points.position.y = THREE.MathUtils.lerp(points.position.y, targetY, Math.min(delta * 3, 1));
+      points.position.x = MathUtils.lerp(points.position.x, targetX, Math.min(delta * 3, 1));
+      points.position.y = MathUtils.lerp(points.position.y, targetY, Math.min(delta * 3, 1));
       points.rotation.x = Math.sin(elapsed * 0.18) * 0.08;
       points.rotation.y = Math.cos(elapsed * 0.12) * 0.12;
       points.rotation.z += delta * 0.018;
@@ -206,8 +231,42 @@ export default function AboutParticleField({
 
     render(performance.now());
 
+    const start = () => {
+      if (!shouldReduceMotion && animationId === 0) {
+        animationId = requestAnimationFrame(render);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        active = false;
+        if (animationId) cancelAnimationFrame(animationId);
+        animationId = 0;
+      } else {
+        active = true;
+        lastFrame = 0;
+        start();
+      }
+    };
+
+    const observer = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver(([entry]) => {
+        active = entry.isIntersecting;
+        if (active) start();
+        else if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = 0;
+        }
+      });
+
+    observer?.observe(canvas);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
-      cancelAnimationFrame(animationId);
+      if (animationId) cancelAnimationFrame(animationId);
+      observer?.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', resize);
       window.removeEventListener('pointermove', handlePointerMove);
       timer.disconnect();

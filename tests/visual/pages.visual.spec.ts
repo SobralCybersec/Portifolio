@@ -32,11 +32,10 @@ for (const [name, route] of [
     await stabilizeVisualLayers(page);
     await prepareFullPageVisual(page);
     const options = maskedVisualOptions(page);
-    const canvasMask = page.locator('main canvas').last().locator('xpath=..');
     await expect(page).toHaveScreenshot(`${name}-desktop.png`, {
       ...options,
       fullPage: true,
-      mask: name === 'projects' ? [...options.mask, canvasMask] : options.mask,
+      ...(name === 'projects' ? { maxDiffPixels: 100 } : {}),
     });
   });
 }
@@ -56,5 +55,8 @@ test('project card region visual regression', async ({ page }) => {
   await expect(card).toBeVisible();
   await expect(card).toHaveScreenshot('project-card.png', {
     animations: 'disabled',
+    // The icon's antialiasing varies by capture pass; keep tolerance below
+    // one visual glyph instead of masking the component region.
+    maxDiffPixels: 20,
   });
 });

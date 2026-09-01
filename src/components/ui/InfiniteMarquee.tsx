@@ -52,7 +52,7 @@ export function InfiniteMarquee({
             </div>
           ))}
         </div>
-        <div className="flex shrink-0" aria-hidden="true">
+        <div className="flex shrink-0" aria-hidden="true" inert>
           {items.map((item, index) => (
             <div key={`second-${index}`} className={`flex items-center ${itemClassName}`}>
               {cloneForLoop(item)}

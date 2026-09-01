@@ -72,7 +72,7 @@ test('handles failed README, language, and top-level requests', async () => {
   expect(data[0].allLanguages).toEqual([]);
 
   global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
-  expect((await GET({} as any)).status).toBe(500);
+  expect((await GET({} as any)).status).toBe(200);
 });
 
 test('extracts small-image skips, HTML videos, and markdown videos', async () => {
@@ -114,8 +114,8 @@ test('finds HTML Demo attachments and relative Demo Preview videos', async () =>
 test('returns unknown error for non-Error top-level failures', async () => {
   global.fetch = jest.fn().mockRejectedValue('offline');
   const result = await GET({} as any);
-  expect(result.status).toBe(500);
-  expect(await result.json()).toEqual({ error: 'Unknown error' });
+  expect(result.status).toBe(200);
+  expect(await result.json()).toEqual([]);
 });
 
 test('returns empty list when one top-level GitHub response is not ok', async () => {

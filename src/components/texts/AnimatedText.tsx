@@ -7,14 +7,15 @@ interface AnimatedTextProps {
   children: ReactNode;
   className?: string;
   delay?: number;
+  critical?: boolean;
 }
 
-export function AnimatedText({ children, className = '', delay = 0 }: AnimatedTextProps) {
+export function AnimatedText({ children, className = '', delay = 0, critical = false }: AnimatedTextProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+      initial={critical ? false : { opacity: 1, y: 20 }}
+      animate={critical ? undefined : { opacity: 1, y: 0 }}
+      transition={critical ? { duration: 0 } : { duration: 0.5, delay }}
       className={className}
     >
       {children}

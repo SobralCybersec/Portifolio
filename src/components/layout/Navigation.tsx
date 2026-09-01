@@ -145,338 +145,145 @@ function MobileMenu(props: MobileMenuProps) {
   );
 }
 
+function isActivePath(pathname: string, path: string) {
+  return pathname === path || pathname.startsWith(path + '/');
+}
+
+type DesktopNavigationProps = Pick<NavigationContentProps, 'pathname' | 'isDark' | 'primary' | 'navLinks' | 'hoveredLink' | 'onHoverLink' | 'onNavigate'>;
+
+function NavigationLogo(props: Pick<NavigationContentProps, 'isDark' | 'onNavigate'>) {
+  const { isDark, onNavigate } = props;
+  return (
+    <Link href="/" onClick={onNavigate} style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, textDecoration: 'none' }}>
+      <Image
+        src={isDark ? '/images/icons/igris.png' : '/images/icons/beru.png'}
+        alt={isDark ? 'Igris' : 'Beru'}
+        width={32}
+        height={32}
+        priority
+        className="object-contain"
+        style={{ width: '32px', height: '32px', flexShrink: 0 }}
+      />
+      <span
+        className="sm:block"
+        style={{ fontFamily: 'var(--font-solo-heading)', fontSize: '12px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: isDark ? '#c4b8e0' : '#1e3a8a', display: 'none' }}
+      >
+        SOBRAL
+      </span>
+    </Link>
+  );
+}
+
+function DesktopNavLink(props: DesktopNavigationProps & { link: NavLink }) {
+  const { pathname, isDark, primary, hoveredLink, onHoverLink, onNavigate, link } = props;
+  const active = isActivePath(pathname, link.href);
+  return (
+    <Link
+      href={link.href}
+      onClick={onNavigate}
+      onMouseEnter={() => onHoverLink(link.href)}
+      onMouseLeave={() => onHoverLink(null)}
+      style={{ position: 'relative', padding: '6px 13px', fontFamily: 'var(--font-solo-heading)', fontSize: '11px', fontWeight: 700, letterSpacing: '1.6px', textTransform: 'uppercase', color: active ? (isDark ? '#d8b4fe' : '#1e3a8a') : (isDark ? '#8fa5bf' : '#5a6b7f'), background: active ? primary + '1f' : 'transparent', border: '1px solid ' + (active ? primary + '73' : 'transparent'), borderRadius: '8px', transition: 'color .18s, background .18s, border-color .18s', textDecoration: 'none', whiteSpace: 'nowrap', zIndex: 1 }}
+    >
+      {link.label}
+      {hoveredLink === link.href && !active && (
+        <motion.span
+          layoutId="nav-hover"
+          style={{ position: 'absolute', inset: 0, background: primary + '0d', border: '1px solid ' + primary + '40', borderRadius: '8px', zIndex: -1 }}
+          transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+        />
+      )}
+      {active && <span style={{ position: 'absolute', bottom: 0, left: '8px', right: '8px', height: '1px', background: primary }} />}
+    </Link>
+  );
+}
+
+function DesktopNavigation(props: DesktopNavigationProps) {
+  const { navLinks } = props;
+  return (
+    <div style={{ alignItems: 'center', gap: '2px', flex: '1 1 0', justifyContent: 'center', minWidth: 0 }} className="hidden lg:flex">
+      {navLinks.map((link) => <DesktopNavLink key={link.href} {...props} link={link} />)}
+    </div>
+  );
+}
+
+function GithubLink(props: Pick<NavigationContentProps, 'isDark' | 'primary'>) {
+  const { isDark, primary } = props;
+  return (
+    <a
+      href="https://github.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="nav-icon-button hidden md:flex"
+      aria-label="GitHub"
+      style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid ' + primary + '40', background: isDark ? 'rgba(4,8,16,0.6)' : 'rgba(255,255,255,0.6)', borderRadius: '10px', transition: 'border-color .18s', flexShrink: 0 }}
+    >
+      <Github style={{ width: '15px', height: '15px', color: isDark ? '#8fa5bf' : '#5a6b7f' }} />
+    </a>
+  );
+}
+
+function MobileMenuToggle(props: Pick<NavigationContentProps, 'isDark' | 'primary' | 'mobileMenuOpen' | 'onToggleMobileMenu' | 'openMenuLabel' | 'closeMenuLabel'>) {
+  const { isDark, primary, mobileMenuOpen, onToggleMobileMenu, openMenuLabel, closeMenuLabel } = props;
+  const Icon = mobileMenuOpen ? X : Menu;
+  return (
+    <button
+      onClick={onToggleMobileMenu}
+      aria-label={mobileMenuOpen ? closeMenuLabel : openMenuLabel}
+      aria-expanded={mobileMenuOpen}
+      className="nav-icon-button lg:hidden"
+      style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid ' + primary + '4d', background: 'transparent', borderRadius: '10px', cursor: 'pointer', flexShrink: 0 }}
+    >
+      <Icon style={{ width: '18px', height: '18px', color: isDark ? '#8fa5bf' : '#5a6b7f' }} />
+    </button>
+  );
+}
+
+function NavigationActions(props: NavigationContentProps) {
+  const { isDark, primary } = props;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+      <GithubLink isDark={isDark} primary={primary} />
+      <div className="hidden md:block" style={{ flexShrink: 0 }}><LanguageSwitcher /></div>
+      <div style={{ flexShrink: 0 }}><ThemeToggle /></div>
+      <MobileMenuToggle {...props} />
+    </div>
+  );
+}
+
+function CornerAccents({ primary }: { primary: string }) {
+  const corners = [
+    { top: -2, left: -2, borderWidth: '2px 0 0 2px' },
+    { top: -2, right: -2, borderWidth: '2px 2px 0 0' },
+    { bottom: -2, left: -2, borderWidth: '0 0 2px 2px' },
+    { bottom: -2, right: -2, borderWidth: '0 2px 2px 0' },
+  ] as const;
+  return <>{corners.map((corner, index) => <div key={index} style={{ position: 'absolute', width: '8px', height: '8px', borderColor: primary, borderStyle: 'solid', ...corner, pointerEvents: 'none' }} />)}</>;
+}
+
+function NavigationBar(props: NavigationContentProps) {
+  const { pathname, isDark, primary, navLinks, mobileMenuOpen, hoveredLink, onHoverLink, onNavigate, onToggleMobileMenu, openMenuLabel, closeMenuLabel } = props;
+  return (
+    <div style={{ position: 'relative', border: '1px solid ' + primary + '88', background: isDark ? 'rgba(10,14,24,0.92)' : 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '2px' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg,transparent,' + primary + ',' + primary + 'dd 50%,' + primary + ',transparent)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg,transparent,' + primary + '66 30%,' + primary + '66 70%,transparent)', pointerEvents: 'none' }} />
+      <CornerAccents primary={primary} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: '52px', gap: '8px', minWidth: 0 }}>
+        <NavigationLogo isDark={isDark} onNavigate={onNavigate} />
+        <DesktopNavigation pathname={pathname} isDark={isDark} primary={primary} navLinks={navLinks} hoveredLink={hoveredLink} onHoverLink={onHoverLink} onNavigate={onNavigate} />
+        <NavigationActions {...props} />
+      </div>
+      <MobileMenu pathname={pathname} isDark={isDark} primary={primary} navLinks={navLinks} mobileMenuOpen={mobileMenuOpen} onNavigate={onNavigate} />
+    </div>
+  );
+}
+
 function NavigationContent(props: NavigationContentProps) {
-  const {
-    pathname,
-    isDark,
-    primary,
-    navLinks,
-    mobileMenuOpen,
-    hoveredLink,
-    onHoverLink,
-    onNavigate,
-    onToggleMobileMenu,
-    openMenuLabel,
-    closeMenuLabel,
-  } = props;
-
-  const isActive = (path: string) =>
-    pathname === path || pathname.startsWith(path + '/');
-
   return (
     <>
-      <nav
-        style={{
-          position: 'fixed',
-          top: '12px',
-          left: '12px',
-          right: '12px',
-          zIndex: 50,
-          maxWidth: '1400px',
-          margin: '0 auto',
-        }}
-        suppressHydrationWarning
-      >
-        <div
-          style={{
-            position: 'relative',
-            border: `1px solid ${primary}88`,
-            background: isDark
-              ? 'rgba(10,14,24,0.92)'
-              : 'rgba(255,255,255,0.92)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            borderRadius: '2px',
-          }}
-        >
-          {/* Top accent line */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '1px',
-              background: `linear-gradient(90deg,transparent,${primary},${primary}dd 50%,${primary},transparent)`,
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* Bottom accent line */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: '1px',
-              background: `linear-gradient(90deg,transparent,${primary}66 30%,${primary}66 70%,transparent)`,
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* Corner accents */}
-          {([
-            { top: -2, left: -2, borderWidth: '2px 0 0 2px' },
-            { top: -2, right: -2, borderWidth: '2px 2px 0 0' },
-            { bottom: -2, left: -2, borderWidth: '0 0 2px 2px' },
-            { bottom: -2, right: -2, borderWidth: '0 2px 2px 0' },
-          ] as const).map((c, i) => (
-            <div
-              key={i}
-              style={{
-                position: 'absolute',
-                width: '8px',
-                height: '8px',
-                borderColor: primary,
-                borderStyle: 'solid',
-                ...c,
-                pointerEvents: 'none',
-              }}
-            />
-          ))}
-
-          {/* Main bar */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0 16px',
-              height: '52px',
-              gap: '8px',
-              minWidth: 0,
-            }}
-          >
-            {/* Logo */}
-            <Link
-              href="/"
-              onClick={onNavigate}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                flexShrink: 0,
-                textDecoration: 'none',
-              }}
-            >
-              <Image
-                src={isDark ? '/images/icons/igris.png' : '/images/icons/beru.png'}
-                alt={isDark ? 'Igris' : 'Beru'}
-                width={32}
-                height={32}
-                className="object-contain"
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  flexShrink: 0,
-                }}
-              />
-
-              <span
-                style={{
-                  fontFamily: 'var(--font-solo-heading)',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  letterSpacing: '2px',
-                  textTransform: 'uppercase',
-                  color: isDark ? '#c4b8e0' : '#1e3a8a',
-                  display: 'none',
-                }}
-                className="sm:block"
-              >
-                SOBRAL
-              </span>
-            </Link>
-
-            {/* Desktop nav */}
-            <div
-              style={{
-                alignItems: 'center',
-                gap: '2px',
-                flex: '1 1 0',
-                justifyContent: 'center',
-                minWidth: 0,
-              }}
-              className="hidden lg:flex"
-            >
-              {navLinks.map((link) => {
-                const active = isActive(link.href);
-
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={onNavigate}
-                    onMouseEnter={() => onHoverLink(link.href)}
-                    onMouseLeave={() => onHoverLink(null)}
-                    style={{
-                      position: 'relative',
-                      padding: '6px 13px',
-                      fontFamily: 'var(--font-solo-heading)',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      letterSpacing: '1.6px',
-                      textTransform: 'uppercase',
-                      color: active
-                        ? `${primary}dd`
-                        : isDark
-                        ? '#8fa5bf'
-                        : '#5a6b7f',
-                      background: active ? `${primary}1f` : 'transparent',
-                      border: `1px solid ${
-                        active ? `${primary}73` : 'transparent'
-                      }`,
-                      borderRadius: '8px',
-                      transition:
-                        'color .18s, background .18s, border-color .18s',
-                      textDecoration: 'none',
-                      whiteSpace: 'nowrap',
-                      zIndex: 1,
-                    }}
-                  >
-                    {link.label}
-
-                    {hoveredLink === link.href && !active && (
-                      <motion.span
-                        layoutId="nav-hover"
-                        style={{
-                          position: 'absolute',
-                          inset: 0,
-                          background: `${primary}0d`,
-                          border: `1px solid ${primary}40`,
-                          borderRadius: '8px',
-                          zIndex: -1,
-                        }}
-                        transition={{
-                          type: 'spring',
-                          bounce: 0.2,
-                          duration: 0.5,
-                        }}
-                      />
-                    )}
-
-                    {active && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: '8px',
-                          right: '8px',
-                          height: '1px',
-                          background: primary,
-                        }}
-                      />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Right cluster */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                flexShrink: 0,
-              }}
-            >
-              {/* GitHub */}
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="nav-icon-button hidden md:flex"
-                aria-label="GitHub"
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: `1px solid ${primary}40`,
-                  background: isDark
-                    ? 'rgba(4,8,16,0.6)'
-                    : 'rgba(255,255,255,0.6)',
-                  borderRadius: '10px',
-                  transition: 'border-color .18s',
-                  flexShrink: 0,
-                }}
-              >
-                <Github
-                  style={{
-                    width: '15px',
-                    height: '15px',
-                    color: isDark ? '#8fa5bf' : '#5a6b7f',
-                  }}
-                />
-              </a>
-
-              {/* Language switcher */}
-              <div className="hidden md:block" style={{ flexShrink: 0 }}>
-                <LanguageSwitcher />
-              </div>
-
-              {/* Theme toggle */}
-              <div style={{ flexShrink: 0 }}>
-                <ThemeToggle />
-              </div>
-
-              {/* Mobile menu button */}
-              <button
-                onClick={() => onToggleMobileMenu()}
-                aria-label={mobileMenuOpen ? closeMenuLabel : openMenuLabel}
-                aria-expanded={mobileMenuOpen}
-                className="nav-icon-button lg:hidden"
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: `1px solid ${primary}4d`,
-                  background: 'transparent',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                }}
-              >
-                {mobileMenuOpen ? (
-                  <X
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      color: isDark ? '#8fa5bf' : '#5a6b7f',
-                    }}
-                  />
-                ) : (
-                  <Menu
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      color: isDark ? '#8fa5bf' : '#5a6b7f',
-                    }}
-                  />
-                )}
-              </button>
-            </div>
-          </div>
-
-
-          <MobileMenu
-            pathname={pathname}
-            isDark={isDark}
-            primary={primary}
-            navLinks={navLinks}
-            mobileMenuOpen={mobileMenuOpen}
-            onNavigate={onNavigate}
-          />
-
-        </div>
+      <nav style={{ position: 'fixed', top: '12px', left: '12px', right: '12px', zIndex: 50, maxWidth: '1400px', margin: '0 auto' }} suppressHydrationWarning>
+        <NavigationBar {...props} />
       </nav>
-
-      {/* Spacer */}
       <div style={{ height: '76px' }} />
     </>
   );

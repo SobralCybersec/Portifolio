@@ -10,6 +10,49 @@ import { Github } from 'lucide-react';
 import SafeImage from '@/components/ui/SafeImage';
 import ImageSlideshow from './ImageSlideshow';
 import type { ProjectCardColors, Repo } from './project-card-types';
+import { useEffect, useRef, useState } from 'react';
+
+function LazyPreviewVideo({ src }: { src: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    if (shouldLoad) return;
+
+    const video = videoRef.current;
+    if (!video || !('IntersectionObserver' in window)) {
+      setShouldLoad(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '400px 0px' },
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [shouldLoad]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={shouldLoad ? src : undefined}
+      className="h-full w-full object-cover"
+      autoPlay={shouldLoad}
+      loop
+      muted
+      playsInline
+      controls
+      preload={shouldLoad ? 'metadata' : 'none'}
+    />
+  );
+}
 
 interface ProjectCardPreviewProps {
   repo: Repo;
@@ -19,101 +62,62 @@ interface ProjectCardPreviewProps {
   isLight: boolean;
   shouldReduceMotion: boolean;
   isLanguageIcon: boolean;
+  featured: boolean;
 }
 
-export function ProjectCardPreview({
-  repo,
-  previewImages,
-  languageFallback,
-  colors: C,
-  isLight,
-  shouldReduceMotion,
-  isLanguageIcon,
-  featured,
-}: ProjectCardPreviewProps & { featured: boolean }) {
-  const t = useTranslations("projects");
+interface PreviewMediaProps {
+  repo: Repo;
+  previewImages: string[];
+  languageFallback: string;
+  colors: ProjectCardColors;
+  isLanguageIcon: boolean;
+}
+
+function PreviewMedia(props: PreviewMediaProps) {
+  const { repo, previewImages, languageFallback, colors: C, isLanguageIcon } = props;
+  const t = useTranslations('projects');
+
+  if (repo.isVideo) return <LazyPreviewVideo src={previewImages[0]} />;
+  if (isLanguageIcon) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-10">
+        <SafeImage
+          src={previewImages[0]}
+          alt={repo.language ?? t('languageIcon')}
+          width={140}
+          height={140}
+          className="object-contain"
+          fallbackSrc={languageFallback}
+          style={{ filter: 'brightness(0.95) contrast(1.1) drop-shadow(0 0 18px ' + C.primary + '80)' }}
+        />
+      </div>
+    );
+  }
+  return <ImageSlideshow images={previewImages} alt={repo.name} interval={5000} fallbackSrc={languageFallback} />;
+}
+
+export function ProjectCardPreview(props: ProjectCardPreviewProps) {
+  const { repo, previewImages, languageFallback, colors: C, isLight, shouldReduceMotion, isLanguageIcon, featured } = props;
 
   return (
     <div
       className="relative mb-5 overflow-hidden"
       style={{
-        aspectRatio: isLanguageIcon ? "1 / 1" : featured ? "21 / 9" : "16 / 9",
-        clipPath: `
-          polygon(
-            0 0,
-            100% 0,
-            100% calc(100% - 18px),
-            calc(100% - 18px) 100%,
-            0 100%
-          )
-        `,
-        border: `1px solid ${C.border}`,
-        background: isLight ? "#dde6ff" : "rgba(6,0,16,0.95)",
-        isolation: "isolate",
+        aspectRatio: isLanguageIcon ? '1 / 1' : featured ? '21 / 9' : '16 / 9',
+        clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%)',
+        border: '1px solid ' + C.border,
+        background: isLight ? '#dde6ff' : 'rgba(6,0,16,0.95)',
+        isolation: 'isolate',
       }}
     >
-      <div
-        className="absolute inset-0 z-10 pointer-events-none"
-        style={{
-          background: `linear-gradient(180deg, transparent, ${C.primary}1a)`,
-        }}
-      />
-
+      <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'linear-gradient(180deg, transparent, ' + C.primary + '1a)' }} />
       <motion.div
         className="absolute inset-0 z-10 pointer-events-none"
-        animate={
-          shouldReduceMotion
-            ? { opacity: 0.05 }
-            : { opacity: [0.05, 0.1, 0.05] }
-        }
-        transition={
-          shouldReduceMotion
-            ? { duration: 0 }
-            : { duration: 2, repeat: Infinity }
-        }
-        style={{
-          background: `repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            ${C.primary}0d 2px,
-            transparent 4px
-          )`,
-        }}
+        animate={shouldReduceMotion ? { opacity: 0.05 } : { opacity: [0.05, 0.1, 0.05] }}
+        transition={shouldReduceMotion ? { duration: 0 } : { duration: 2, repeat: Infinity }}
+        style={{ background: 'repeating-linear-gradient(90deg, transparent 0px, ' + C.primary + '0d 2px, transparent 4px)' }}
       />
-
-      {repo.isVideo ? (
-        <video
-          src={previewImages[0]}
-          className="h-full w-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-          controls
-          preload="metadata"
-        />
-      ) : isLanguageIcon ? (
-        <div className="flex h-full w-full items-center justify-center p-10">
-          <SafeImage
-            src={previewImages[0]}
-            alt={repo.language ?? t("languageIcon")}
-            width={140}
-            height={140}
-            className="object-contain"
-            fallbackSrc={languageFallback}
-            style={{
-              filter: `brightness(0.95) contrast(1.1) drop-shadow(0 0 18px ${C.primary}80)`,
-            }}
-          />
-        </div>
-      ) : (
-        <ImageSlideshow
-          images={previewImages}
-          alt={repo.name}
-          interval={5000}
-          fallbackSrc={languageFallback}
-        />
-      )}
+      <PreviewMedia repo={repo} previewImages={previewImages} languageFallback={languageFallback} colors={C} isLanguageIcon={isLanguageIcon} />
     </div>
   );
 }
@@ -298,4 +302,3 @@ export function ProjectCardVisuals(props: ProjectCardVisualsProps) {
     </>
   );
 }
-

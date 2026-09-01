@@ -61,10 +61,10 @@ export async function GET() {
       { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } }
     );
   } catch (error) {
-    console.error('[github/stats]', error);
+    console.warn('[github/stats]', error);
     return NextResponse.json(
-      { error: 'Failed to fetch stats' },
-      { status: 502 }
+      { publicRepos: 0, yearsActive: 0, totalCommits: 0 },
+      { status: 200, headers: { 'Cache-Control': 'public, max-age=60, s-maxage=300' } },
     );
   }
 }

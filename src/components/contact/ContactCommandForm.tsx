@@ -205,7 +205,7 @@ export default function ContactCommandForm({
         </div>
 
         <div data-contact-meta className="border border-[var(--border)] bg-[var(--bg-card)]/[0.55] p-6">
-          <div className="flex items-center gap-3 text-[var(--theme-accent)]">
+          <div className="flex items-center gap-3 text-[var(--theme-primary)]">
             <Clock3 className="h-4 w-4" />
             <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{labels.responseWindow}</span>
           </div>

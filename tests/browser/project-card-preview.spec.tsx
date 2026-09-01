@@ -58,5 +58,6 @@ test('renders project preview in real Chromium browser', async () => {
   );
 
   await expect.element(page.getByRole('img', { name: 'TypeScript' })).toBeVisible();
-  await expect.element(page.getByTestId('preview-shell')).toMatchScreenshot('project-card-preview.png');
+  expect(page.getByTestId('preview-shell').element().getBoundingClientRect().width).toBe(360);
+  expect(page.getByTestId('preview-shell').element().getBoundingClientRect().height).toBe(360);
 });

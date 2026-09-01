@@ -9,8 +9,12 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
-import PortfolioTransition from './PageTransitionOverlay';
+
+const PortfolioTransition = dynamic(() => import('./PageTransitionOverlay'), {
+  ssr: false,
+});
 
 /**
  * Shared route layer built from Cinematic Letterbox,

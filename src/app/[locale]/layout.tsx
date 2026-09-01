@@ -1,7 +1,6 @@
 import '../globals.css';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono, Rajdhani, Codystar } from 'next/font/google';
 import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
@@ -14,20 +13,37 @@ import { Analytics } from '@vercel/analytics/react';
 import { OPEN_GRAPH_LOCALES, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
 import { PageTransitionProvider } from '@/components/layout/PageTransition';
 
-const geistSans = Inter({
+const geistSans = localFont({
+  src: [
+    { path: '../../../node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2', weight: '400' },
+    { path: '../../../node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2', weight: '600' },
+    { path: '../../../node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2', weight: '700' },
+  ],
   variable: '--font-geist-sans',
-  subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = JetBrains_Mono({
+const geistMono = localFont({
+  src: [
+    { path: '../../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2', weight: '400' },
+    { path: '../../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-600-normal.woff2', weight: '600' },
+    { path: '../../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2', weight: '700' },
+  ],
   variable: '--font-geist-mono',
-  subsets: ['latin'],
+  display: 'swap',
 });
 
-const soloHeading = Rajdhani({
+const soloHeading = localFont({
+  src: [
+    { path: '../../../node_modules/@fontsource/rajdhani/files/rajdhani-latin-300-normal.woff2', weight: '300' },
+    { path: '../../../node_modules/@fontsource/rajdhani/files/rajdhani-latin-400-normal.woff2', weight: '400' },
+    { path: '../../../node_modules/@fontsource/rajdhani/files/rajdhani-latin-500-normal.woff2', weight: '500' },
+    { path: '../../../node_modules/@fontsource/rajdhani/files/rajdhani-latin-600-normal.woff2', weight: '600' },
+    { path: '../../../node_modules/@fontsource/rajdhani/files/rajdhani-latin-700-normal.woff2', weight: '700' },
+  ],
   variable: '--font-solo-heading',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  preload: false,
 });
 
 const eternal = localFont({
@@ -36,10 +52,25 @@ const eternal = localFont({
   display: 'swap',
 });
 
-const codystar = Codystar({
+const codystar = localFont({
+  src: [
+    { path: '../../../node_modules/@fontsource/codystar/files/codystar-latin-300-normal.woff2', weight: '300' },
+    { path: '../../../node_modules/@fontsource/codystar/files/codystar-latin-400-normal.woff2', weight: '400' },
+  ],
   variable: '--font-codystar',
-  subsets: ['latin'],
-  weight: ['300', '400'],
+  display: 'swap',
+  preload: false,
+});
+
+const displayFont = localFont({
+  src: [
+    { path: '../../../node_modules/@fontsource/teko/files/teko-latin-500-normal.woff2', weight: '500' },
+    { path: '../../../node_modules/@fontsource/teko/files/teko-latin-600-normal.woff2', weight: '600' },
+    { path: '../../../node_modules/@fontsource/teko/files/teko-latin-700-normal.woff2', weight: '700' },
+  ],
+  variable: '--font-teko',
+  display: 'swap',
+  preload: false,
 });
 
 export function generateStaticParams() {
@@ -137,13 +168,13 @@ export default async function LocaleLayout({
         <link rel="icon" type="image/svg+xml" href="/images/favicon/Ahjin.svg" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${soloHeading.variable} ${eternal.variable} ${codystar.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${soloHeading.variable} ${eternal.variable} ${codystar.variable} ${displayFont.variable} antialiased`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <DynamicFavicon />
             <BackgroundMusic autoPlay />
             <PageTransitionProvider>{children}</PageTransitionProvider>
-            <Analytics />
+            {process.env.VERCEL === '1' && <Analytics />}
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

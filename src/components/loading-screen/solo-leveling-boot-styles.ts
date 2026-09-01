@@ -2,6 +2,7 @@ export const SOLO_LEVELING_BOOT_STYLES = String.raw`
             .sl-intro {
               pointer-events: none;
               isolation: isolate;
+              font-family: var(--font-solo-heading), sans-serif;
               /* Theme accents — purple + blue, shared by dark & light. */
               --sl-purple: #6f32ff;
               --sl-purple-hot: #965dff;
@@ -209,12 +210,14 @@ export const SOLO_LEVELING_BOOT_STYLES = String.raw`
             }
 
             .sl-kr {
+              font-family: sans-serif;
               color: var(--sl-blue);
               letter-spacing: 0.1em;
               text-shadow: 0 0 12px rgba(60, 200, 255, 0.55);
             }
 
             .sl-title {
+              font-family: var(--font-teko), sans-serif;
               font-style: italic;
               font-size: clamp(4rem, 11vw, 8.6rem);
               line-height: 0.72;

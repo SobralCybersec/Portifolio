@@ -10,7 +10,7 @@ import {
 } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface ExpertiseGroup {
   title: string;
@@ -22,6 +22,57 @@ export interface ExpertiseGroup {
 interface InteractiveExpertiseGridProps {
   groups: ExpertiseGroup[];
   moduleLabel?: string;
+}
+
+function DeferredDecorativeImage({
+  src,
+  sizes,
+  className,
+  wrapperClassName,
+}: {
+  src: string;
+  sizes: string;
+  className: string;
+  wrapperClassName: string;
+}) {
+  const wrapperRef = useRef<HTMLSpanElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || !('IntersectionObserver' in window)) {
+      setVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '0px' },
+    );
+
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <span ref={wrapperRef} className={wrapperClassName} aria-hidden="true">
+      {visible && (
+        <Image
+          src={src}
+          alt=""
+          fill
+          unoptimized
+          sizes={sizes}
+          className={className}
+        />
+      )}
+    </span>
+  );
 }
 
 function ExpertiseCard({ group, index, moduleLabel }: { group: ExpertiseGroup; index: number; moduleLabel: string }) {
@@ -64,22 +115,19 @@ function ExpertiseCard({ group, index, moduleLabel }: { group: ExpertiseGroup; i
       className="group relative min-h-64 overflow-hidden border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 hover:border-[var(--theme-primary)] md:p-8"
     >
       {group.background && (
-        <Image
+        <DeferredDecorativeImage
           src={group.background}
-          alt=""
-          fill
-          unoptimized
           sizes="(max-width: 768px) 100vw, 50vw"
           className="theme-ambient-media pointer-events-none absolute inset-0 z-0 object-cover opacity-20 mix-blend-screen transition duration-700 group-hover:scale-105 group-hover:opacity-30"
+          wrapperClassName="pointer-events-none absolute inset-0 z-0"
         />
       )}
       {group.portrait && (
-        <Image
+        <DeferredDecorativeImage
           src={group.portrait}
-          alt=""
-          fill
           sizes="220px"
           className="theme-portrait-media pointer-events-none absolute inset-y-0 right-0 left-auto z-0 w-2/5 object-contain object-right-bottom opacity-20 mix-blend-screen transition duration-700 group-hover:scale-105 group-hover:opacity-30"
+          wrapperClassName="pointer-events-none absolute inset-y-0 right-0 left-auto z-0 w-2/5"
         />
       )}
       <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-[var(--bg-card)]/[0.94] via-[var(--bg-card)]/[0.82] to-transparent" />

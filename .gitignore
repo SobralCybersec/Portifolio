@@ -11,6 +11,7 @@ resources
 /.quality-venv/
 /playwright-report/
 /test-results/
+/.vitest-attachments/
 /.lighthouseci/
 /storybook-static/
 

@@ -49,6 +49,7 @@ const LetterGlitch = ({
   const grid = useRef({ columns: 0, rows: 0 });
   const context = useRef<CanvasRenderingContext2D | null>(null);
   const lastGlitchTime = useRef(0);
+  const canvasSize = useRef({ width: 0, height: 0 });
 
   const lettersAndSymbols = Array.from(characters);
 
@@ -118,17 +119,20 @@ const LetterGlitch = ({
     }));
   };
 
-  const resizeCanvas = () => {
+  const resizeCanvas = (width?: number, height?: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const parent = canvas.parentElement;
     if (!parent) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const rect = parent.getBoundingClientRect();
+    const rect = width === undefined || height === undefined
+      ? parent.getBoundingClientRect()
+      : { width, height };
 
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
+    canvasSize.current = { width: rect.width, height: rect.height };
 
     canvas.style.width = `${rect.width}px`;
     canvas.style.height = `${rect.height}px`;
@@ -148,7 +152,7 @@ const LetterGlitch = ({
     if (!canvas) return;
     
     const ctx = context.current;
-    const { width, height } = canvas.getBoundingClientRect();
+    const { width, height } = canvasSize.current;
     ctx.clearRect(0, 0, width, height);
     ctx.font = `${fontSize}px monospace`;
     ctx.textBaseline = 'top';
@@ -234,6 +238,7 @@ const LetterGlitch = ({
     animate();
 
     let resizeTimeout: ReturnType<typeof setTimeout>;
+    let resizeObserver: ResizeObserver | undefined;
 
     const handleResize = () => {
       clearTimeout(resizeTimeout);
@@ -244,10 +249,19 @@ const LetterGlitch = ({
       }, 100);
     };
 
-    window.addEventListener('resize', handleResize);
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(([entry]) => {
+        const { width, height } = entry.contentRect;
+        resizeCanvas(width, height);
+      });
+      resizeObserver.observe(canvas.parentElement as HTMLElement);
+    } else {
+      window.addEventListener('resize', handleResize);
+    }
 
     return () => {
       cancelAnimationFrame(animationRef.current!);
+      resizeObserver?.disconnect();
       window.removeEventListener('resize', handleResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

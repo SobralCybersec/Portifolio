@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { Github, Linkedin, Mail } from 'lucide-react';
@@ -10,6 +9,7 @@ import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
 import ContactCommandForm from '@/components/contact/ContactCommandForm';
 import ScrollEffect from '@/components/effects/ScrollEffect';
 import { useClickSound } from '@/hooks/audio/useClickSound';
+import { useDeferredMount } from '@/hooks/browser/useDeferredMount';
 import { useHydrated } from '@/hooks/browser/useHydrated';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
@@ -19,17 +19,11 @@ const AboutParticleField = dynamic(() => import('@/components/about/AboutParticl
 export default function ContactPage() {
   useClickSound();
   const mounted = useHydrated();
+  const effectsReady = useDeferredMount();
+  const webglReady = useDeferredMount(2500);
   const { theme } = useTheme();
   const t = useTranslations('contact');
   const isLight = mounted && theme === 'light';
-
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://platform.linkedin.com/badges/js/profile.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => script.remove();
-  }, [theme]);
 
   const socialLinks = [
     { icon: Github, label: t('github'), href: 'https://github.com/SobralCybersec' },
@@ -41,7 +35,7 @@ export default function ContactPage() {
     <>
       <Navigation />
       <div className="page-grid-overlay" />
-      {mounted && theme === 'dark' && (
+      {effectsReady && mounted && theme === 'dark' && (
         <div className="pointer-events-none fixed inset-0 z-[-2]">
           <HexagonGrid
             cellSize={60}
@@ -53,14 +47,16 @@ export default function ContactPage() {
         </div>
       )}
       <main className="relative overflow-hidden pt-20">
-        <ScrollEffect />
-        <ParticleBackground />
-        <AboutParticleField
-          className="z-0 opacity-45"
-          particleColors={isLight ? ['#3b82f6', '#2563eb', '#8b5cf6'] : ['#a855f7', '#8b5cf6', '#3b82f6']}
-          particleCount={110}
-          particleSpread={1.4}
-        />
+        {effectsReady && <ScrollEffect />}
+        {effectsReady && <ParticleBackground />}
+        {webglReady && (
+          <AboutParticleField
+            className="z-0 opacity-45"
+            particleColors={isLight ? ['#3b82f6', '#2563eb', '#8b5cf6'] : ['#a855f7', '#8b5cf6', '#3b82f6']}
+            particleCount={110}
+            particleSpread={1.4}
+          />
+        )}
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
           <header className="mb-10 max-w-4xl md:mb-12">
@@ -103,23 +99,19 @@ export default function ContactPage() {
 
           <div className="mx-auto mt-8 flex max-w-6xl flex-col items-center gap-6 border-t border-[var(--border)] pt-6 md:flex-row md:justify-between">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{t('footer')}</p>
-            <div
-              key={theme}
-              className="badge-base LI-profile-badge opacity-80 transition-opacity hover:opacity-100"
-              data-locale="pt_BR"
-              data-size="medium"
-              data-theme={isLight ? 'light' : 'dark'}
-              data-type="VERTICAL"
-              data-vanity="matheusdecyber"
-              data-version="v1"
-            >
+            <div className="opacity-80 transition-opacity hover:opacity-100">
               <a
-                className="badge-base__link LI-simple-link"
-                href="https://br.linkedin.com/in/matheusdecyber?trk=profile-badge"
+                data-theme={isLight ? 'light' : 'dark'}
+                className="inline-flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 transition-colors hover:border-[var(--theme-primary)]"
+                href="https://br.linkedin.com/in/matheusdecyber"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Matheus S.
+                <Linkedin className="h-5 w-5 text-[var(--theme-primary)]" aria-hidden="true" />
+                <span className="flex flex-col">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">LinkedIn</span>
+                  <span className="font-semibold text-[var(--text-primary)]">Matheus S.</span>
+                </span>
               </a>
             </div>
           </div>

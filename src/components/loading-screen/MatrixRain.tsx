@@ -44,8 +44,10 @@ export default function MatrixRain(props: MatrixRainProps) {
     const fade = light ? 'rgba(8, 10, 28, 0.16)' : 'rgba(2, 3, 10, 0.22)';
 
     const resize = () => {
-      width = canvas.width = canvas.offsetWidth;
-      height = canvas.height = canvas.offsetHeight;
+      // This canvas fills viewport. Use viewport metrics instead of reading
+      // layout geometry during the animation boot.
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
       columns = Math.ceil(width / cellSize);
       drops = new Array(columns)
         .fill(0)

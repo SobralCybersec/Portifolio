@@ -1,10 +1,11 @@
 import React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   getTransitionForPath,
   PageTransitionProvider,
   usePageTransition,
 } from '../layout/PageTransition';
+import { TRANSITION_TIMINGS } from '../layout/page-transition-config';
 import { Link } from '@/i18n/config/routing';
 
 const mockRouter = { push: jest.fn(), replace: jest.fn() };
@@ -70,17 +71,20 @@ describe('PageTransitionProvider', () => {
     ['/certifications', 'black-white-slice'],
     ['/chat', 'loading-screen'],
     ['/en', 'letterbox'],
-  ])('renders %s transition overlay', (href, effect) => {
-    jest.useFakeTimers();
+  ])('renders %s transition overlay', async (href, effect) => {
     function RouteConsumer() {
       const { navigate } = usePageTransition();
       return <button type="button" onClick={() => navigate(href)}>navigate</button>;
     }
     const { unmount } = render(<PageTransitionProvider><RouteConsumer /></PageTransitionProvider>);
     act(() => fireEvent.click(screen.getByRole('button', { name: 'navigate' })));
+    await waitFor(() => {
+      const overlay = document.querySelector('.portfolio-transition');
+      expect(overlay).not.toBeNull();
+      expect(overlay).toHaveAttribute('data-effect', effect);
+      expect(overlay).toHaveAttribute('data-phase', 'cover');
+    });
     const overlay = document.querySelector('.portfolio-transition')!;
-    expect(overlay).toHaveAttribute('data-effect', effect);
-    expect(overlay).toHaveAttribute('data-phase', 'cover');
     if (effect === 'monocolor-wipe') expect(overlay.querySelectorAll('.portfolio-transition__manga-panel')).toHaveLength(6);
     if (effect === 'marquee-stripes') expect(overlay.querySelectorAll('.portfolio-transition__marquee-line')).toHaveLength(7);
     if (effect === 'black-white-slice') expect(overlay.querySelectorAll('.portfolio-transition__split-panel')).toHaveLength(2);
@@ -149,9 +153,9 @@ describe('PageTransitionProvider', () => {
     render(<PageTransitionProvider><Links /></PageTransitionProvider>);
     const internal = screen.getByRole('link', { name: 'internal' });
     const event = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 });
-    internal.dispatchEvent(event);
+    act(() => internal.dispatchEvent(event));
     expect(event.defaultPrevented).toBe(true);
-    act(() => jest.advanceTimersByTime(620));
+    act(() => jest.advanceTimersByTime(TRANSITION_TIMINGS['monocolor-wipe'].coverMs));
     expect(document.querySelector('.portfolio-transition')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('link', { name: 'new tab' }), { ctrlKey: true });

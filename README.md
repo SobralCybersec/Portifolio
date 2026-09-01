@@ -39,6 +39,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Live Preview**: Interactive live code preview component
 * **Tech Carousel**: Animated technology showcase carousel
 * **City Map**: Visual repository map rendered from GitHub data
+* **Stack Documentation**: Markdown field notes for TypeScript and React with diagrams, HTML examples, and stack icons
 * **Vercel Analytics**: Integrated analytics for page views and user insights
 * **CI/CD Pipeline**: GitHub Actions with multi-platform Docker builds, security scanning, and Lighthouse audits
 * **Responsive Design**: Mobile-first approach with Tailwind CSS
@@ -72,6 +73,14 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Runtime**: Node.js 22
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel with optimized configuration
+
+### Engineering Documentation
+
+| Guide | Focus |
+| --- | --- |
+| [TypeScript Field Notes](./docs/typescript.md) | Type contracts, runtime boundaries, component APIs, and strict checks. |
+| [React Field Notes](./docs/react.md) | Render flow, component composition, state ownership, and semantic HTML. |
+| [Frontend QA](./docs/testing.md) | Test stack, browser coverage, CI parity, and reviewable evidence. |
 
 ### Dependency maintenance
 
@@ -145,6 +154,9 @@ npm start
 ```bash
 # Run all tests
 npm test
+
+# Run every Jest, Vitest, browser, Playwright, and Node test
+pnpm full:tests
 
 # Watch mode
 npm run test:watch
@@ -374,6 +386,12 @@ npm run test:watch
 # Coverage report
 npm run test:coverage
 ```
+
+See [test.md](./test.md) for the full test matrix, Mermaid diagrams, screenshots, and video demonstration.
+
+### Complexity Review
+
+Lizard reviews TypeScript and TSX complexity during quality checks. `NavigationContent` and `ProjectCardPreview` now use smaller render helpers instead of large branching bodies; both pass the configured review and hard thresholds.
 
 ### Test Structure
 

@@ -103,7 +103,7 @@ export function BackgroundMusic({ autoPlay = false }: BackgroundMusicProps = {})
   const soundFile = theme === 'dark' ? '/sounds/sound.mp3' : '/sounds/sound2.mp3';
 
   return (
-    <audio ref={audioRef} loop preload="auto">
+    <audio ref={audioRef} loop preload="none">
       <source src={soundFile} type="audio/mpeg" />
     </audio>
   );

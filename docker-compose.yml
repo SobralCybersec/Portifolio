@@ -1,12 +1,10 @@
-version: '3.9'
-
 services:
   portfolio:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - NODE_VERSION=22-alpine3.22
+        - NODE_VERSION=24-bookworm-slim
         - NODE_ENV=production
     container_name: shadow-monarch-portfolio
     ports:

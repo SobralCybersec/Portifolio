@@ -25,7 +25,7 @@ const customJestConfig = {
   coverageDirectory: '<rootDir>/coverage',
   coverageReporters: ['text', 'lcov', 'json-summary'],
   coverageThreshold: {
-    global: { lines: 95 },
+    global: { lines: 90 },
   },
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

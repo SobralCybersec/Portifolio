@@ -204,9 +204,13 @@ jest.mock('@/i18n/config/routing', () => ({
 }));
 
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
+  constructor(callback) { this.callback = callback; }
   disconnect() {}
-  observe() {}
+  observe(element) {
+    if (element?.dataset?.lazyLoad) {
+      this.callback?.([{ isIntersecting: true }]);
+    }
+  }
   takeRecords() { return []; }
   unobserve() {}
 };

@@ -71,14 +71,32 @@ jobs:
           context: .
           platforms: linux/amd64
           push: false
+          load: true
           pull: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: portfolio-qa:pr
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             NODE_ENV=production
             NEXT_TELEMETRY_DISABLED=1
+
+      - name: Smoke test Docker image
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --detach --name portfolio-qa-smoke --publish 3000:3000 portfolio-qa:pr
+          cleanup() {
+            docker logs portfolio-qa-smoke || true
+            docker rm --force portfolio-qa-smoke || true
+          }
+          trap cleanup EXIT
+
+          curl --fail --silent --show-error --retry 20 --retry-delay 2 \
+            http://127.0.0.1:3000/api/health
+          curl --fail --silent --show-error --retry 5 --retry-delay 2 \
+            http://127.0.0.1:3000/en
 
       - name: Build and push Docker image
         if: github.event_name != 'pull_request'

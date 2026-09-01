@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
+import { useHydrated } from '@/hooks/browser/useHydrated';
 import Hero from '@/components/home/Hero';
 import Navigation from '@/components/layout/Navigation';
 import ScrollProgress from '@/components/effects/ScrollProgress';
@@ -38,8 +39,12 @@ interface Repo {
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [bootComplete, setBootComplete] = useState(false);
+  const [decorationsReady, setDecorationsReady] = useState(false);
   const [repos, setRepos] = useState<Repo[]>([]);
+  const [skillsReady, setSkillsReady] = useState(false);
+  const skillsRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const mounted = useHydrated();
   useClickSound();
 
   const handleBootComplete = () => {
@@ -55,58 +60,81 @@ export default function Page() {
       .catch(() => setRepos([]));
   }, []);
 
+  useEffect(() => {
+    if (!bootComplete) return;
+
+    const timer = window.setTimeout(() => setDecorationsReady(true), 1600);
+    return () => window.clearTimeout(timer);
+  }, [bootComplete]);
+
+  useEffect(() => {
+    const section = skillsRef.current;
+    if (!section || !('IntersectionObserver' in window)) {
+      setSkillsReady(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setSkillsReady(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '0px 0px 300px' });
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
-      {/* Permanent cmatrix rain — lives behind everything, before and after boot */}
-      <MatrixBackground />
+      {/* Decorative canvases start after first paint; boot screen owns initial motion. */}
+      {decorationsReady && <MatrixBackground />}
       {!bootComplete && <SoloLevelingBoot onComplete={handleBootComplete} />}
-      {bootComplete && (
-        <>
-          {/* Animated Grid Overlay */}
-          <div className="page-grid-overlay" />
+      {/* Animated Grid Overlay */}
+      <div className="page-grid-overlay" />
           
-          {/* Dark Theme Background Effects */}
-          {theme === 'dark' && (
-            <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
-              <HexagonGrid 
-                cellSize={60} 
-                glowColor="rgba(168, 85, 247, 0.6)" 
-                lineColor="rgba(168, 85, 247, 0.08)"
-                glowInterval={150}
-                maxSimultaneous={6}
-              />
-            </div>
-          )}
-          
-          {/* Particle Background for entire page */}
-          <div style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none' }}>
-            <ParticleBackground />
-          </div>
-          
-          <Navigation />
-          <ScrollProgress />
-          <KeyboardNav onMenuToggle={() => setMenuOpen(!menuOpen)} />
-          
-          <main className="portfolio-main">
-            <div className="page-section" id="hero">
-              <Hero />
-            </div>
-            
-          <div className="page-section" id="live">
-              <LivePreview />
-            </div>
-
-
-            <div className="page-section" id="skills">
-              <Skills repos={repos} techSignal={<TechCarousel compact />} />
-            </div>
-
-            <div className="page-section" id="contact">
-              <Contact />
-            </div>
-          </main>
-        </>
+      {/* Dark Theme Background Effects */}
+      {decorationsReady && mounted && theme === 'dark' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
+          <HexagonGrid
+            cellSize={60}
+            glowColor="rgba(168, 85, 247, 0.6)"
+            lineColor="rgba(168, 85, 247, 0.08)"
+            glowInterval={150}
+            maxSimultaneous={6}
+          />
+        </div>
       )}
+          
+      {/* Particle Background for entire page */}
+      {decorationsReady && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none' }}>
+          <ParticleBackground />
+        </div>
+      )}
+          
+      <Navigation />
+      <ScrollProgress />
+      <KeyboardNav onMenuToggle={() => setMenuOpen(!menuOpen)} />
+          
+      <main className="portfolio-main">
+        <div className="page-section" id="hero">
+          <Hero />
+        </div>
+
+        <div className="page-section" id="live">
+          <LivePreview />
+        </div>
+
+
+        <div ref={skillsRef} data-lazy-load="skills" className="page-section min-h-[900px]" id="skills">
+          {skillsReady && <Skills repos={repos} techSignal={<TechCarousel compact />} />}
+        </div>
+
+        <div className="page-section" id="contact">
+          <Contact />
+        </div>
+      </main>
     </>
   );
 }

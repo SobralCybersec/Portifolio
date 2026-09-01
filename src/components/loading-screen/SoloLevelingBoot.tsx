@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Teko, Rajdhani, Noto_Sans_KR } from 'next/font/google';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 import { useHydrated } from '@/hooks/browser/useHydrated';
@@ -13,37 +12,13 @@ interface SoloLevelingBootProps {
   onComplete: () => void;
 }
 
-// Display font for the giant "SOLO / LEVELING" wordmark.
-const displayFont = Teko({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  display: 'swap',
-});
-
-// System / HUD font for labels, the typewriter log and status line.
-const systemFont = Rajdhani({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
-
-// Korean accent used on the System stamps ("각성" — awakening).
-// No `subsets` here: Noto Sans KR has no selectable "korean" subset name in
-// next/font, and 'latin' alone drops the Korean glyphs. Omitting subsets +
-// preload:false pulls the full face (incl. Korean) without a build error.
-const koreanFont = Noto_Sans_KR({
-  weight: ['500', '700'],
-  display: 'swap',
-  preload: false,
-});
-
-// reveal transition 1s cubic-bezier(.78,0,.2,1) — from the reference.
-const PANEL_EASE = [0.78, 0, 0.2, 1] as const;
+// HUD reveal transition 1s cubic-bezier(.78,0,.2,1) — from the reference.
+const HUD_EASE = [0.78, 0, 0.2, 1] as const;
 
 // Timing contract: HUD frame draws in, types, then panels part at REVEAL_MS
 // (frame reverse-collapses), overlay finishes at FINISH_MS.
-const REVEAL_MS = 1300;
-const FINISH_MS = 2600;
+const REVEAL_MS = 600;
+const FINISH_MS = 1200;
 const REDUCED_FINISH_MS = 700;
 
 /**
@@ -83,15 +58,15 @@ function useTypewriter(text: string, start: boolean, reduceMotion: boolean) {
 }
 
 /**
- * Short full-screen route boot: a Solo Leveling "shadow-wipe" gate. Two jagged
- * panels sit closed over the viewport, a System card types itself in, then the
- * panels slide apart (the shadow wipe) before the overlay fades and unmounts.
+ * Short full-screen route boot: a centered System card types itself in, then
+ * collapses before the overlay fades and unmounts.
  */
 export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) {
   const t = useTranslations('boot');
   const [revealed, setRevealed] = useState(false);
   const [visible, setVisible] = useState(true);
   const reduceMotion = useReducedMotion();
+  const shouldReduceMotion = reduceMotion === true;
   const { resolvedTheme } = useTheme();
   const mounted = useHydrated();
   // Treat as DARK until mounted so SSR/first paint stays on the dark palette
@@ -99,12 +74,13 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
   const isLight = mounted && resolvedTheme === 'light';
 
   const onCompleteRef = useRef(onComplete);
+  const completedRef = useRef(false);
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  const typed = useTypewriter(t('authLine'), visible, Boolean(reduceMotion));
+  const typed = useTypewriter(t('authLine'), visible, shouldReduceMotion);
 
   useEffect(() => {
     // revealed/visible already initialise to false/true via useState, so no
@@ -113,11 +89,16 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
     const timers: number[] = [];
 
     const finish = () => {
+      if (completedRef.current) {
+        return;
+      }
+
+      completedRef.current = true;
       setVisible(false);
       onCompleteRef.current();
     };
 
-    if (reduceMotion) {
+    if (shouldReduceMotion) {
       timers.push(window.setTimeout(finish, REDUCED_FINISH_MS));
     } else {
       timers.push(
@@ -130,7 +111,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
         }, REVEAL_MS),
       );
 
-      // Mirrors the original intro: reveal at ~520 ms, remove at ~1900 ms.
+      // Keep intro short so it does not delay first meaningful paint.
       timers.push(window.setTimeout(finish, FINISH_MS));
     }
 
@@ -142,7 +123,7 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
         audio.src = '';
       }
     };
-  }, [reduceMotion]);
+  }, [shouldReduceMotion]);
 
   return (
     <AnimatePresence>
@@ -152,39 +133,20 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
           role="status"
           aria-label={t('statusAria')}
           aria-live="polite"
-          className={`${systemFont.className} sl-intro ${isLight ? 'sl-theme-light' : ''} fixed inset-0 z-[9999] overflow-hidden text-white`}
+          className={`sl-intro ${isLight ? 'sl-theme-light' : ''} fixed inset-0 z-[9999] overflow-hidden text-white`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reduceMotion ? 0.08 : 0.28 }}
+          transition={{ duration: shouldReduceMotion ? 0.08 : 0.28 }}
         >
           <motion.div
             aria-hidden="true"
             className="sl-backdrop absolute inset-0"
+            style={{ background: 'transparent' }}
             animate={{ opacity: revealed ? 0 : 1 }}
-            transition={{ duration: reduceMotion ? 0 : 0.72, delay: revealed ? 0.28 : 0 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.72, delay: revealed ? 0.28 : 0 }}
           >
-            <MatrixRain active={!reduceMotion} light={isLight} />
-          </motion.div>
-
-          <motion.div
-            aria-hidden="true"
-            className="sl-panel sl-panel-top absolute left-[-6vw] top-[-4vh] h-[58vh] w-[112vw]"
-            animate={{ y: revealed ? '-112%' : '0%' }}
-            transition={{ duration: reduceMotion ? 0 : 1, ease: PANEL_EASE }}
-          >
-            <div className="sl-panel-runes" />
-            <div className="sl-panel-fractures" />
-          </motion.div>
-
-          <motion.div
-            aria-hidden="true"
-            className="sl-panel sl-panel-bottom absolute bottom-[-4vh] left-[-6vw] h-[58vh] w-[112vw]"
-            animate={{ y: revealed ? '112%' : '0%' }}
-            transition={{ duration: reduceMotion ? 0 : 1, ease: PANEL_EASE }}
-          >
-            <div className="sl-panel-runes sl-panel-runes-reverse" />
-            <div className="sl-panel-fractures sl-panel-fractures-reverse" />
+            <MatrixRain active={!shouldReduceMotion} light={isLight} />
           </motion.div>
 
           <div className="sl-intro-card absolute inset-0 z-10 grid place-items-center px-5">
@@ -193,26 +155,26 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
             <motion.div
               className="sl-glass-shell sl-hud-frame w-[min(590px,86vw)] -skew-x-[4deg]"
               style={{ transformOrigin: 'center' }}
-              initial={reduceMotion ? false : { scaleX: 0, scaleY: 0, opacity: 0 }}
+              initial={shouldReduceMotion ? false : { scaleX: 0, scaleY: 0, opacity: 0 }}
               animate={
-                reduceMotion
+                shouldReduceMotion
                   ? { scaleX: 1, scaleY: 1, opacity: 1 }
                   : revealed
                     ? { scaleX: [1, 1, 0], scaleY: [1, 0, 0], opacity: [1, 1, 0] }
                     : { scaleX: [0, 1, 1], scaleY: [0, 0, 1], opacity: 1 }
               }
               transition={
-                reduceMotion
+                shouldReduceMotion
                   ? { duration: 0 }
-                  : { duration: revealed ? 0.55 : 0.8, ease: PANEL_EASE, times: [0, 0.5, 1] }
+                    : { duration: revealed ? 0.55 : 0.8, ease: HUD_EASE, times: [0, 0.5, 1] }
               }
             >
               <motion.div
                 className="sl-glass relative overflow-hidden px-6 py-7 text-center sm:px-10 sm:py-9"
-                animate={{ opacity: reduceMotion ? 1 : revealed ? 0 : 1 }}
+                animate={{ opacity: shouldReduceMotion ? 1 : revealed ? 0 : 1 }}
                 transition={{
-                  duration: reduceMotion ? 0 : 0.32,
-                  delay: reduceMotion ? 0 : revealed ? 0 : 0.55,
+                  duration: shouldReduceMotion ? 0 : 0.32,
+                  delay: shouldReduceMotion ? 0 : revealed ? 0 : 0.55,
                 }}
               >
                 <div aria-hidden="true" className="sl-scan absolute inset-0" />
@@ -223,11 +185,11 @@ export default function SoloLevelingBoot({ onComplete }: SoloLevelingBootProps) 
 
                 <p className="sl-system-label mb-3 flex items-center justify-center gap-2 text-[9px] font-semibold uppercase tracking-[0.34em] sm:text-[10px]">
                   <span>{t('authorization')}</span>
-                  <span className={`${koreanFont.className} sl-kr`}>각성</span>
+                  <span className="sl-kr">각성</span>
                 </p>
 
                 <h1
-                  className={`${displayFont.className} sl-title relative m-0 uppercase`}
+                  className="sl-title relative m-0 uppercase"
                 >
                   <span className="sl-title-solo block">Solo</span>
                   <span className="sl-title-leveling block">Leveling</span>

@@ -13,6 +13,7 @@ import { ArrowUpRight, Award, CheckCircle2, Layers3, ShieldCheck, X } from 'luci
 import FilterDropdown from '@/components/ui/FilterDropdown';
 import { useReducedMotion } from 'framer-motion';
 import { useHydrated } from '@/hooks/browser/useHydrated';
+import { useDeferredMount } from '@/hooks/browser/useDeferredMount';
 import type { CSSProperties } from 'react';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
@@ -122,6 +123,7 @@ function tFallback(key: 'record' | 'verified' | 'inspect') {
 export default function CertificationsPage() {
   useClickSound();
   const mounted = useHydrated();
+  const effectsReady = useDeferredMount();
   const { theme } = useTheme();
   const t = useTranslations('certifications');
   const reduceMotion = useReducedMotion() ?? false;
@@ -366,7 +368,7 @@ export default function CertificationsPage() {
     <>
       <Navigation />
       <div className="page-grid-overlay" />
-      {mounted && theme === 'dark' && (
+      {effectsReady && mounted && theme === 'dark' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
           <HexagonGrid 
             cellSize={60} 
@@ -378,8 +380,8 @@ export default function CertificationsPage() {
         </div>
       )}
       <main className="certification-page relative min-h-screen pt-20">
-        <ScrollEffect />
-        <ParticleBackground />
+        {effectsReady && <ScrollEffect />}
+        {effectsReady && <ParticleBackground />}
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
           <section className="cert-hero">
             <div className="cert-hero-copy">

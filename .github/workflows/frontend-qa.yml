@@ -21,22 +21,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11.9.0
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y ffmpeg
 
       - name: Lint
         run: pnpm run lint
@@ -59,13 +62,19 @@ jobs:
           NODE_ENV: production
 
       - name: Playwright browser suite
-        run: pnpm run test:playwright
+        run: pnpm run test:playwright:all
+
+      - name: Convert journey video to MP4
+        run: pnpm run convert:video
 
       - name: Build Storybook
         run: pnpm run build-storybook
 
       - name: Lighthouse CI
         run: pnpm exec lhci autorun
+
+      - name: Capture Lighthouse report screenshots
+        run: pnpm run test:lighthouse:screenshots
 
       - name: Upload QA artifacts
         if: ${{ !cancelled() }}
@@ -76,6 +85,7 @@ jobs:
             playwright-report
             test-results
             .lighthouseci
+            docs/assets/testing/lighthouse
             storybook-static
           if-no-files-found: ignore
           retention-days: 7

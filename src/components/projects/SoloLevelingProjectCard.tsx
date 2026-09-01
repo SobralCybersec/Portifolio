@@ -196,7 +196,6 @@ export default function SoloLevelingProjectCard({
       whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
       ref={cardRef}
       aria-labelledby={`project-title-${repo.id}`}
-      role={onReadme ? "button" : undefined}
       tabIndex={onReadme ? 0 : undefined}
       className="group relative overflow-hidden"
       onClick={handleCardClick}

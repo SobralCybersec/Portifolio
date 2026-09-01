@@ -2,22 +2,22 @@
 
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/layout/Navigation';
-import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
+import { GradientText } from '@/components/texts/AnimatedText';
 import { useClickSound } from '@/hooks/audio/useClickSound';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import SoloLevelingProjectCard from '@/components/projects/SoloLevelingProjectCard';
 import FilterDropdown from '@/components/ui/FilterDropdown';
 import ScrollEffect from '@/components/effects/ScrollEffect';
 import ScrollProgress from '@/components/effects/ScrollProgress';
 import ScrollReveal from '@/components/effects/ScrollReveal';
-import ProjectReadmeModal from '@/components/projects/ProjectReadmeModal';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
+const ProjectReadmeModal = dynamic(() => import('@/components/projects/ProjectReadmeModal'), { ssr: false });
+const SoloLevelingProjectCard = dynamic(() => import('@/components/projects/SoloLevelingProjectCard'));
 
 interface Repo {
   id: number;
@@ -38,11 +38,65 @@ interface Repo {
   };
 }
 
+function LazyProjectCard({
+  project,
+  index,
+  onReadme,
+  featured,
+}: {
+  project: Repo;
+  index: number;
+  onReadme: (repo: Repo) => void;
+  featured: boolean;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(index < 2);
+
+  useEffect(() => {
+    if (visible) return;
+
+    const element = cardRef.current;
+    if (!element || !('IntersectionObserver' in window)) {
+      setVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '900px 0px' },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [visible]);
+
+  return (
+    <div ref={cardRef} className="min-h-[430px]">
+      {visible ? (
+        <SoloLevelingProjectCard
+          repo={project}
+          index={index}
+          onReadme={onReadme}
+          featured={featured}
+        />
+      ) : (
+        <div aria-hidden="true" className="h-[430px] border border-[var(--border)] bg-[var(--bg-card)]/35" />
+      )}
+    </div>
+  );
+}
+
 export default function ProjectsPage() {
   useClickSound();
   const { theme } = useTheme();
   const t = useTranslations('projects');
   const shouldReduceMotion = useReducedMotion();
+  const [effectsReady, setEffectsReady] = useState(false);
   const [projects, setProjects] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
@@ -133,40 +187,27 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  if (loading) {
-    return (
-      <>
-        <Navigation />
-        <main className="min-h-[100dvh] pt-20">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24">
-            <div className="mb-12 max-w-3xl">
-              <div className={`mb-5 h-3 w-28 bg-[var(--theme-primary)]/20 ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
-              <div className={`h-16 w-3/4 bg-[var(--bg-card)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
-              <div className={`mt-5 h-5 w-full max-w-2xl bg-[var(--bg-card)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[0, 1, 2].map(index => (
-                <div key={index} className={`h-[430px] border border-[var(--border)] bg-[var(--bg-card)]/50 ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
-              ))}
-            </div>
-            <div className="mt-8 flex items-center justify-center gap-3 text-sm text-[var(--text-muted)]">
-              <span>{t('loading')}</span>
-              <span className="h-1 w-20 overflow-hidden bg-[var(--border)]">
-                <span className={`block h-full w-3/5 bg-[var(--theme-primary)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
-              </span>
-            </div>
-          </div>
-        </main>
-      </>
-    );
-  }
+  useEffect(() => {
+    const revealEffects = () => {
+      setEffectsReady(true);
+      window.removeEventListener('scroll', revealEffects);
+      window.removeEventListener('pointerdown', revealEffects);
+    };
+
+    window.addEventListener('scroll', revealEffects, { passive: true, once: true });
+    window.addEventListener('pointerdown', revealEffects, { passive: true, once: true });
+    return () => {
+      window.removeEventListener('scroll', revealEffects);
+      window.removeEventListener('pointerdown', revealEffects);
+    };
+  }, []);
 
   return (
     <>
       <Navigation />
       {shouldReduceMotion !== true && <ScrollProgress />}
       <div className="page-grid-overlay" />
-      {theme === 'dark' && (
+      {effectsReady && theme === 'dark' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none' }}>
           <HexagonGrid
             cellSize={60}
@@ -178,38 +219,30 @@ export default function ProjectsPage() {
         </div>
       )}
       <main className="relative min-h-[100dvh] pt-20">
-        <ScrollEffect />
-        <ParticleBackground />
+        {effectsReady && <ScrollEffect />}
+        {effectsReady && <ParticleBackground />}
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <section className="relative overflow-hidden border-b border-[var(--border)] py-14 md:py-20">
             <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[var(--theme-primary)]/10 blur-3xl" />
             <div className="grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end">
               <div>
-                <AnimatedText className="mb-5">
+                <div className="mb-5">
                   <div className="flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--theme-primary)]">
                     <span aria-hidden="true" className="h-px w-8 bg-[var(--theme-primary)]" />
                     <span className="text-[var(--text-muted)]/60">/ {String(projects.length).padStart(2, '0')}</span>
                   </div>
-                </AnimatedText>
+                </div>
 
-                <AnimatedText delay={0.08}>
-                  <h1 className="max-w-4xl text-6xl font-black uppercase leading-[0.88] tracking-[-0.06em] text-[var(--text-primary)] sm:text-7xl md:text-8xl">
-                    <GradientText>{t('title')}</GradientText>
-                  </h1>
-                </AnimatedText>
+                <h1 className="max-w-4xl text-6xl font-black uppercase leading-[0.88] tracking-[-0.06em] text-[var(--text-primary)] sm:text-7xl md:text-8xl">
+                  <GradientText>{t('title')}</GradientText>
+                </h1>
 
-                <ScrollReveal
-                  containerClassName="mt-8 max-w-2xl"
-                  textClassName="text-base text-[var(--text-muted)] md:text-lg"
-                >
+                <p className="mt-8 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] md:text-lg">
                   {t('description')}
-                </ScrollReveal>
+                </p>
               </div>
 
-              <motion.aside
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: shouldReduceMotion ? 0 : 0.6, delay: shouldReduceMotion ? 0 : 0.18 }}
+              <aside
                 className="relative overflow-hidden border border-[var(--theme-primary)]/30 bg-[var(--bg-card)]/65 p-5 backdrop-blur-sm sm:p-6"
                 aria-label={t('title')}
               >
@@ -236,7 +269,7 @@ export default function ProjectsPage() {
                     <dd className="mt-1 text-xl font-bold text-[var(--text-primary)]">{projectMetrics.previews}</dd>
                   </div>
                 </dl>
-              </motion.aside>
+              </aside>
             </div>
           </section>
 
@@ -299,7 +332,21 @@ export default function ProjectsPage() {
               </div>
             </div>
 
-            {filteredProjects.length > 0 ? (
+            {loading ? (
+              <>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {[0, 1, 2].map(index => (
+                    <div key={index} className={`h-[430px] border border-[var(--border)] bg-[var(--bg-card)]/50 ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+                  ))}
+                </div>
+                <div className="mt-8 flex items-center justify-center gap-3 text-sm text-[var(--text-muted)]">
+                  <span>{t('loading')}</span>
+                  <span className="h-1 w-20 overflow-hidden bg-[var(--border)]">
+                    <span className={`block h-full w-3/5 bg-[var(--theme-primary)] ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+                  </span>
+                </div>
+              </>
+            ) : filteredProjects.length > 0 ? (
               <motion.div layout className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-12">
                 {filteredProjects.map((project, idx) => (
                   <motion.div
@@ -309,9 +356,10 @@ export default function ProjectsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: shouldReduceMotion ? 0 : 0.45, delay: shouldReduceMotion ? 0 : Math.min(idx * 0.04, 0.2) }}
                     className={filteredProjects.length === 1 ? 'lg:col-span-12' : idx === 0 ? 'lg:col-span-7' : idx === 1 ? 'lg:col-span-5' : 'lg:col-span-4'}
+                    style={{ contentVisibility: 'auto', containIntrinsicSize: '480px' }}
                   >
-                    <SoloLevelingProjectCard
-                      repo={project}
+                    <LazyProjectCard
+                      project={project}
                       index={idx}
                       onReadme={setSelectedProject}
                       featured={idx === 0}

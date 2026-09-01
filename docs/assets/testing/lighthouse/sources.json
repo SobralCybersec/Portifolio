@@ -1,0 +1,56 @@
+[
+  {
+    "endpoint": "/en",
+    "report": ".lighthouseci/localhost-en-2026_09_01_18_40_38.report.html",
+    "output": "docs/assets/testing/lighthouse/homepage-full.png",
+    "source": "Lighthouse report HTML opened as file://",
+    "capture": "Chromium fullPage screenshot",
+    "lighthouseVersion": "12.6.1",
+    "capturedAt": "2026-09-01T18:40:38.574Z"
+  },
+  {
+    "endpoint": "/en/about",
+    "report": ".lighthouseci/localhost-en_about-2026_09_01_18_41_03.report.html",
+    "output": "docs/assets/testing/lighthouse/about-full.png",
+    "source": "Lighthouse report HTML opened as file://",
+    "capture": "Chromium fullPage screenshot",
+    "lighthouseVersion": "12.6.1",
+    "capturedAt": "2026-09-01T18:41:03.151Z"
+  },
+  {
+    "endpoint": "/en/projects",
+    "report": ".lighthouseci/localhost-en_projects-2026_09_01_18_41_23.report.html",
+    "output": "docs/assets/testing/lighthouse/projects-full.png",
+    "source": "Lighthouse report HTML opened as file://",
+    "capture": "Chromium fullPage screenshot",
+    "lighthouseVersion": "12.6.1",
+    "capturedAt": "2026-09-01T18:41:23.526Z"
+  },
+  {
+    "endpoint": "/en/certifications",
+    "report": ".lighthouseci/localhost-en_certifications-2026_09_01_18_41_44.report.html",
+    "output": "docs/assets/testing/lighthouse/certifications-full.png",
+    "source": "Lighthouse report HTML opened as file://",
+    "capture": "Chromium fullPage screenshot",
+    "lighthouseVersion": "12.6.1",
+    "capturedAt": "2026-09-01T18:41:44.138Z"
+  },
+  {
+    "endpoint": "/en/chat",
+    "report": ".lighthouseci/localhost-en_chat-2026_09_01_18_42_08.report.html",
+    "output": "docs/assets/testing/lighthouse/chat-full.png",
+    "source": "Lighthouse report HTML opened as file://",
+    "capture": "Chromium fullPage screenshot",
+    "lighthouseVersion": "12.6.1",
+    "capturedAt": "2026-09-01T18:42:08.791Z"
+  },
+  {
+    "endpoint": "/en/contact",
+    "report": ".lighthouseci/localhost-en_contact-2026_09_01_18_42_28.report.html",
+    "output": "docs/assets/testing/lighthouse/contact-full.png",
+    "source": "Lighthouse report HTML opened as file://",
+    "capture": "Chromium fullPage screenshot",
+    "lighthouseVersion": "12.6.1",
+    "capturedAt": "2026-09-01T18:42:28.738Z"
+  }
+]

@@ -142,7 +142,7 @@ describe('coverage-heavy visual components', () => {
     const { rerender } = render(<Hero animateSection="hero" />);
     await waitFor(() => expect(screen.getByText('12+')).toBeInTheDocument());
     expect(screen.getByRole('link', { name: 'cta.downloadCV' })).toHaveAttribute('href', '/cv/cv.pdf');
-    expect(screen.getByAltText('Matheus Sobral — Developer')).toHaveAttribute('src', '/images/JinWoo-BackFacing3.png');
+    expect(screen.getByAltText('Matheus Sobral — Developer')).toHaveAttribute('src', '/images/JinWoo-BackFacing3-768.avif');
 
     jest.spyOn(themes, 'useTheme').mockReturnValue({ theme: 'dark' });
     jest.spyOn(routing, 'usePathname').mockReturnValue('/en');

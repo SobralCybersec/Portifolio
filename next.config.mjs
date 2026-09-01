@@ -25,7 +25,7 @@ const contentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://platform.linkedin.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://go-skill-icons.vercel.app https://skillicons.dev https://img.shields.io https://github.com https://githubassets.com https://*.githubassets.com https://raw.githubusercontent.com https://*.githubusercontent.com https://opengraph.githubassets.com https://repository-images.githubusercontent.com https://user-images.githubusercontent.com https://avatars.githubusercontent.com https://i.imgur.com https://media.forgecdn.net https://www.fiap.com.br https://res.cloudinary.com https://platform.linkedin.com",
+  "img-src 'self' data: blob: https://go-skill-icons.vercel.app https://skillicons.dev https://img.shields.io https://github.com https://githubassets.com https://*.githubassets.com https://raw.githubusercontent.com https://*.githubusercontent.com https://opengraph.githubassets.com https://repository-images.githubusercontent.com https://user-images.githubusercontent.com https://avatars.githubusercontent.com https://i.imgur.com https://media.forgecdn.net https://www.fiap.com.br https://res.cloudinary.com https://platform.linkedin.com https://api.star-history.com https://cdn.jsdelivr.net",
   "media-src 'self' blob: https:",
   "connect-src 'self' https://api.github.com https://github.com https://raw.githubusercontent.com https://*.githubusercontent.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://*.vercel-insights.com https://api.groq.com https://api.mymemory.translated.net https://platform.linkedin.com https://www.linkedin.com https://*.upstash.io https://ws-sa1.pusher.com https://sockjs-sa1.pusher.com wss://ws-sa1.pusher.com wss://sockjs-sa1.pusher.com",
   "frame-src 'self' https://youtube.com https://www.youtube.com https://youtube-nocookie.com https://www.youtube-nocookie.com https://www.linkedin.com",
@@ -60,7 +60,7 @@ const nextConfig = {
     // Reduced image variants = faster builds
     deviceSizes: [640, 828, 1200, 1920],
 
-    imageSizes: [16, 32, 64, 128, 256],
+    imageSizes: [16, 32, 64, 128, 256, 384],
 
     qualities: [100, 75],
 

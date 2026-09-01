@@ -58,14 +58,14 @@ describe('/api/github/repos', () => {
     expect(Array.isArray(data)).toBe(true);
   });
 
-  it('handles network errors gracefully', async () => {
+  it('returns an empty list when GitHub is unavailable', async () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
     const request = new NextRequest('http://localhost:3000/api/github/repos');
     const response = await GET(request);
     const data = await response.json();
 
-    expect(response.status).toBe(500);
-    expect(data).toHaveProperty('error');
+    expect(response.status).toBe(200);
+    expect(data).toEqual([]);
   });
 });

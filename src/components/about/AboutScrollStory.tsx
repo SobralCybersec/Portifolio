@@ -1,12 +1,9 @@
 'use client';
 
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowDown, ArrowUpRight } from 'lucide-react';
-import Image from 'next/image';
-import { useEffect, useRef } from 'react';
-
-if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger);
 
 export interface AboutStoryItem {
   label: string;
@@ -15,6 +12,7 @@ export interface AboutStoryItem {
   signal: string;
   detail: string;
   image?: string;
+  imageDesktop?: string;
 }
 
 interface AboutScrollStoryProps {
@@ -31,68 +29,94 @@ export default function AboutScrollStory({ items, sectionLabel, prompt, traceLab
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    const cards = cardRefs.current.filter((card): card is HTMLElement => Boolean(card));
-    const progress = progressRef.current;
-    if (!section || !progress || cards.length === 0) return;
+    let cancelled = false;
+    let cleanup = () => {};
 
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion) {
-      gsap.set(cards, { clearProps: 'all', autoAlpha: 1 });
-      gsap.set(progress, { scaleY: 1 });
-      return;
-    }
+    const initialize = () => {
+      if (cancelled) return;
 
-    const isMobile = window.matchMedia?.('(max-width: 767px)').matches;
-    const context = gsap.context(() => {
-      gsap.set(cards, { autoAlpha: 0, y: isMobile ? 42 : 72, x: 0, rotateY: 0, scale: 0.96 });
-      gsap.set(cards[0], { autoAlpha: 1, y: 0, scale: 1 });
-      gsap.set(progress, { scaleY: 0 });
+      const section = sectionRef.current;
+      const cards = cardRefs.current.filter((card): card is HTMLElement => Boolean(card));
+      const progress = progressRef.current;
+      if (!section || !progress || cards.length === 0) return;
 
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top+=80',
-          end: 'bottom top+=80',
-          scrub: 0.8,
-          invalidateOnRefresh: true,
-        },
-      });
+      gsap.registerPlugin(ScrollTrigger);
 
-      cards.forEach((card, index) => {
-        // Give every panel a full read beat before the next panel takes over.
-        const position = index * 2.2;
-        if (index > 0) {
-          timeline.to(cards[index - 1], {
-            autoAlpha: 0.18,
-            y: -48,
-            scale: 0.94,
+      const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) {
+        gsap.set(cards, { clearProps: 'all', autoAlpha: 1 });
+        gsap.set(progress, { scaleY: 1 });
+        return;
+      }
+
+      const isMobile = window.matchMedia?.('(max-width: 767px)').matches;
+      const context = gsap.context(() => {
+        gsap.set(cards, { autoAlpha: 0, y: isMobile ? 42 : 72, x: 0, rotateY: 0, scale: 0.96 });
+        gsap.set(cards[0], { autoAlpha: 1, y: 0, scale: 1 });
+        gsap.set(progress, { scaleY: 0 });
+
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top+=80',
+            end: 'bottom top+=80',
+            scrub: 0.8,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        cards.forEach((card, index) => {
+          // Give every panel a full read beat before the next panel takes over.
+          const position = index * 2.2;
+          if (index > 0) {
+            timeline.to(cards[index - 1], {
+              autoAlpha: 0.18,
+              y: -48,
+              scale: 0.94,
+              duration: 1.05,
+              ease: 'power2.inOut',
+            }, position);
+          }
+          timeline.to(card, {
+            autoAlpha: 1,
+            y: 0,
+            rotateY: 0,
+            scale: 1,
             duration: 1.05,
-            ease: 'power2.inOut',
+            ease: 'power3.out',
           }, position);
-        }
-        timeline.to(card, {
-          autoAlpha: 1,
-          y: 0,
-          rotateY: 0,
-          scale: 1,
-          duration: 1.05,
-          ease: 'power3.out',
-        }, position);
 
-        timeline.to(card, {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: index === cards.length - 1 ? 2.2 : 1.15,
-          ease: 'none',
-        }, position + 1.05);
-      });
+          timeline.to(card, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: index === cards.length - 1 ? 2.2 : 1.15,
+            ease: 'none',
+          }, position + 1.05);
+        });
 
-      timeline.to(progress, { scaleY: 1, duration: timeline.duration(), ease: 'none' }, 0);
-    }, section);
+        timeline.to(progress, { scaleY: 1, duration: timeline.duration(), ease: 'none' }, 0);
+      }, section);
 
-    return () => context.revert();
+      cleanup = () => context.revert();
+    };
+
+    const start = () => {
+      window.removeEventListener('scroll', start);
+      window.removeEventListener('pointerdown', start);
+      void initialize();
+    };
+
+    window.addEventListener('scroll', start, { passive: true });
+    window.addEventListener('pointerdown', start, { passive: true });
+    if (window.scrollY > 0) start();
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('scroll', start);
+      window.removeEventListener('pointerdown', start);
+      cleanup();
+    };
   }, [items.length]);
 
   const updateSpotlight = (event: React.PointerEvent<HTMLElement>) => {
@@ -131,17 +155,23 @@ export default function AboutScrollStory({ items, sectionLabel, prompt, traceLab
                 key={item.label}
                 ref={(element) => { cardRefs.current[index] = element; }}
                 onPointerMove={updateSpotlight}
+                style={{ opacity: index === 0 ? 1 : 0, visibility: index === 0 ? 'visible' : 'hidden' }}
                 className="about-story-card group absolute inset-0 overflow-hidden border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[0_24px_90px_rgba(0,0,0,0.16)] [background-image:radial-gradient(320px_circle_at_var(--spot-x,50%)_var(--spot-y,50%),rgba(168,85,247,0.12),transparent_72%)] md:p-10"
               >
                 {item.image && (
                   <div className="theme-story-media pointer-events-none absolute inset-y-0 right-0 z-0 w-[70%] opacity-25 mix-blend-screen transition-transform duration-700 group-hover:scale-105 md:w-[58%] md:opacity-30">
-                    <Image
-                      src={item.image}
-                      alt=""
-                      fill
-                      sizes="(max-width: 768px) 75vw, 45vw"
-                      className="object-contain object-right-bottom"
-                    />
+                    <picture className="absolute inset-0 block">
+                      <source media="(max-width: 768px)" srcSet={item.image} />
+    <img
+                        src={item.image}
+                        srcSet={item.imageDesktop ? `${item.imageDesktop} 768w` : undefined}
+                        sizes="58vw"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-contain object-right-bottom"
+                      />
+                    </picture>
                   </div>
                 )}
                 <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(120deg,rgba(168,85,247,0.08),transparent_36%,transparent_68%,rgba(59,130,246,0.06))]" />
@@ -152,9 +182,9 @@ export default function AboutScrollStory({ items, sectionLabel, prompt, traceLab
                     <ArrowUpRight className="h-5 w-5 text-[var(--text-muted)]" aria-hidden="true" />
                   </div>
                   <div className="py-8">
-                    <h3 className="max-w-3xl font-[var(--font-eternal)] text-4xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)] md:text-6xl">
+                    <h2 className="max-w-3xl font-[var(--font-eternal)] text-4xl font-bold uppercase tracking-[0.06em] text-[var(--text-primary)] md:text-6xl">
                       {item.title}
-                    </h3>
+                    </h2>
                     <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--text-muted)] md:text-lg">{item.body}</p>
                   </div>
                   <div className="grid gap-4 border-t border-[var(--border)] pt-5 sm:grid-cols-[0.8fr_1.2fr]">

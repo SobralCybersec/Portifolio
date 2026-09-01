@@ -51,34 +51,75 @@ export default function ParticleBackground() {
     }
 
     const particleColor = theme === 'light' ? '59, 130, 246' : '147, 51, 234';
-    let rafId: number;
+    let rafId = 0;
+    let lastFrame = 0;
+    let active = true;
+    const frameInterval = 1000 / 30;
 
-    // Animation loop
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const animate = (timestamp: number) => {
+      if (!active || document.hidden) {
+        rafId = 0;
+        return;
+      }
 
-      for (const particle of particles) {
-        particle.x += particle.speedX;
-        particle.y += particle.speedY;
+      const elapsed = lastFrame === 0 ? 1 : Math.min((timestamp - lastFrame) / (1000 / 60), 2);
+      if (timestamp - lastFrame >= frameInterval) {
+        lastFrame = timestamp;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
+        for (const particle of particles) {
+          particle.x += particle.speedX * elapsed;
+          particle.y += particle.speedY * elapsed;
 
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${particleColor}, ${particle.opacity})`;
-        ctx.fill();
+          if (particle.x < 0) particle.x = canvas.width;
+          if (particle.x > canvas.width) particle.x = 0;
+          if (particle.y < 0) particle.y = canvas.height;
+          if (particle.y > canvas.height) particle.y = 0;
+
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${particleColor}, ${particle.opacity})`;
+          ctx.fill();
+        }
       }
 
       rafId = requestAnimationFrame(animate);
     };
 
-    animate();
+    const start = () => {
+      if (rafId === 0) rafId = requestAnimationFrame(animate);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        active = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = 0;
+      } else {
+        active = true;
+        lastFrame = 0;
+        start();
+      }
+    };
+
+    const observer = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver(([entry]) => {
+        active = entry.isIntersecting;
+        if (active) start();
+        else if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = 0;
+        }
+      });
+    observer?.observe(canvas);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    start();
 
     return () => {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
+      observer?.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', resizeCanvas);
     };
   }, [theme]);

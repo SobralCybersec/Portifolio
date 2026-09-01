@@ -45,7 +45,7 @@ export default function ScrollReveal({
               viewport={{ once: true, margin: '-12% 0px' }}
               transition={{
                 duration: shouldReduceMotion ? 0 : 0.45,
-                delay: shouldReduceMotion ? 0 : index * 0.018,
+                delay: shouldReduceMotion ? 0 : Math.min(index * 0.018, 0.36),
                 ease: 'easeOut',
               }}
               className="inline-block"

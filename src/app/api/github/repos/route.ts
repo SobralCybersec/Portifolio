@@ -1,9 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { gzipSync } from 'node:zlib';
 import { getLanguageImage } from '@/lib/github/languageIcon';
 
 const GITHUB_USERNAMES = ['SobralCybersec', 'MatheusSobralCSharp'];
 const SORT_BY = 'updated';
 const REPO_TYPE = 'owner';
+const ENRICH_CONCURRENCY = 12;
+
+interface ClientRepo {
+  id: number;
+  name: string;
+  description: string | null;
+  html_url: string;
+  homepage: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  topics: string[];
+  owner: { login: string };
+  previewImage: string;
+  isVideo: boolean;
+  techStack: string[];
+  allLanguages: string[];
+}
 
 /**
  * GitHub usernames and repo names only allow [a-zA-Z0-9._-] and are
@@ -268,39 +287,76 @@ export async function GET(request: NextRequest) {
         new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
 
-    // Enrich EVERY repo (not just the first 12) so every card gets its real
+    // Enrich every repo so every card gets its real
     // README media — video/screenshots — instead of falling back to the bare
     // language icon. GitHub sub-calls are run in bounded-concurrency batches so
     // we stay well under GitHub's rate/socket limits even with 100+ repos.
-    const ENRICH_CONCURRENCY = 8;
-    const enriched: any[] = [];
-    for (let i = 0; i < filtered.length; i += ENRICH_CONCURRENCY) {
-      const batch = filtered.slice(i, i + ENRICH_CONCURRENCY);
-      const results = await Promise.all(
-        batch.map(async (repo: any) => {
-          const [readmeData, allLanguages] = await Promise.all([
-            fetchReadmeData(repo.owner.login, repo.name, headers),
-            fetchAllLanguages(repo.owner.login, repo.name, headers),
-          ]);
-          return {
-            ...repo,
-            previewImage: readmeData.previewImage ?? getLanguageImage(repo.language),
-            isVideo: readmeData.isVideo,
-            techStack: readmeData.techStack,
-            allLanguages, // e.g. ["python", "batchfile", "assembly", "c", "yara"]
-          };
-        })
-      );
-      enriched.push(...results);
+    const enriched: any[] = new Array(filtered.length);
+    let nextIndex = 0;
+    const enrichWorker = async () => {
+      while (true) {
+        const index = nextIndex++;
+        const repo = filtered[index];
+        if (!repo) return;
+
+        const [readmeData, allLanguages] = await Promise.all([
+          fetchReadmeData(repo.owner.login, repo.name, headers),
+          fetchAllLanguages(repo.owner.login, repo.name, headers),
+        ]);
+
+        enriched[index] = {
+          ...repo,
+          previewImage: readmeData.previewImage ?? getLanguageImage(repo.language),
+          isVideo: readmeData.isVideo,
+          techStack: readmeData.techStack,
+          allLanguages, // e.g. ["python", "batchfile", "assembly", "c", "yara"]
+        };
+      }
+    };
+
+    await Promise.all(
+      Array.from(
+        { length: Math.min(ENRICH_CONCURRENCY, filtered.length) },
+        () => enrichWorker(),
+      ),
+    );
+
+    const clientRepos: ClientRepo[] = enriched.map((repo) => ({
+      id: repo.id,
+      name: repo.name,
+      description: repo.description ?? null,
+      html_url: repo.html_url,
+      homepage: repo.homepage ?? null,
+      language: repo.language ?? null,
+      stargazers_count: repo.stargazers_count ?? 0,
+      forks_count: repo.forks_count ?? 0,
+      topics: Array.isArray(repo.topics) ? repo.topics : [],
+      owner: { login: repo.owner?.login ?? '' },
+      previewImage: repo.previewImage,
+      isVideo: repo.isVideo,
+      techStack: repo.techStack,
+      allLanguages: repo.allLanguages,
+    }));
+
+    const payload = JSON.stringify(clientRepos);
+    const acceptsGzip = request.headers?.get?.('accept-encoding')?.includes('gzip') ?? false;
+    const responseHeaders = {
+      'Cache-Control': 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400',
+      'Content-Type': 'application/json; charset=utf-8',
+      Vary: 'Accept-Encoding',
+      ...(acceptsGzip ? { 'Content-Encoding': 'gzip' } : {}),
+    };
+
+    if (!acceptsGzip) {
+      return NextResponse.json(clientRepos, { headers: responseHeaders });
     }
 
-    return NextResponse.json(enriched, {
-      headers: { 'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=86400' },
-    });
+    return new NextResponse(gzipSync(payload), { headers: responseHeaders });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    );
+    console.warn('[github/repos]', error);
+    return NextResponse.json([], {
+      status: 200,
+      headers: { 'Cache-Control': 'public, max-age=60, s-maxage=300' },
+    });
   }
 }

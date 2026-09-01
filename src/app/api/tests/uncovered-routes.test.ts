@@ -96,7 +96,7 @@ describe('github stats route', () => {
     expect((global.fetch as jest.Mock).mock.calls[0][1]).toEqual(expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer token' }) }));
 
     (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: false });
-    expect((await statsRoute.GET()).status).toBe(502);
+    expect((await statsRoute.GET()).status).toBe(200);
     delete process.env.GITHUB_USERNAME;
     delete process.env.GITHUB_TOKEN;
   });
