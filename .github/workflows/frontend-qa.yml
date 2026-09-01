@@ -48,7 +48,7 @@ jobs:
         run: pnpm exec tsc --noEmit
 
       - name: Jest and Testing Library
-        run: pnpm run test:jest -- --no-coverage
+        run: pnpm exec jest --runInBand --no-coverage
 
       - name: Vitest jsdom
         run: pnpm run test:vitest
