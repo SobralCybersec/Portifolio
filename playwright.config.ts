@@ -126,7 +126,7 @@ export default defineConfig({
 
   webServer: {
     command: isCI
-      ? 'HOSTNAME=127.0.0.1 PORT=3000 node .next/standalone/server.js'
+      ? 'HOSTNAME=127.0.0.1 PORT=3000 node scripts/qa/start-production.mjs'
       : 'pnpm dev --hostname 127.0.0.1 --port 3000',
 
     url: 'http://127.0.0.1:3000/en',
