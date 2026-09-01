@@ -62,6 +62,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium chromium-headless-shell firefox
+
+      - name: Build application for browser tests
+        run: npm run build
+        env:
+          NODE_ENV: production
+
       - name: Run tests
         run: npm test
 
