@@ -1,10 +1,8 @@
 import { cpSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import nextEnv from '@next/env';
 
 const root = process.cwd();
-nextEnv.loadEnvConfig(root);
 const standaloneRoot = resolve(root, '.next/standalone');
 const standaloneStatic = resolve(standaloneRoot, '.next/static');
 const buildStatic = resolve(root, '.next/static');
