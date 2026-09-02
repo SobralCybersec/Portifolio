@@ -44,6 +44,12 @@ const nextConfig = {
   // onBuildComplete hook look for a trace file that its build layout omits.
   output: process.env.VERCEL ? undefined : 'standalone',
 
+  // Blog content is read by server routes through a runtime directory walk.
+  // Keep only editorial files in the traced server output.
+  outputFileTracingIncludes: {
+    '/*': ['./content/blog/**/*', './data/blog-tags.yml'],
+  },
+
   poweredByHeader: false,
 
   compress: true,

@@ -3,7 +3,7 @@ import path from 'node:path';
 import { parseBlogMetadata } from './schema';
 import type { BlogMonthGroup, BlogPost, BlogPostMetadata, BlogQuery } from './types';
 
-export const BLOG_CONTENT_ROOT = path.resolve(process.cwd(), 'content/blog');
+export const BLOG_CONTENT_ROOT = path.join(/* turbopackIgnore: true */ process.cwd(), 'content', 'blog');
 const BUNDLE_RE = /^(\d{4})\/(\d{2})\/(\d{2})\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 
 type BundleFile = { locale: string; sourcePath: string; metadata: BlogPostMetadata };
@@ -26,11 +26,11 @@ function collectBundleDirectories(root: string): string[] {
   const pending = [root];
   while (pending.length) {
     const current = pending.pop() as string;
-    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      const target = path.join(current, entry.name);
+    for (const entry of fs.readdirSync(/* turbopackIgnore: true */ current, { withFileTypes: true })) {
+      const target = path.join(/* turbopackIgnore: true */ current, entry.name);
       if (entry.isDirectory()) pending.push(target);
     }
-    const files = fs.readdirSync(current);
+    const files = fs.readdirSync(/* turbopackIgnore: true */ current);
     if (files.includes('index.mdx') || files.includes('index.en.mdx')) result.push(current);
   }
   return result.sort();
@@ -44,9 +44,9 @@ function parseBundle(bundlePath: string, contentRoot: string): BlogBundle {
   const [, year, month, day, slug] = match;
   const files: BundleFile[] = [];
   for (const [locale, filename] of [['pt', 'index.mdx'], ['en', 'index.en.mdx']] as const) {
-    const sourcePath = path.join(bundlePath, filename);
-    if (!fs.existsSync(sourcePath)) continue;
-    const { metadata } = parseBlogMetadata(fs.readFileSync(sourcePath, 'utf8'));
+    const sourcePath = path.join(/* turbopackIgnore: true */ bundlePath, filename);
+    if (!fs.existsSync(/* turbopackIgnore: true */ sourcePath)) continue;
+    const { metadata } = parseBlogMetadata(fs.readFileSync(/* turbopackIgnore: true */ sourcePath, 'utf8'));
     files.push({ locale, sourcePath, metadata });
   }
   if (!files.some((file) => file.locale === 'pt')) throw new Error(`Missing index.mdx in ${relative}`);
@@ -101,7 +101,7 @@ export function getPostByRoute(
 }
 
 export function readPostBody(post: BlogPost): string {
-  const source = fs.readFileSync(post.sourcePath, 'utf8');
+  const source = fs.readFileSync(/* turbopackIgnore: true */ post.sourcePath, 'utf8');
   return parseBlogMetadata(source).body;
 }
 
