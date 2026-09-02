@@ -36,7 +36,7 @@
       "commits": "Commits"
     },
     "ticker": "JAVA • SPRING BOOT • REST APIs • AWS • REDIS • DOCKER • CI/CD • OPEN SOURCE",
-    "scrollCapabilities": "Scroll-responsive capabilities"
+    "scrollCapabilities": "Capabilities respond to scrolling"
   },
   "skills": {
     "title": "SKILLS",
@@ -109,9 +109,9 @@
     "creating": "Creating...",
     "importMarkdown": "Import Markdown File",
     "dropMarkdown": "Drop .md or .mdx file here",
-    "autoFills": "Auto-fills title, description, and content",
+    "autoFills": "Fills in title, description, and content",
     "dragDropUpload": "Drag & drop or click to upload",
-    "autoTranslate": "Auto-translate to all languages",
+    "autoTranslate": "Translate to all languages",
     "livePreview": "Live Preview",
     "hidePreview": "Hide",
     "showPreview": "Show",
@@ -318,7 +318,7 @@
     "eyebrow": "ABOUT",
     "background": "Background",
     "backgroundText1": "I am a Full-Stack Developer and Cybersecurity Analyst with 2+ years building Java systems with more than 1 million downloads in production. I study Computer Science at UNESA and Cybersecurity at Centro Universitário FIAP.",
-    "backgroundText2": "I focus on software architecture, performance, security, and API integration. I use Java, Spring Boot, Redis, SQL, and AWS to build REST APIs with Clean Code and room to scale.",
+    "backgroundText2": "I focus on software architecture, performance, security, and API integration. I use Java, Spring Boot, Redis, SQL, and AWS to build REST APIs with clean code that's easy to extend.",
     "expertise": "Skills",
     "security": "Languages & Back-end",
     "development": "Front-end",
@@ -329,7 +329,7 @@
     "aiTools": "AI & LLMs",
     "execution": "Execution",
     "philosophy": "Experience",
-    "philosophyText1": "Autonomous · Software Developer focused on Java (2023). Developed and maintained large-scale Java applications with more than 1 million downloads in production. Handled implementation, testing, debugging, and bug fixes across the development cycle.",
+    "philosophyText1": "Software Developer focused on Java since 2023. I develop and maintain Java applications with more than 1 million production downloads. I handle implementation, testing, debugging, and bug fixes throughout the development cycle.",
     "philosophyText2": "Bungo Stray ERP · Full-Stack Developer focused on back-end (2026). Developed a multi-tenant ERP system with Java 17 and Spring Boot. Implemented JWT authentication with Spring Security, RBAC, password hashing with BCrypt and Argon2id, Cassandra persistence, and Redis caching.",
     "profileSignal": "Profile",
         "stackStatus": "Stack status / {count, plural, =0 {SYNCING} other {# REPOS}}",
@@ -358,8 +358,8 @@
     "title": "Live Chat",
     "signOut": "Sign out",
     "signInGithub": "Sign in with GitHub",
-    "emptyState": "No messages yet. Be the first to say something!",
-    "inputPlaceholder": "Type a message… (Enter to send)",
+    "emptyState": "No messages yet.",
+    "inputPlaceholder": "Type a message... (Enter to send)",
     "send": "Send",
     "joinConversation": "to join the conversation"
   },

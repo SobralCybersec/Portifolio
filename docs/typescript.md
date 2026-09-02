@@ -22,7 +22,7 @@ Type contracts for boundaries, state, and component APIs in this portfolio.
 
 <table>
   <thead>
-    <tr><th>Signal</th><th>Project baseline</th><th>Use it for</th></tr>
+    <tr><th>Topic</th><th>Project baseline</th><th>Use it for</th></tr>
   </thead>
   <tbody>
     <tr><td>Compiler</td><td>TypeScript 5.9.x</td><td>Strict static checks before a browser or server run.</td></tr>
@@ -72,7 +72,7 @@ function statusLabel<T>(state: LoadState<T>) {
 }
 ```
 
-| Shape | Meaning | Consumer benefit |
+| Type | Meaning | Why it helps |
 | --- | --- | --- |
 | `unknown` | Data not trusted yet | Forces a real check. |
 | Union | One of a finite set of states | Exhaustive branching. |
@@ -161,10 +161,10 @@ function Notice({ title, children, tone = 'neutral', onClose }: NoticeProps) {
 
 ## Checks
 
-| Command | Signal |
+| Command | Result |
 | --- | --- |
-| `pnpm exec tsc --noEmit` | Type errors across app and tests. |
-| `pnpm run lint` | TypeScript-aware ESLint rules. |
+| `pnpm exec tsc --noEmit` | Type checks across app and tests. |
+| `pnpm run lint` | TypeScript-aware ESLint checks. |
 | `pnpm run test:jest` | Component and utility behavior. |
 | `pnpm run build` | Production route and type integration. |
 

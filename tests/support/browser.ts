@@ -156,6 +156,10 @@ export async function installStableApiMocks(
         body = [];
         break;
 
+      case '/api/auth/session':
+        body = null;
+        break;
+
       default:
         if (url.pathname.endsWith('/readme')) {
           body = {

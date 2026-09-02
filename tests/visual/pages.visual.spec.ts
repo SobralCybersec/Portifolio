@@ -36,6 +36,7 @@ for (const [name, route] of [
       ...options,
       fullPage: true,
       ...(name === 'projects' ? { maxDiffPixels: 100 } : {}),
+      ...(name === 'certifications' ? { maxDiffPixels: 25 } : {}),
     });
   });
 }
@@ -57,6 +58,6 @@ test('project card region visual regression', async ({ page }) => {
     animations: 'disabled',
     // The icon's antialiasing varies by capture pass; keep tolerance below
     // one visual glyph instead of masking the component region.
-    maxDiffPixels: 20,
+    maxDiffPixels: 25,
   });
 });

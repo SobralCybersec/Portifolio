@@ -90,7 +90,7 @@ const testTranslations = {
   'chat.signOut': 'Sign out',
   'chat.signInGithub': 'Sign in with GitHub',
   'chat.emptyState': 'No messages yet. Be the first to say something!',
-  'chat.inputPlaceholder': 'Type a message… (Enter to send)',
+  'chat.inputPlaceholder': 'Type a message... (Enter to send)',
   'chat.send': 'Send',
   'chat.joinConversation': 'to join the conversation',
   'liveCoding.feedEyebrow': 'LIVE / CODING FEED',

@@ -36,7 +36,7 @@
       "commits": "提交"
     },
     "ticker": "JAVA • SPRING BOOT • REST API • AWS • REDIS • DOCKER • CI/CD • 开源",
-    "scrollCapabilities": "响应滚动的能力展示"
+    "scrollCapabilities": "随滚动响应的功能"
   },
   "skills": {
     "title": "技能",
@@ -232,7 +232,7 @@
     "eyebrow": "关于",
     "background": "背景",
     "backgroundText1": "我是一名全栈开发者和网络安全分析师，拥有 2 年以上经验，开发的 Java 系统在生产环境中下载量超过 100 万。我在 UNESA 学习计算机科学，在 Centro Universitario FIAP 学习网络安全。",
-    "backgroundText2": "我专注于软件架构、性能、安全和 API 集成。使用 Java、Spring Boot、Redis、SQL 和 AWS，采用 Clean Code 与可扩展结构构建 REST API。",
+    "backgroundText2": "我专注于软件架构、性能、安全和 API 集成。我使用 Java、Spring Boot、Redis、SQL 和 AWS 构建 REST API，保持代码清晰并便于扩展。",
     "expertise": "技能",
     "security": "语言 & 后端",
     "development": "前端",
@@ -243,7 +243,7 @@
     "aiTools": "AI & LLM",
     "execution": "执行",
     "philosophy": "经验",
-    "philosophyText1": "自主 · 专注 Java 的软件开发者（2023 年）。开发和维护大型 Java 应用程序，生产环境下载量超过 100 万。负责实现、测试、调试和错误修复等完整开发周期。",
+    "philosophyText1": "专注于 Java 的软件开发者（2023 年起）。我开发和维护生产环境下载量超过 100 万的大型 Java 应用。我负责开发周期中的实现、测试、调试和错误修复。",
     "philosophyText2": "Bungo Stray ERP · 专注后端的全栈开发者（2026 年）。使用 Java 17 和 Spring Boot 开发多租户 ERP 系统。实现 Spring Security JWT 身份验证、RBAC、BCrypt 与 Argon2id 密码哈希、Cassandra 持久化和 Redis 缓存。",
     "profileSignal": "个人资料",
         "stackStatus": "技术栈状态 / {count, plural, =0 {同步中} other {# 个仓库}}",
@@ -274,7 +274,7 @@
     "signOut": "退出登录",
     "signInGithub": "使用GitHub登录",
     "emptyState": "还没有消息。成为第一个发言的人吧！",
-    "inputPlaceholder": "输入消息…（按Enter发送）",
+    "inputPlaceholder": "输入消息...（按Enter发送）",
     "send": "发送",
     "joinConversation": "加入对话"
   },

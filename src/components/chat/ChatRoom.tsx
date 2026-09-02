@@ -396,7 +396,7 @@ export default function ChatRoom({ session }: { session: Session | null }) {
                   flexShrink: 0, letterSpacing: 0.5,
                 }}
               >
-                {sending ? '…' : t('send')}
+                {sending ? '...' : t('send')}
               </button>
             </div>
           ) : (

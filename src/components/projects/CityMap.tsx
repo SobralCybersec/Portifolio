@@ -241,7 +241,7 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
         ctx.font = `bold ${Math.min(12, node.size * 0.5) / z}px monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        const label = node.repo.name.length > 14 ? node.repo.name.slice(0, 13) + '…' : node.repo.name;
+        const label = node.repo.name.length > 14 ? node.repo.name.slice(0, 13) + '...' : node.repo.name;
         ctx.fillText(label, node.x, node.y + node.size + 4 / z);
         ctx.restore();
       }

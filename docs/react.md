@@ -22,13 +22,13 @@ Component composition, state ownership, and semantic HTML for this portfolio.
 
 <table>
   <thead>
-    <tr><th>Signal</th><th>Project baseline</th><th>Use it for</th></tr>
+    <tr><th>Topic</th><th>Project baseline</th><th>Use it for</th></tr>
   </thead>
   <tbody>
     <tr><td>Runtime</td><td>React 19.x</td><td>Describe UI as a function of current inputs.</td></tr>
     <tr><td>Framework</td><td>Next.js 16.x App Router</td><td>Route-level composition and server/client boundaries.</td></tr>
-    <tr><td>Component contract</td><td>Typed props + semantic HTML</td><td>Make reuse legible at the call site and in the DOM.</td></tr>
-    <tr><td>Motion</td><td>Framer Motion</td><td>Animate state transitions without owning page meaning.</td></tr>
+    <tr><td>Component contract</td><td>Typed props + semantic HTML</td><td>Keep reuse clear at the call site and in the DOM.</td></tr>
+    <tr><td>Motion</td><td>Framer Motion</td><td>Animate state transitions; keep page meaning in the component.</td></tr>
   </tbody>
 </table>
 
@@ -72,7 +72,7 @@ flowchart LR
   <p>Semantic markup survives before and after hydration.</p>
 </article>
 
-The component may control the data and timing, but the browser still gets headings, labels, buttons, lists, and landmarks.
+The component controls data and timing, but the browser still gets headings, labels, buttons, lists, and landmarks.
 
 ## 02 / Component contract
 
@@ -104,7 +104,7 @@ export function StatusCard({ label, value, tone = 'neutral' }: StatusCardProps) 
 
 ## 03 / Composition seam
 
-Composition is the handoff between layout and behavior. Use `children` when the caller owns content; lift state only to the nearest component that needs to coordinate it.
+Composition connects layout and behavior. Use `children` when the caller owns content; lift state only to the nearest component that needs to coordinate it.
 
 ```mermaid
 flowchart TB
@@ -116,7 +116,7 @@ flowchart TB
     STATE --> FEATURE
 ```
 
-### A small panel seam
+### A small panel
 
 ```tsx
 type PanelProps = {
@@ -136,7 +136,7 @@ function Panel({ title, children }: PanelProps) {
 
 <table>
   <thead>
-    <tr><th>Decision</th><th>Good seam</th><th>Smell</th></tr>
+    <tr><th>Decision</th><th>Good boundary</th><th>Warning</th></tr>
   </thead>
   <tbody>
     <tr><td>State owner</td><td>Nearest shared parent.</td><td>Global state for local hover.</td></tr>
@@ -158,12 +158,12 @@ function Panel({ title, children }: PanelProps) {
 
 ## Checks
 
-| Command | Signal |
+| Command | Result |
 | --- | --- |
-| `pnpm run lint` | React and TypeScript static rules. |
+| `pnpm run lint` | React and TypeScript checks. |
 | `pnpm run test:jest` | Component behavior in jsdom. |
 | `pnpm run test:browser` | Focused browser DOM behavior. |
-| `pnpm run test:e2e` | Route, responsive, and interaction flows. |
+| `pnpm run test:e2e` | Route, responsive, and interaction checks. |
 | `pnpm run build` | App Router production integration. |
 
 <details>

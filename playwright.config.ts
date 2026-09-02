@@ -12,6 +12,15 @@ const mobileViewport = {
   height: 844,
 };
 
+const ciRuntimeEnv = [
+  'AUTH_SECRET=ci-test-auth-secret-0123456789012345678901',
+  'AUTH_TRUST_HOST=true',
+  'AUTH_GITHUB_ID=ci-test-github-id',
+  'AUTH_GITHUB_SECRET=ci-test-github-secret',
+  'UPSTASH_REDIS_REST_URL=https://ci.invalid',
+  'UPSTASH_REDIS_REST_TOKEN=ci-test-upstash-token',
+].join(' ');
+
 export default defineConfig({
   testDir: './tests',
   outputDir: 'test-results',
@@ -126,7 +135,7 @@ export default defineConfig({
 
   webServer: {
     command: isCI
-      ? 'HOSTNAME=127.0.0.1 PORT=3000 node scripts/qa/start-production.mjs'
+      ? `${ciRuntimeEnv} HOSTNAME=127.0.0.1 PORT=3000 node scripts/qa/start-production.mjs`
       : 'pnpm dev --hostname 127.0.0.1 --port 3000',
 
     url: 'http://127.0.0.1:3000/en',

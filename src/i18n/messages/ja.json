@@ -36,7 +36,7 @@
       "commits": "コミット"
     },
     "ticker": "JAVA • SPRING BOOT • REST API • AWS • REDIS • DOCKER • CI/CD • オープンソース",
-    "scrollCapabilities": "スクロール対応の機能"
+    "scrollCapabilities": "スクロールに反応する機能"
   },
   "skills": {
     "title": "スキル",
@@ -243,7 +243,7 @@
     "aiTools": "AI & LLM",
     "execution": "実行",
     "philosophy": "経験",
-    "philosophyText1": "自律 · Javaを中心としたソフトウェア開発者（2023年）。100万以上のダウンロード実績を持つ大規模Javaアプリケーションを開発・保守。実装、テスト、デバッグ、バグ修正まで開発サイクル全体を担当しました。",
+    "philosophyText1": "Javaを中心とするソフトウェア開発者（2023年から）。100万以上のダウンロード実績がある大規模Javaアプリケーションを開発・保守しています。開発サイクル全体で実装、テスト、デバッグ、バグ修正を担当します。",
     "philosophyText2": "Bungo Stray ERP · バックエンドを中心としたフルスタック開発者（2026年）。Java 17とSpring BootでマルチテナントERPシステムを開発。Spring SecurityによるJWT認証、RBAC、BCryptとArgon2idによるパスワードハッシュ、Cassandra永続化、Redisキャッシュを実装しました。",
     "profileSignal": "プロフィール",
         "stackStatus": "スタック状態 / {count, plural, =0 {同期中} other {# リポジトリ}}",
@@ -274,7 +274,7 @@
     "signOut": "サインアウト",
     "signInGithub": "GitHubでサインイン",
     "emptyState": "まだメッセージはありません。最初のメッセージを送りましょう！",
-    "inputPlaceholder": "メッセージを入力…（Enterで送信）",
+    "inputPlaceholder": "メッセージを入力...（Enterで送信）",
     "send": "送信",
     "joinConversation": "会話に参加するには"
   },

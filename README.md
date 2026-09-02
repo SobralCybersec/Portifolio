@@ -4,7 +4,7 @@
   Shadow Monarch Portfolio
 </h1>
 
-Modern Next.js portfolio with Solo Leveling theme, featuring dynamic theming, multilingual support, real-time chat, GitHub integration, visitor tracking, and stunning animations.
+Next.js portfolio with a Solo Leveling theme, multilingual support, real-time chat, GitHub integration, visitor tracking, and animated UI.
 
 **English**
 
@@ -26,24 +26,24 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
   <img src="https://i.imgur.com/dwyUWDH.gif" width="30"/> Features
 </h1>
 
-* **Solo Leveling Boot Animation**: Epic system notification boot sequence with theme-aware styling
-* **Dynamic Theme System**: Purple gradient (dark) and blue gradient (light) with smooth transitions
-* **Custom Scrollbar**: Modern purple gradient scrollbar with cross-browser support (webkit + Firefox)
+* **Solo Leveling Boot Animation**: System notification boot sequence with theme-aware styling
+* **Theme System**: Purple gradient (dark) and blue gradient (light) with transitions
+* **Custom Scrollbar**: Purple gradient scrollbar with cross-browser support (webkit + Firefox)
 * **Bleach Animations**: Clip-path animations for Hero section and Skills grid with stagger effects
 * **Multilingual Support**: 7 languages (EN, ES, PT, FR, DE, JA, ZH) with automatic translation via Groq API
 * **Real-time Chat**: Live chat room powered by Pusher + Upstash Redis with rate limiting
 * **Background Music**: Theme-aware music that switches between dark/light modes
-* **Animated Components**: Hexagon grid, particle effects, scroll progress, letter glitch, and smooth page transitions
+* **Animated Components**: Hexagon grid, particle effects, scroll progress, letter glitch, and page transitions
 * **GitHub Integration**: Dual-account project fetching (SobralCybersec + MatheusSobralCSharp) with image slideshows and tech stack detection
 * **Visitor Counter**: Persistent cumulative visitor tracking via Upstash Redis
 * **Live Preview**: Interactive live code preview component
-* **Tech Carousel**: Animated technology showcase carousel
+* **Tech Carousel**: Animated technology carousel
 * **City Map**: Visual repository map rendered from GitHub data
 * **Stack Documentation**: Markdown field notes for TypeScript and React with diagrams, HTML examples, and stack icons
-* **Vercel Analytics**: Integrated analytics for page views and user insights
+* **Vercel Analytics**: Page-view analytics
 * **CI/CD Pipeline**: GitHub Actions with multi-platform Docker builds, security scanning, and Lighthouse audits
 * **Responsive Design**: Mobile-first approach with Tailwind CSS
-* **SEO Optimized**: Dynamic metadata, sitemap, and Open Graph support
+* **SEO Metadata**: Dynamic metadata, sitemap, and Open Graph support
 * **Performance**: Turbopack dev/build cache, dynamic imports, image optimization (AVIF/WebP), and code splitting
 * **Rate Limiting**: Upstash Redis sliding window rate limits on auth (10/min), chat (20/min), and general API (100/min)
 
@@ -72,7 +72,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Testing**: Jest 30.5 + React Testing Library 16.3
 * **Runtime**: Node.js 22
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
-* **Deployment**: Vercel with optimized configuration
+* **Deployment**: Vercel configuration
 
 ### Engineering Documentation
 
@@ -249,7 +249,7 @@ Portifolio/
 
 ### Solo Leveling Boot Animation
 
-Epic system notification that plays on first visit:
+System notification that plays on first visit:
 - Theme-aware colors (purple for dark, blue for light)
 - Animated card with scanlines and glowing effects
 - Job change animation: Necromancer → Shadow Monarch
@@ -281,7 +281,7 @@ Powered by Pusher + Upstash Redis:
 
 ### Custom Scrollbar
 
-Modern purple gradient scrollbar:
+Purple gradient scrollbar:
 - **Chrome/Safari/Edge**: webkit-scrollbar pseudo-elements
 - **Firefox**: scrollbar-color and scrollbar-width properties
 - Transparent thumb with border revealing gradient track
@@ -307,14 +307,14 @@ Powered by Groq API:
 ---
 
 <h1 align="center">
-  <img src="https://i.imgur.com/6nSJzZ2.gif" width="35"/> Component Highlights
+  <img src="https://i.imgur.com/6nSJzZ2.gif" width="35"/> Components
 </h1>
 
 ### HexagonGrid
 Animated hexagonal grid background with:
 - Dynamic sizing based on viewport
 - Theme-aware colors
-- Smooth animations
+- Animated hexagon transitions
 - Client-side only rendering
 
 ### BackgroundMusic
@@ -323,12 +323,12 @@ Theme-aware music player:
 - Switches music on theme change
 - Volume: 0.35 (half volume)
 - Persists across page navigation
-- Smooth transitions
+- Replaces track on theme change
 
 ### ImageSlideshow
 Automatic image carousel for projects (inline in GitHubProjects):
 - 3-second intervals
-- Smooth fade transitions
+- One-second opacity fades
 - Supports multiple images parsed from README
 - Error handling with GitHub OG image fallback
 
@@ -336,7 +336,7 @@ Automatic image carousel for projects (inline in GitHubProjects):
 Animated progress bar:
 - Purple gradient (dark mode)
 - Blue gradient (light mode)
-- Smooth scroll tracking
+- Progress tracks scroll position
 - Fixed at top of viewport
 
 ---
@@ -347,7 +347,7 @@ Animated progress bar:
 
 ### ESLint 9 Configuration
 
-**Modern flat config** (`eslint.config.mjs`):
+**Flat config** (`eslint.config.mjs`):
 - Next.js 16 core-web-vitals preset
 - React 19 strict rules compliance
 - Custom ignore patterns for build artifacts
@@ -369,7 +369,7 @@ npm run lint -- --fix
 
 ### Test Suite
 
-Comprehensive test coverage:
+Test coverage includes:
 - **Unit Tests**: Components, hooks, utilities
 - **Integration Tests**: API routes, blog system
 - **Component Tests**: React Testing Library
@@ -462,9 +462,9 @@ git push origin v1.0.0
 
 ### Vercel (Recommended)
 
-**Configuration**: `vercel.json` with 2026 best practices
+**Configuration**: `vercel.json` with security and runtime settings
 - Security headers (CSP, HSTS, X-Frame-Options)
-- Optimized caching strategies
+- Cache-control strategies
 - Image optimization settings
 - Function configuration (memory, maxDuration)
 
@@ -527,12 +527,12 @@ Returns:
 * [x] GitHub projects integration (dual-account)
 * [x] Image slideshow for projects (3s intervals)
 * [x] Animated components (HexagonGrid, ParticleBackground, LetterGlitch, MetricsTicker)
-* [x] SEO optimization
+* [x] SEO metadata
 * [x] CI/CD pipeline with GitHub Actions (ci, deploy, docker, dependencies)
 * [x] Docker multi-platform builds (amd64, arm64)
 * [x] Security scanning (Trivy, Snyk)
-* [x] Comprehensive test suite
-* [x] Vercel deployment optimization
+* [x] Test suite
+* [x] Vercel deployment configuration
 * [x] ESLint 9 migration with flat config
 * [x] Next.js Image optimization (AVIF/WebP)
 * [x] Visitor counter with Upstash Redis persistence

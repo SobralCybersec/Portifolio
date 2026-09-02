@@ -22,7 +22,7 @@ function cloneForLoop(item: ReactNode) {
 }
 
 /**
- * Seamless duplicated-track marquee adapted from PersonalBlog's
+ * Duplicated-track marquee adapted from PersonalBlog's
  * InfiniteMarquee. Caller owns visual tokens so portfolio theme stays native.
  */
 export function InfiniteMarquee({

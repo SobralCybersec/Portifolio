@@ -64,7 +64,7 @@ export default function Hero({ animateSection }: HeroProps) {
       <div className="hero-inner">
         <div className="hero-grid">
 
-          {/* Left — content */}
+          {/* Left: content */}
           <div className="hero-left-col">
             <AnimatedText delay={0}>
               <div className="hero-badges" suppressHydrationWarning>
@@ -163,7 +163,7 @@ export default function Hero({ animateSection }: HeroProps) {
             </AnimatedText>
           </div>
 
-          {/* Right — image + stats */}
+          {/* Right: image and stats */}
           <div className="hero-right-col">
             <AnimatedText critical>
               <div className="hero-image-wrapper" suppressHydrationWarning>
