@@ -7,6 +7,7 @@ import { AnimatedText } from '@/components/texts/AnimatedText';
 import CityMap from './CityMap';
 import Image from 'next/image';
 import { safeGithubUrl, safeExternalUrl } from '@/lib/security/url';
+import { shouldRenderVideoPreview } from '@/lib/media/project-preview';
 
 function ImageSlideshow({ images }: { images: string[] }) {
   const [current, setCurrent] = useState(0);
@@ -217,7 +218,7 @@ export default function GitHubProjects() {
             >
               {repo.previewImage && (
                 <div className="relative w-full mb-4 rounded-lg overflow-hidden bg-zinc-900" style={{ aspectRatio: '16/9' }}>
-                  {repo.isVideo ? (
+                  {shouldRenderVideoPreview(repo.isVideo, repo.previewImage) ? (
                     <video
                       src={repo.previewImage}
                       className="w-full h-full object-contain"

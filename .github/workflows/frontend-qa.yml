@@ -35,6 +35,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Documentation check
+        run: pnpm run docs:check
+
+      - name: Validate blog content
+        run: pnpm run blog:validate
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium chromium-headless-shell firefox webkit
 

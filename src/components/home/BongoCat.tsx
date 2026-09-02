@@ -1,11 +1,19 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { BONGO_CAT_STYLES } from './bongo-cat-styles';
 
 export default function BongoCat() {
+  const [motionReady, setMotionReady] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setMotionReady(true), 320);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <div
-      className="bongo-cat-shell"
+      className={`bongo-cat-shell${motionReady ? ' bongo-cat-shell--motion-ready' : ''}`}
       role="img"
       aria-label="Bongo cat coding animation"
     >
@@ -145,7 +153,7 @@ export default function BongoCat() {
 
       </div>
 
-      <style jsx>{BONGO_CAT_STYLES}</style>
+      <style>{BONGO_CAT_STYLES}</style>
     </div>
   );
 }

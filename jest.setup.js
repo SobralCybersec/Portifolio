@@ -134,7 +134,7 @@ jest.mock('next-intl', () => ({
 jest.mock('next-themes', () => ({
   useTheme: () => ({ theme: 'dark', setTheme: jest.fn() }),
   ThemeProvider: ({ children }) => children,
-}));
+}), { virtual: true });
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({

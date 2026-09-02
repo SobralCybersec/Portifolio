@@ -107,6 +107,10 @@ vi.mock('@/components/layout/Navigation', () => ({
   ),
 }));
 
+vi.mock('@/components/home/ChapterIndex', () => ({
+  default: () => null,
+}));
+
 vi.mock('@/hooks/audio/useClickSound', () => ({
   useClickSound: () => undefined,
 }));

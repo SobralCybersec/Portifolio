@@ -13,6 +13,7 @@ import ParticleBackground from '../effects/ParticleBackground';
 import SafeImage from '../ui/SafeImage';
 import ScrollEffect from '../effects/ScrollEffect';
 import ScrollProgress from '../effects/ScrollProgress';
+import BongoCat from '../home/BongoCat';
 import Skills from '../home/Skills';
 import ThemeToggle from '../layout/ThemeToggle';
 import { Typewriter, TypewriterLoop } from '../texts/Typewriter';
@@ -265,6 +266,20 @@ test('covers skills derivation and both typewriter hydration branches', () => {
 
   render(<Typewriter text="Ready" cursor={false} />);
   render(<TypewriterLoop texts={['One', 'Two']} />);
+});
+
+test('starts BongoCat motion after its first frame settles', () => {
+  jest.useFakeTimers();
+  const { container } = render(<BongoCat />);
+  const shell = container.querySelector('.bongo-cat-shell');
+
+  expect(container.querySelector('style')).toHaveTextContent('.typing-animation');
+  expect(shell).not.toHaveClass('bongo-cat-shell--motion-ready');
+
+  act(() => jest.advanceTimersByTime(320));
+
+  expect(shell).toHaveClass('bongo-cat-shell--motion-ready');
+  jest.useRealTimers();
 });
 
 test('covers favicon creation and background music boot completion', async () => {

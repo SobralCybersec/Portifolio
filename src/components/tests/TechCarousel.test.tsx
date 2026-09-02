@@ -37,6 +37,7 @@ describe('TechCarousel Component', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'Inspect TypeScript' })[0]);
 
     expect(screen.getByText('Key Features')).toBeInTheDocument();
+    expect(screen.queryByAltText('TypeScript demo')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Learn More' })).toHaveAttribute('href', 'https://www.typescriptlang.org/');
   });
 
@@ -44,6 +45,7 @@ describe('TechCarousel Component', () => {
     const { container } = render(<TechCarousel />);
     fireEvent.click(container.querySelector('.tech-card-wrapper')!);
     expect(screen.getByText('Key Features')).toBeInTheDocument();
+    expect(screen.queryByAltText('TypeScript demo')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Learn More' })).toHaveAttribute('href', 'https://www.typescriptlang.org/');
     const modal = screen.getByText('Key Features').closest('.fixed')!;
     fireEvent.click(modal.querySelector(':scope > div')!);

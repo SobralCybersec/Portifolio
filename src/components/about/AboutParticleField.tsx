@@ -107,12 +107,26 @@ export default function AboutParticleField({
     const container = canvas?.parentElement;
     if (!canvas || !container) return;
 
-    const renderer = new WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: false,
-      powerPreference: 'high-performance',
-    });
+    try {
+      const context = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+      if (!context) return;
+    } catch {
+      return;
+    }
+
+    let renderer: WebGLRenderer;
+
+    try {
+      renderer = new WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: false,
+        powerPreference: 'high-performance',
+      });
+    } catch {
+      // WebGL is optional decoration; browsers without a usable context keep page content.
+      return;
+    }
     renderer.setClearColor(0, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 

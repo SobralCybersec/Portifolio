@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth/auth';
 import { SessionProvider } from 'next-auth/react';
 import Navigation from '@/components/layout/Navigation';
+import RouteView from '@/components/layout/RouteView';
 import { HexagonGrid, ClientChatRoom } from '@/components/runtime/ClientOnlyComponents';
 import ChatEffects from '@/components/chat/ChatEffects';
 
@@ -22,6 +23,7 @@ export default async function ChatPage() {
       <ChatEffects />
 
       <Navigation />
+      <RouteView>
       <main style={{
         maxWidth: 860, margin: '0 auto', padding: '20px 16px',
         height: 'calc(100vh - 76px)', display: 'flex', flexDirection: 'column',
@@ -48,6 +50,7 @@ export default async function ChatPage() {
           </SessionProvider>
         </div>
       </main>
+      </RouteView>
     </>
   );
 }

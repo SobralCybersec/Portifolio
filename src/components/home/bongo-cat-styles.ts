@@ -172,6 +172,27 @@ export const BONGO_CAT_STYLES = `
     animation-delay: 150ms;
   }
 
+  /* Hold deterministic first-frame art until component styles and layout settle. */
+  .bongo-cat-shell:not(.bongo-cat-shell--motion-ready)::before {
+    transform: translateX(0);
+    animation: none;
+  }
+
+  .bongo-cat-shell:not(.bongo-cat-shell--motion-ready) .typing-animation {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .bongo-cat-shell:not(.bongo-cat-shell--motion-ready) #paw-right--up,
+  .bongo-cat-shell:not(.bongo-cat-shell--motion-ready) #paw-left--up {
+    opacity: 0;
+  }
+
+  .bongo-cat-shell:not(.bongo-cat-shell--motion-ready) #paw-right--down,
+  .bongo-cat-shell:not(.bongo-cat-shell--motion-ready) #paw-left--down {
+    opacity: 1;
+  }
+
   @keyframes typing-f1-l1 {
     0% { stroke-dashoffset: 1; }
     14%, 100% { stroke-dashoffset: 0; }

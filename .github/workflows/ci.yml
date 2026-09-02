@@ -38,7 +38,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        
+
+      - name: Documentation check
+        run: npm run docs:check
+
+      - name: Validate blog content
+        run: npm run blog:validate
+
       - name: Run ESLint
         run: npm run lint
 
@@ -90,6 +96,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate blog content
+        run: npm run blog:validate
 
       - name: Build Next.js application
         run: npm run build

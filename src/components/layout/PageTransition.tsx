@@ -19,12 +19,17 @@ const PortfolioTransition = dynamic(() => import('./PageTransitionOverlay'), {
 /**
  * Shared route layer built from Cinematic Letterbox,
  * Monocolor Editorial Wipe,
- * Split Center Reveal,
+ * Grayscale Media Reveal,
  * and Kinetic Marquee Stripes source overlays.
  */
-export type { ActiveTransition, TransitionName, TransitionTiming } from './page-transition-config';
-import type { ActiveTransition, TransitionName } from './page-transition-config';
-import { TRANSITION_TIMINGS, TRANSITION_VIDEOS } from './page-transition-config';
+export type { ActiveTransition, TransitionEffect, TransitionName, TransitionTiming } from './page-transition-config';
+import type { ActiveTransition, TransitionEffect, TransitionName } from './page-transition-config';
+import {
+  PAGE_TRANSITIONS,
+  PAGE_TRANSITION_VARIANTS,
+  TRANSITION_TIMINGS,
+  TRANSITION_VIDEOS,
+} from './page-transition-config';
 interface NavigationOptions {
   replace?: boolean;
   commit?: () => void;
@@ -39,9 +44,20 @@ const ROUTE_TRANSITIONS: Record<string, TransitionName> = {
   '/': 'letterbox',
   '/about': 'monocolor-wipe',
   '/projects': 'marquee-stripes',
+  '/blog': 'marquee-stripes',
   '/certifications': 'black-white-slice',
   '/contact': 'monocolor-wipe',
   '/chat': 'loading-screen',
+};
+
+const ROUTE_LABELS: Record<string, string> = {
+  '/': 'HOME',
+  '/about': 'ABOUT',
+  '/projects': 'PROJECTS',
+  '/blog': 'BLOG',
+  '/certifications': 'CERTIFICATIONS',
+  '/contact': 'CONTACT',
+  '/chat': 'CHAT',
 };
 
 const LOCALES = new Set([
@@ -56,12 +72,21 @@ const LOCALES = new Set([
 
 const FAILSAFE_MS = 10000;
 
+interface NativeViewTransition {
+  finished: Promise<unknown>;
+  skipTransition?: () => void;
+}
+
+interface ViewTransitionDocument {
+  startViewTransition?: (
+    updateCallback: () => void | Promise<void>,
+  ) => NativeViewTransition;
+}
+
 const PageTransitionContext =
   createContext<PageTransitionContextValue | null>(null);
 
-export function getTransitionForPath(
-  pathname: string,
-): TransitionName {
+function getRoutePath(pathname: string) {
   const cleanPath =
     pathname
       .split(/[?#]/, 1)[0]
@@ -78,7 +103,60 @@ export function getTransitionForPath(
       ? '/'
       : withoutLocale.replace(/\/+$/, '');
 
-  return ROUTE_TRANSITIONS[route] ?? 'letterbox';
+  return route === '/blog' || route.startsWith('/blog/') ? '/blog' : route;
+}
+
+export function getTransitionCompositionForPath(
+  pathname: string,
+  seed = 0,
+): readonly TransitionEffect[] {
+  const route = getRoutePath(pathname);
+  const variants =
+    PAGE_TRANSITION_VARIANTS[route] ?? [[PAGE_TRANSITIONS['/']]];
+
+  return (
+    variants[getTransitionVariantForPath(pathname, seed)] ??
+    variants[0] ??
+    [PAGE_TRANSITIONS['/']]
+  );
+}
+
+export function getTransitionVariantForPath(
+  pathname: string,
+  seed = 0,
+) {
+  const route = getRoutePath(pathname);
+  const variants =
+    PAGE_TRANSITION_VARIANTS[route] ?? [[PAGE_TRANSITIONS['/']]];
+
+  if (variants.length < 2 || seed === 0) {
+    return 0;
+  }
+
+  let routeHash = 0;
+
+  for (const character of route) {
+    routeHash = (routeHash * 31 + character.charCodeAt(0)) >>> 0;
+  }
+
+  let value =
+    (routeHash ^ Math.imul(seed, 0x9e3779b9)) >>> 0;
+
+  value ^= value >>> 16;
+  value = Math.imul(value, 0x85ebca6b) >>> 0;
+  value ^= value >>> 13;
+
+  return (value >>> 0) % variants.length;
+}
+
+export function getTransitionForPath(
+  pathname: string,
+): TransitionName {
+  return ROUTE_TRANSITIONS[getRoutePath(pathname)] ?? 'letterbox';
+}
+
+export function getTransitionLabelForPath(pathname: string) {
+  return ROUTE_LABELS[getRoutePath(pathname)] ?? 'PORTFOLIO';
 }
 
 function prefersReducedMotion() {
@@ -145,6 +223,17 @@ export function PageTransitionProvider({
       null,
     );
 
+  const pendingEffectsRef =
+    useRef<readonly TransitionEffect[] | null>(
+      null,
+    );
+
+  const pendingLabelRef =
+    useRef<string | null>(null);
+
+  const pendingVariantRef =
+    useRef<number | null>(null);
+
   const pendingVideoRef =
     useRef<string | null>(
       null,
@@ -168,7 +257,32 @@ export function PageTransitionProvider({
     cover?: number;
     reveal?: number;
     failsafe?: number;
+    nativeUpdate?: number;
   }>({});
+
+  const nativeViewTransitionRef =
+    useRef<NativeViewTransition | null>(null);
+
+  const nativeUpdateResolveRef =
+    useRef<(() => void) | null>(null);
+
+  const resolveNativeUpdate = useCallback(() => {
+    const resolve = nativeUpdateResolveRef.current;
+    nativeUpdateResolveRef.current = null;
+
+    if (
+      timersRef.current.nativeUpdate !==
+      undefined
+    ) {
+      window.clearTimeout(
+        timersRef.current.nativeUpdate,
+      );
+      timersRef.current.nativeUpdate =
+        undefined;
+    }
+
+    resolve?.();
+  }, []);
 
   const clearTimers =
     useCallback(() => {
@@ -202,17 +316,39 @@ export function PageTransitionProvider({
         );
       }
 
+      if (
+        timers.nativeUpdate !==
+        undefined
+      ) {
+        window.clearTimeout(
+          timers.nativeUpdate,
+        );
+      }
+
       timersRef.current = {};
     }, []);
 
   const finish =
     useCallback(() => {
+      resolveNativeUpdate();
       clearTimers();
+
+      nativeViewTransitionRef.current?.skipTransition?.();
+      nativeViewTransitionRef.current = null;
 
       transitionRef.current =
         null;
 
       pendingEffectRef.current =
+        null;
+
+      pendingEffectsRef.current =
+        null;
+
+      pendingLabelRef.current =
+        null;
+
+      pendingVariantRef.current =
         null;
 
       pendingVideoRef.current =
@@ -222,7 +358,59 @@ export function PageTransitionProvider({
         null;
 
       setTransition(null);
-    }, [clearTimers]);
+    }, [clearTimers, resolveNativeUpdate]);
+
+  const startNativeNavigation = useCallback(
+    (commit: () => void) => {
+      const documentWithViewTransition =
+        document as ViewTransitionDocument;
+
+      if (
+        typeof documentWithViewTransition.startViewTransition !==
+        'function'
+      ) {
+        commit();
+        return;
+      }
+
+      let nativeTransition: NativeViewTransition;
+
+      try {
+        nativeTransition =
+          documentWithViewTransition.startViewTransition(
+            () =>
+              new Promise<void>((resolve) => {
+                nativeUpdateResolveRef.current = resolve;
+                timersRef.current.nativeUpdate =
+                  window.setTimeout(
+                    resolveNativeUpdate,
+                    1400,
+                  );
+                commit();
+              }),
+          );
+      } catch {
+        commit();
+        return;
+      }
+
+      nativeViewTransitionRef.current =
+        nativeTransition;
+
+      void nativeTransition.finished
+        .catch(() => undefined)
+        .finally(() => {
+          if (
+            nativeViewTransitionRef.current ===
+            nativeTransition
+          ) {
+            nativeViewTransitionRef.current =
+              null;
+          }
+        });
+    },
+    [resolveNativeUpdate],
+  );
 
   /**
    * IMPORTANT:
@@ -250,6 +438,9 @@ export function PageTransitionProvider({
     useCallback(
       (
         effect: TransitionName,
+        effects: readonly TransitionEffect[],
+        label: string,
+        variant: number,
         video: string,
         marqueeSeed: number,
       ) => {
@@ -271,6 +462,9 @@ export function PageTransitionProvider({
             ? {
                 ...current,
                 effect,
+                effects,
+                label,
+                variant,
                 video,
                 marqueeSeed,
                 phase:
@@ -278,6 +472,9 @@ export function PageTransitionProvider({
               }
             : {
                 effect,
+                effects,
+                label,
+                variant,
                 video,
                 marqueeSeed,
                 phase:
@@ -351,8 +548,27 @@ export function PageTransitionProvider({
         const target =
           `${url.pathname}${url.search}${url.hash}`;
 
+        const marqueeSeed =
+          videoIndexRef.current++;
+
+        const effects =
+          getTransitionCompositionForPath(
+            url.pathname,
+            marqueeSeed,
+          );
+
         const effect =
-          getTransitionForPath(
+          effects[0] ??
+          getTransitionForPath(url.pathname);
+
+        const variant =
+          getTransitionVariantForPath(
+            url.pathname,
+            marqueeSeed,
+          );
+
+        const label =
+          getTransitionLabelForPath(
             url.pathname,
           );
 
@@ -376,9 +592,6 @@ export function PageTransitionProvider({
           return true;
         }
 
-        const marqueeSeed =
-          videoIndexRef.current++;
-
         const video =
           nextVideo(
             marqueeSeed,
@@ -387,6 +600,9 @@ export function PageTransitionProvider({
         const nextTransition:
           ActiveTransition = {
           effect,
+          effects,
+          label,
+          variant,
           video,
           marqueeSeed,
           phase: 'cover',
@@ -399,6 +615,15 @@ export function PageTransitionProvider({
 
         pendingEffectRef.current =
           effect;
+
+        pendingEffectsRef.current =
+          effects;
+
+        pendingLabelRef.current =
+          label;
+
+        pendingVariantRef.current =
+          variant;
 
         pendingVideoRef.current =
           video;
@@ -456,24 +681,32 @@ export function PageTransitionProvider({
                 holdTransition,
               );
 
-              try {
-                if (
-                  options.commit
-                ) {
-                  options.commit();
-                } else if (
-                  options.replace
-                ) {
-                  router.replace(
-                    target,
-                  );
-                } else {
-                  router.push(
-                    target,
-                  );
+              const commitRoute = () => {
+                try {
+                  if (
+                    options.commit
+                  ) {
+                    options.commit();
+                  } else if (
+                    options.replace
+                  ) {
+                    router.replace(
+                      target,
+                    );
+                  } else {
+                    router.push(
+                      target,
+                    );
+                  }
+                } catch {
+                  finish();
                 }
-              } catch {
-                finish();
+              };
+
+              if (current.effects.includes('view-transition-morph')) {
+                startNativeNavigation(commitRoute);
+              } else {
+                commitRoute();
               }
             },
             coverMs,
@@ -495,6 +728,7 @@ export function PageTransitionProvider({
       [
         finish,
         router,
+        startNativeNavigation,
       ],
     );
 
@@ -515,8 +749,20 @@ export function PageTransitionProvider({
     lastPathRef.current =
       pathname;
 
+    // Let native View Transition capture the committed destination geometry.
+    resolveNativeUpdate();
+
     const pendingEffect =
       pendingEffectRef.current;
+
+    const pendingEffects =
+      pendingEffectsRef.current;
+
+    const pendingLabel =
+      pendingLabelRef.current;
+
+    const pendingVariant =
+      pendingVariantRef.current;
 
     const pendingVideo =
       pendingVideoRef.current;
@@ -531,6 +777,15 @@ export function PageTransitionProvider({
     pendingEffectRef.current =
       null;
 
+    pendingEffectsRef.current =
+      null;
+
+    pendingLabelRef.current =
+      null;
+
+    pendingVariantRef.current =
+      null;
+
     pendingVideoRef.current =
       null;
 
@@ -540,6 +795,21 @@ export function PageTransitionProvider({
     beginReveal(
       pendingEffect ??
         getTransitionForPath(
+          pathname ?? '/',
+        ),
+
+      pendingEffects ??
+        getTransitionCompositionForPath(
+          pathname ?? '/',
+        ),
+
+      pendingLabel ??
+        getTransitionLabelForPath(
+          pathname ?? '/',
+        ),
+
+      pendingVariant ??
+        getTransitionVariantForPath(
           pathname ?? '/',
         ),
 
@@ -553,6 +823,7 @@ export function PageTransitionProvider({
   }, [
     beginReveal,
     pathname,
+    resolveNativeUpdate,
   ]);
 
   /**

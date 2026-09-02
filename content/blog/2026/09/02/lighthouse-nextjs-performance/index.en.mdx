@@ -1,0 +1,61 @@
+---
+title: "How I got 100 on Lighthouse"
+description: "A short record of the decisions that reduced JavaScript, avoided layout shift, and made this Next.js page faster."
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: true
+translationKey: "lighthouse-nextjs-performance"
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "b3b2c15d2da4963938784e0916821d5f99aac3b5042d9a42dfbc504f6045f48d"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## The result
+
+Performance didn't come from a single trick. It came from keeping the critical path small: Server Components by default, images with known dimensions, and visual effects outside the first paint.
+
+<Callout title="Golden rule" variant="success">
+  Measure the critical path before optimizing details. The user feels bytes and waits, not the elegance of the code.
+</Callout>
+
+## What changed
+
+1. Editorial lists load only metadata on the server.
+2. MDX content compiles only on the article page.
+3. Videos and embeds use on-demand loading.
+
+### The editorial contract
+
+| Field | Role |
+| --- | --- |
+| `title` | Page title and card title |
+| `description` | Summary, SEO, RSS, and archive |
+| `date` | Chronological ordering |
+| `tags` | Controlled taxonomy |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## Next measurement
+
+The next step is to compare pages with real content, without turning the blog into a giant index in the browser.
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube.com/embed/Pw0E4OSJQTM"
+  title="Fairy Tail (PT-BR) - Closing 1"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>

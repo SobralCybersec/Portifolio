@@ -1,11 +1,13 @@
 import React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
+  getTransitionCompositionForPath,
   getTransitionForPath,
+  getTransitionVariantForPath,
   PageTransitionProvider,
   usePageTransition,
 } from '../layout/PageTransition';
-import { TRANSITION_TIMINGS } from '../layout/page-transition-config';
+import { MOSAIC_GIFS, MOSAIC_VIDEOS, TRANSITION_TIMINGS } from '../layout/page-transition-config';
 import { Link } from '@/i18n/config/routing';
 
 const mockRouter = { push: jest.fn(), replace: jest.fn() };
@@ -53,9 +55,39 @@ describe('PageTransitionProvider', () => {
     expect(getTransitionForPath('/en/')).toBe('letterbox');
     expect(getTransitionForPath('/pt/about?from=home')).toBe('monocolor-wipe');
     expect(getTransitionForPath('/projects///#top')).toBe('marquee-stripes');
+    expect(getTransitionForPath('/en/blog/2026/09/02/post')).toBe('marquee-stripes');
     expect(getTransitionForPath('/de/certifications')).toBe('black-white-slice');
     expect(getTransitionForPath('/ja/chat')).toBe('loading-screen');
     expect(getTransitionForPath('/missing')).toBe('letterbox');
+  });
+
+  test('keeps legacy defaults while selecting one complete route variant', () => {
+    expect(getTransitionCompositionForPath('/en/projects')).toEqual([
+      'marquee-stripes',
+    ]);
+    expect(getTransitionCompositionForPath('/pt/certifications')).toEqual([
+      'black-white-slice',
+    ]);
+    expect(getTransitionCompositionForPath('/en/blog')).toEqual([
+      'marquee-stripes',
+    ]);
+    expect(getTransitionCompositionForPath('/en/blog/2026/09/02/post')).toEqual([
+      'marquee-stripes',
+    ]);
+    expect(getTransitionCompositionForPath('/unknown')[0]).toBe('letterbox');
+  });
+
+  test('selects one deterministic transition variant per navigation seed', () => {
+    expect(getTransitionVariantForPath('/en/projects')).toBe(0);
+    expect(getTransitionCompositionForPath('/en/projects', 1)).not.toEqual(
+      getTransitionCompositionForPath('/en/projects', 0),
+    );
+    expect(getTransitionCompositionForPath('/en/projects', 1)[0]).toBe('fourth-wall-frames');
+    expect(getTransitionCompositionForPath('/en/projects', 1)).toHaveLength(1);
+    expect(getTransitionCompositionForPath('/en/about', 1)).toEqual([
+      'monocolor-wipe',
+      'fourth-wall-typography',
+    ]);
   });
 
   test('returns fallback transition API outside provider', () => {
@@ -68,6 +100,7 @@ describe('PageTransitionProvider', () => {
   test.each([
     ['/about', 'monocolor-wipe'],
     ['/projects', 'marquee-stripes'],
+    ['/blog', 'marquee-stripes'],
     ['/certifications', 'black-white-slice'],
     ['/chat', 'loading-screen'],
     ['/en', 'letterbox'],
@@ -87,10 +120,36 @@ describe('PageTransitionProvider', () => {
     const overlay = document.querySelector('.portfolio-transition')!;
     if (effect === 'monocolor-wipe') expect(overlay.querySelectorAll('.portfolio-transition__manga-panel')).toHaveLength(6);
     if (effect === 'marquee-stripes') expect(overlay.querySelectorAll('.portfolio-transition__marquee-line')).toHaveLength(7);
-    if (effect === 'black-white-slice') expect(overlay.querySelectorAll('.portfolio-transition__split-panel')).toHaveLength(2);
+    if (effect === 'black-white-slice') {
+      expect(overlay.querySelectorAll('.portfolio-transition__split-panel')).toHaveLength(0);
+      expect(overlay.querySelector('.portfolio-transition__video')).not.toBeNull();
+    }
     if (effect === 'letterbox') expect(overlay.querySelectorAll('.portfolio-transition__letterbox')).toHaveLength(2);
     if (effect === 'loading-screen') expect(screen.getByTestId('loading-transition')).toHaveTextContent('3000');
     unmount();
+  });
+
+  test('renders both video and GIF media in manga panels', async () => {
+    function RouteConsumer() {
+      const { navigate } = usePageTransition();
+      return <button type="button" onClick={() => navigate('/about')}>navigate</button>;
+    }
+
+    render(<PageTransitionProvider><RouteConsumer /></PageTransitionProvider>);
+    act(() => fireEvent.click(screen.getByRole('button', { name: 'navigate' })));
+
+    await waitFor(() => {
+      const overlay = document.querySelector('.portfolio-transition');
+      expect(overlay).not.toBeNull();
+      expect(overlay?.querySelectorAll('.portfolio-transition__manga-panel video')).toHaveLength(3);
+      expect(overlay?.querySelectorAll('.portfolio-transition__manga-panel img')).toHaveLength(3);
+      expect(overlay?.querySelectorAll('.portfolio-transition__manga-panel[data-media-type="video"]')).toHaveLength(3);
+      expect(overlay?.querySelectorAll('.portfolio-transition__manga-panel[data-media-type="gif"]')).toHaveLength(3);
+    });
+
+    expect(MOSAIC_VIDEOS.length).toBeGreaterThan(0);
+    expect(MOSAIC_GIFS.length).toBeGreaterThan(0);
+    expect(MOSAIC_GIFS.every((src) => src.startsWith('/images/gifs/') && src.endsWith('.gif'))).toBe(true);
   });
 
   test('keeps same overlay through cover, hold, reveal, then finishes', () => {

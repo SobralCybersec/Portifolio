@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/layout/Navigation';
+import RouteView from '@/components/layout/RouteView';
 import { GradientText } from '@/components/texts/AnimatedText';
 import { useClickSound } from '@/hooks/audio/useClickSound';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -13,6 +14,7 @@ import FilterDropdown from '@/components/ui/FilterDropdown';
 import ScrollEffect from '@/components/effects/ScrollEffect';
 import ScrollProgress from '@/components/effects/ScrollProgress';
 import ScrollReveal from '@/components/effects/ScrollReveal';
+import MagneticLibraryGrid from '@/components/projects/MagneticLibraryGrid';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
@@ -43,11 +45,13 @@ function LazyProjectCard({
   index,
   onReadme,
   featured,
+  variant,
 }: {
   project: Repo;
   index: number;
   onReadme: (repo: Repo) => void;
   featured: boolean;
+  variant?: 'default' | 'library';
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(index < 2);
@@ -83,6 +87,7 @@ function LazyProjectCard({
           index={index}
           onReadme={onReadme}
           featured={featured}
+          variant={variant}
         />
       ) : (
         <div aria-hidden="true" className="h-[430px] border border-[var(--border)] bg-[var(--bg-card)]/35" />
@@ -218,6 +223,7 @@ export default function ProjectsPage() {
           />
         </div>
       )}
+      <RouteView>
       <main className="relative min-h-[100dvh] pt-20">
         {effectsReady && <ScrollEffect />}
         {effectsReady && <ParticleBackground />}
@@ -347,7 +353,7 @@ export default function ProjectsPage() {
                 </div>
               </>
             ) : filteredProjects.length > 0 ? (
-              <motion.div layout className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-12">
+              <MagneticLibraryGrid>
                 {filteredProjects.map((project, idx) => (
                   <motion.div
                     key={project.id}
@@ -355,7 +361,7 @@ export default function ProjectsPage() {
                     initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: shouldReduceMotion ? 0 : 0.45, delay: shouldReduceMotion ? 0 : Math.min(idx * 0.04, 0.2) }}
-                    className={filteredProjects.length === 1 ? 'lg:col-span-12' : idx === 0 ? 'lg:col-span-7' : idx === 1 ? 'lg:col-span-5' : 'lg:col-span-4'}
+                    className="magnetic-library-grid__item"
                     style={{ contentVisibility: 'auto', containIntrinsicSize: '480px' }}
                   >
                     <LazyProjectCard
@@ -363,10 +369,11 @@ export default function ProjectsPage() {
                       index={idx}
                       onReadme={setSelectedProject}
                       featured={idx === 0}
+                      variant="library"
                     />
                   </motion.div>
                 ))}
-              </motion.div>
+              </MagneticLibraryGrid>
             ) : (
               <motion.div
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
@@ -379,6 +386,7 @@ export default function ProjectsPage() {
           </section>
         </div>
       </main>
+      </RouteView>
       {selectedProject && (
         <ProjectReadmeModal
           owner={selectedProject.owner?.login ?? 'SobralCybersec'}

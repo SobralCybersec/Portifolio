@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import Navigation from '@/components/layout/Navigation';
+import RouteView from '@/components/layout/RouteView';
 import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
 import ContactCommandForm from '@/components/contact/ContactCommandForm';
 import ScrollEffect from '@/components/effects/ScrollEffect';
@@ -46,6 +47,7 @@ export default function ContactPage() {
           />
         </div>
       )}
+      <RouteView>
       <main className="relative overflow-hidden pt-20">
         {effectsReady && <ScrollEffect />}
         {effectsReady && <ParticleBackground />}
@@ -117,6 +119,7 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
+      </RouteView>
     </>
   );
 }

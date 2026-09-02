@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/layout/Navigation';
+import RouteView from '@/components/layout/RouteView';
 import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
 import { useClickSound } from '@/hooks/audio/useClickSound';
 import { useTheme } from 'next-themes';
@@ -379,6 +380,7 @@ export default function CertificationsPage() {
           />
         </div>
       )}
+      <RouteView>
       <main className="certification-page relative min-h-screen pt-20">
         {effectsReady && <ScrollEffect />}
         {effectsReady && <ParticleBackground />}
@@ -479,6 +481,7 @@ export default function CertificationsPage() {
           </section>
         </div>
       </main>
+      </RouteView>
 
       {/* Modal */}
       {selectedCert && (

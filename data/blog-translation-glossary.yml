@@ -1,0 +1,19 @@
+preserve:
+  - Next.js
+  - React
+  - TypeScript
+  - Rust
+  - Tauri
+  - Lighthouse
+  - Playwright
+  - Vitest
+  - Server Components
+  - MDX
+  - GitHub
+  - Vercel
+
+terms:
+  "tempo de carregamento": "load time"
+  "deslocamento de layout": "layout shift"
+  "carregamento sob demanda": "on-demand loading"
+  "caminho crítico": "critical path"

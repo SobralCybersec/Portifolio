@@ -5,19 +5,23 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Navigation from '@/components/layout/Navigation';
+import RouteView from '@/components/layout/RouteView';
 import { GradientText } from '@/components/texts/AnimatedText';
 import type { AboutStoryItem } from '@/components/about/AboutScrollStory';
 import type { ExpertiseGroup } from '@/components/about/InteractiveExpertiseGrid';
+import type { Repo } from '@/components/projects/project-card-types';
 import ScrollEffect from '@/components/effects/ScrollEffect';
 import { useClickSound } from '@/hooks/audio/useClickSound';
 import { useHydrated } from '@/hooks/browser/useHydrated';
-import { deriveSkills, type Repo } from '@/lib/profile/deriveSkills';
+import { deriveSkills } from '@/lib/profile/deriveSkills';
+import { filterProjectsBySkill } from '@/lib/profile/matchProjectsToSkill';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 const AboutParticleField = dynamic(() => import('@/components/about/AboutParticleField'), { ssr: false });
 const AboutScrollStory = dynamic(() => import('@/components/about/AboutScrollStory'));
 const InteractiveExpertiseGrid = dynamic(() => import('@/components/about/InteractiveExpertiseGrid'));
+const SoloLevelingProjectCard = dynamic(() => import('@/components/projects/SoloLevelingProjectCard'));
 
 export default function AboutPage() {
   useClickSound();
@@ -25,7 +29,10 @@ export default function AboutPage() {
   const { theme } = useTheme();
   const t = useTranslations('about');
   const [repos, setRepos] = useState<Repo[]>([]);
+  const [reposReady, setReposReady] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const expertiseSectionRef = useRef<HTMLElement>(null);
+  const skillProjectsRef = useRef<HTMLElement>(null);
   const [effectsReady, setEffectsReady] = useState(false);
   const [webglReady, setWebglReady] = useState(false);
 
@@ -60,6 +67,8 @@ export default function AboutPage() {
         if (active && Array.isArray(data)) setRepos(data as Repo[]);
       } catch {
         // Static expertise content remains available when live data is unavailable.
+      } finally {
+        if (active) setReposReady(true);
       }
     };
 
@@ -89,6 +98,22 @@ export default function AboutPage() {
   }, []);
 
   const liveSkills = useMemo(() => deriveSkills(repos), [repos]);
+  const matchingProjects = useMemo(
+    () => selectedSkill ? filterProjectsBySkill(repos, selectedSkill) : [],
+    [repos, selectedSkill],
+  );
+
+  const handleSkillSelect = (skill: string) => {
+    setSelectedSkill(skill);
+    window.setTimeout(() => {
+      const target = skillProjectsRef.current;
+      if (!target) return;
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+      target.scrollIntoView({ behavior, block: 'start' });
+    }, 0);
+  };
 
   const storyItems: AboutStoryItem[] = [
     {
@@ -157,6 +182,7 @@ export default function AboutPage() {
           />
         </div>
       )}
+      <RouteView>
       <main className="relative min-h-screen overflow-x-clip pt-20">
         {effectsReady && <ScrollEffect />}
         {effectsReady && <ParticleBackground />}
@@ -191,10 +217,48 @@ export default function AboutPage() {
                 <h2 id="expertise-title" className="mt-3 font-[var(--font-solo-heading)] text-3xl font-bold uppercase tracking-[0.08em] text-[var(--text-primary)] md:text-5xl">{t('expertise')}</h2>
               </div>
             </div>
-            <InteractiveExpertiseGrid groups={expertiseGroups} moduleLabel={t('story.moduleLabel')} />
+            <InteractiveExpertiseGrid
+              groups={expertiseGroups}
+              moduleLabel={t('story.moduleLabel')}
+              selectedSkill={selectedSkill}
+              onSkillSelect={handleSkillSelect}
+            />
+
+            {selectedSkill && (
+              <section ref={skillProjectsRef} id="skill-projects" className="scroll-mt-24 pt-14" aria-labelledby="skill-projects-title">
+                <div className="mb-6 flex flex-col gap-2 border-l-2 border-[var(--theme-primary)] pl-4">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--theme-primary)]">{t('skillProjectsLabel')}</p>
+                  <h3 id="skill-projects-title" className="font-[var(--font-solo-heading)] text-2xl font-bold uppercase tracking-[0.08em] text-[var(--text-primary)] md:text-4xl">
+                    {t('skillProjectsTitle', { skill: selectedSkill })}
+                  </h3>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]" aria-live="polite">
+                    {reposReady ? t('skillProjectsCount', { count: matchingProjects.length }) : t('skillProjectsLoading')}
+                  </p>
+                </div>
+
+                {!reposReady ? (
+                  <p className="border border-[var(--border)] bg-[var(--bg-card)]/60 p-6 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    {t('skillProjectsLoading')}
+                  </p>
+                ) : matchingProjects.length === 0 ? (
+                  <p className="border border-[var(--border)] bg-[var(--bg-card)]/60 p-6 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    {t('skillProjectsEmpty')}
+                  </p>
+                ) : (
+                  <div data-testid="skill-projects-rail" className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-5 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" tabIndex={0} aria-label={t('skillProjectsTitle', { skill: selectedSkill })}>
+                    {matchingProjects.map((repo, index) => (
+                      <div key={repo.id} className="w-[min(86vw,28rem)] flex-none snap-start">
+                        <SoloLevelingProjectCard repo={repo} index={index} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
           </section>
         </div>
       </main>
+      </RouteView>
     </>
   );
 }

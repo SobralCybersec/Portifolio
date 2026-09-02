@@ -15,14 +15,16 @@ import { useHydrated } from "@/hooks/browser/useHydrated";
 import { safeGithubUrl, safeExternalUrl } from "@/lib/security/url";
 import { getLanguageImage } from "@/lib/github/languageIcon";
 import { useTranslations } from "next-intl";
-import { ProjectCardPreview, ProjectCardVisuals } from "./ProjectCardParts";
+import { getPreviewImages, ProjectCardPreview, ProjectCardVisuals } from "./ProjectCardParts";
 import type { Repo } from "./project-card-types";
+import ProjectLibraryCard from './ProjectLibraryCard';
 
 interface SoloLevelingProjectCardProps {
   repo: Repo;
   index: number;
   onReadme?: (repo: Repo) => void;
   featured?: boolean;
+  variant?: 'default' | 'library';
 }
 
 const LANG_COLORS: Record<string, string> = {
@@ -82,22 +84,18 @@ function langColor(lang: string | null, colors: typeof DARK_COLORS): string {
   return lang ? (LANG_COLORS[lang] ?? colors.primary) : colors.primary;
 }
 
-function getPreviewImages(previewImage: string | undefined): string[] {
-  if (!previewImage) return [];
-
-  try {
-    const parsed = JSON.parse(previewImage);
-    if (Array.isArray(parsed)) {
-      return [...new Set<string>(parsed)];
-    }
-  } catch {
-    return [previewImage];
+export default function SoloLevelingProjectCard({
+  variant = 'default',
+  ...props
+}: SoloLevelingProjectCardProps) {
+  if (variant === 'library') {
+    return <ProjectLibraryCard {...props} />;
   }
 
-  return [previewImage];
+  return <DefaultSoloLevelingProjectCard {...props} />;
 }
 
-export default function SoloLevelingProjectCard({
+function DefaultSoloLevelingProjectCard({
   repo,
   index,
   onReadme,

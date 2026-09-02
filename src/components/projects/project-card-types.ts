@@ -11,6 +11,7 @@ export interface Repo {
   previewImage?: string;
   isVideo?: boolean;
   techStack?: string[];
+  allLanguages?: string[];
   owner?: {
     login: string;
   };

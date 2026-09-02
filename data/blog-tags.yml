@@ -1,0 +1,24 @@
+nextjs:
+  label: Next.js
+  description: Next.js, App Router, rendering and framework internals.
+  aliases:
+    - next
+    - next-js
+frontend:
+  label: Frontend
+  description: Interface engineering, accessibility and browser performance.
+  aliases: []
+performance:
+  label: Performance
+  description: Practical measurements and improvements for web performance.
+  aliases: []
+software-engineering:
+  label: Software Engineering
+  description: Architecture, quality and engineering practices.
+  aliases:
+    - engineering
+cybersecurity:
+  label: Cybersecurity
+  description: Defensive engineering, application security and analysis.
+  aliases:
+    - security

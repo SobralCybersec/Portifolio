@@ -70,8 +70,11 @@ test('covers SoloLevelingProjectCard preview, metadata, links, and fallback path
   expect(screen.getByRole('link', { name: /Archive/i })).toHaveAttribute('href', repo.html_url);
   expect(screen.getByRole('link', { name: /Deploy/i })).toHaveAttribute('href', repo.homepage);
 
-  rerender(<SoloLevelingProjectCard repo={{ ...repo, previewImage: '/icons/typescript.png', isVideo: true }} index={1} />);
+  rerender(<SoloLevelingProjectCard repo={{ ...repo, previewImage: '/demo.mp4', isVideo: true }} index={1} />);
   expect(document.querySelector('video')).toBeInTheDocument();
+  rerender(<SoloLevelingProjectCard repo={{ ...repo, previewImage: '/icons/typescript.png', isVideo: true }} index={1} />);
+  expect(document.querySelector('video')).not.toBeInTheDocument();
+  expect(screen.getByAltText('TypeScript')).toBeInTheDocument();
   rerender(<SoloLevelingProjectCard repo={{ ...repo, previewImage: '/icons/typescript.png', isVideo: false }} index={1} />);
   expect(screen.getByAltText('TypeScript')).toBeInTheDocument();
   rerender(<SoloLevelingProjectCard repo={{ ...repo, previewImage: undefined, description: null, homepage: null, language: null }} index={2} />);

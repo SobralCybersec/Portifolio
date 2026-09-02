@@ -4,18 +4,29 @@ import type { CSSProperties } from 'react';
 import GameLoadingScreen from '@/components/loading-screen/GameLoadingScreen';
 import {
   MARQUEE_COPIES,
+  MOSAIC_GIFS,
   MOSAIC_VIDEOS,
   TRANSITION_TIMINGS,
 } from './page-transition-config';
-import type { ActiveTransition } from './page-transition-config';
+import type { ActiveTransition, TransitionEffect } from './page-transition-config';
 
-function getMosaicVideos(seed: number) {
-  const offset = seed % MOSAIC_VIDEOS.length;
+function rotateMedia(media: readonly string[], seed: number) {
+  const offset = seed % media.length;
 
   return [
-    ...MOSAIC_VIDEOS.slice(offset),
-    ...MOSAIC_VIDEOS.slice(0, offset),
+    ...media.slice(offset),
+    ...media.slice(0, offset),
   ];
+}
+
+function getMosaicMedia(seed: number) {
+  const videos = rotateMedia(MOSAIC_VIDEOS, seed);
+  const gifs = rotateMedia(MOSAIC_GIFS, seed);
+
+  return Array.from({ length: 6 }, (_, index) => ({
+    src: index % 2 === 0 ? videos[index / 2] : gifs[Math.floor(index / 2)],
+    type: index % 2 === 0 ? 'video' as const : 'gif' as const,
+  }));
 }
 
 function getMarqueeCopies(seed: number) {
@@ -42,6 +53,13 @@ function getMarqueeCopies(seed: number) {
   return copies;
 }
 
+function hasEffect(
+  effects: readonly TransitionEffect[],
+  effect: TransitionEffect,
+) {
+  return effects.includes(effect);
+}
+
 export default function PortfolioTransition({
   transition,
 }: {
@@ -51,7 +69,7 @@ export default function PortfolioTransition({
     transition.marqueeSeed,
   );
 
-  const mosaicVideos = getMosaicVideos(
+  const mosaicMedia = getMosaicMedia(
     transition.marqueeSeed,
   );
 
@@ -82,11 +100,13 @@ export default function PortfolioTransition({
       key={transition.id}
       className="portfolio-transition"
       data-effect={transition.effect}
+      data-effects={transition.effects.join(' ')}
+      data-variant={transition.variant}
       data-phase={transition.phase}
       style={transitionStyle}
       aria-hidden="true"
     >
-      {transition.effect === 'loading-screen' ? (
+      {transition.effect === 'view-transition-morph' ? null : transition.effect === 'loading-screen' ? (
         <GameLoadingScreen
           renderSrc="/images/JinWoo-BackFacing3.png"
           duration={timing.coverMs}
@@ -100,20 +120,34 @@ export default function PortfolioTransition({
             <div
               key={index}
               className={`portfolio-transition__manga-panel portfolio-transition__manga-panel--${String.fromCharCode(97 + index)}`}
+              data-media-type={mosaicMedia[index].type}
               style={{ '--manga-index': index } as CSSProperties}
             >
-              <video
-                className="portfolio-transition__manga-panel-video"
-                width={1920}
-                height={1080}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-              >
-                <source src={mosaicVideos[index]} type="video/mp4" />
-              </video>
+              {mosaicMedia[index].type === 'gif' ? (
+                // Native image keeps animated GIF frames intact.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="portfolio-transition__manga-panel-media"
+                  src={mosaicMedia[index].src}
+                  alt=""
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              ) : (
+                <video
+                  className="portfolio-transition__manga-panel-media"
+                  width={1920}
+                  height={1080}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                >
+                  <source src={mosaicMedia[index].src} type="video/mp4" />
+                </video>
+              )}
             </div>
           ))}
         </div>
@@ -153,25 +187,6 @@ export default function PortfolioTransition({
       )}
 
       {transition.effect ===
-        'black-white-slice' && (
-        <>
-          <div
-            className="
-              portfolio-transition__split-panel
-              portfolio-transition__split-panel--left
-            "
-          />
-
-          <div
-            className="
-              portfolio-transition__split-panel
-              portfolio-transition__split-panel--right
-            "
-          />
-        </>
-      )}
-
-      {transition.effect ===
         'marquee-stripes' && (
         <div className="portfolio-transition__marquee">
           {marqueeCopies.map(
@@ -202,7 +217,32 @@ export default function PortfolioTransition({
           )}
         </div>
       )}
+
+      {hasEffect(transition.effects, 'fourth-wall-frames') && (
+        <div className="portfolio-transition__wall-layer" data-effect-layer="fourth-wall-frames">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div
+              key={index}
+              className="portfolio-transition__wall-frame"
+              style={{ '--wall-index': index } as CSSProperties}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {hasEffect(transition.effects, 'fourth-wall-typography') && (
+        <div className="portfolio-transition__type-layer" data-effect-layer="fourth-wall-typography">
+          <span className="portfolio-transition__type-word" style={{ '--type-index': 0 } as CSSProperties}>
+            {transition.label}
+          </span>
+          <span className="portfolio-transition__type-word portfolio-transition__type-word--inverse" style={{ '--type-index': 1 } as CSSProperties}>
+            / {transition.label}
+          </span>
+          <i className="portfolio-transition__type-fissure" />
+        </div>
+      )}
     </div>
   );
 }
-

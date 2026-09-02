@@ -111,6 +111,31 @@ test('finds HTML Demo attachments and relative Demo Preview videos', async () =>
   ]));
 });
 
+test('keeps image links labeled Demonstration out of the video pipeline', async () => {
+  const repos = [repo('SpringSecurityWeb', 'Java'), repo('BungouStrayERP', 'TypeScript')];
+  global.fetch = jest.fn()
+    .mockResolvedValueOnce(response(repos))
+    .mockResolvedValueOnce(response([]))
+    .mockResolvedValueOnce(response('# Demonstration\n[Demonstration](assets/spring-security.png)'))
+    .mockResolvedValueOnce(response({ Java: 1 }))
+    .mockResolvedValueOnce(response('# Demonstração\n[Demonstração](assets/erp-screen.webp)'))
+    .mockResolvedValueOnce(response({ TypeScript: 1 }));
+
+  const data = await (await GET({} as any)).json();
+  expect(data).toEqual(expect.arrayContaining([
+    expect.objectContaining({
+      name: 'SpringSecurityWeb',
+      isVideo: false,
+      previewImage: 'https://raw.githubusercontent.com/SobralCybersec/SpringSecurityWeb/main/assets/spring-security.png',
+    }),
+    expect.objectContaining({
+      name: 'BungouStrayERP',
+      isVideo: false,
+      previewImage: 'https://raw.githubusercontent.com/SobralCybersec/BungouStrayERP/main/assets/erp-screen.webp',
+    }),
+  ]));
+});
+
 test('returns unknown error for non-Error top-level failures', async () => {
   global.fetch = jest.fn().mockRejectedValue('offline');
   const result = await GET({} as any);

@@ -89,11 +89,12 @@ export default function MatrixBackground() {
   return (
     <canvas
       ref={canvasRef}
+      className="matrix-background"
       aria-hidden="true"
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: -3,
+        zIndex: -1,
         width: '100%',
         height: '100%',
         pointerEvents: 'none',

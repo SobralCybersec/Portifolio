@@ -6,11 +6,12 @@ import dynamic from 'next/dynamic';
 import { useHydrated } from '@/hooks/browser/useHydrated';
 import Hero from '@/components/home/Hero';
 import Navigation from '@/components/layout/Navigation';
+import RouteView from '@/components/layout/RouteView';
 import ScrollProgress from '@/components/effects/ScrollProgress';
+import ChapterIndex from '@/components/home/ChapterIndex';
 import { useClickSound } from '@/hooks/audio/useClickSound';
 
 const SoloLevelingBoot = dynamic(() => import('@/components/loading-screen/SoloLevelingBoot'), { ssr: false });
-const MatrixBackground = dynamic(() => import('@/components/effects/MatrixBackground'), { ssr: false });
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 const KeyboardNav = dynamic(() => import('@/components/ui/KeyboardNav'), { ssr: false });
@@ -87,8 +88,6 @@ export default function Page() {
 
   return (
     <>
-      {/* Decorative canvases start after first paint; boot screen owns initial motion. */}
-      {decorationsReady && <MatrixBackground />}
       {!bootComplete && <SoloLevelingBoot onComplete={handleBootComplete} />}
       {/* Animated Grid Overlay */}
       <div className="page-grid-overlay" />
@@ -116,8 +115,10 @@ export default function Page() {
       <Navigation />
       <ScrollProgress />
       <KeyboardNav onMenuToggle={() => setMenuOpen(!menuOpen)} />
-          
-      <main className="portfolio-main">
+
+      <RouteView>
+        <main className="portfolio-main">
+          <ChapterIndex />
         <div className="page-section" id="hero">
           <Hero />
         </div>
@@ -134,7 +135,8 @@ export default function Page() {
         <div className="page-section" id="contact">
           <Contact />
         </div>
-      </main>
+        </main>
+      </RouteView>
     </>
   );
 }

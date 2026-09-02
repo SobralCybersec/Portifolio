@@ -204,6 +204,7 @@ describe('GitHubProjects', () => {
         html_url: 'javascript:bad',
         homepage: 'javascript:bad',
         previewImage: '/invalid.png',
+        isVideo: true,
         topics: [],
       },
     ];
@@ -220,6 +221,7 @@ describe('GitHubProjects', () => {
       expect(screen.getByText('plain-repo')).toBeInTheDocument();
     });
     expect(document.querySelector('video')).toHaveAttribute('src', '/demo.mp4');
+    expect(document.querySelectorAll('video')).toHaveLength(1);
     expect(screen.getByText('No description available')).toBeInTheDocument();
     expect(screen.getByText('Tech Stack')).toBeInTheDocument();
     fireEvent.error(screen.getByAltText('plain-repo preview'));

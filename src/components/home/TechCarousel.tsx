@@ -13,16 +13,15 @@ interface TechItem {
   description: string;
   link: string;
   category: string;
-  demoGif?: string;
   features?: string[];
 }
 
 const techStack: TechItem[] = [
   // Frontend
-  { name: 'TypeScript', icon: '/icons/typescript.png', description: 'Typed superset of JavaScript with compile-time checks, interfaces, and IDE support. It catches type errors before runtime.', link: 'https://www.typescriptlang.org/', category: 'Frontend', demoGif: 'https://raw.githubusercontent.com/microsoft/TypeScript-Website/v2/packages/typescriptlang-org/static/images/branding/ts-lettermark-blue.svg', features: ['Static Type Checking', 'IntelliSense Support', 'ES6+ Features', 'Interfaces & Generics'] },
-  { name: 'Next.js', icon: '/icons/nextjs.png', description: 'React framework with App Router, Server Components, and Turbopack for server-rendered applications and API routes.', link: 'https://nextjs.org/', category: 'Frontend', demoGif: 'https://nextjs.org/static/twitter-cards/home.jpg', features: ['Server Components', 'Turbopack', 'Image Optimization', 'API Routes'] },
-  { name: 'React', icon: '/icons/react.png', description: 'UI library built around components and hooks. React 19 adds useOptimistic and Server Actions.', link: 'https://react.dev/', category: 'Frontend', demoGif: 'https://repository-images.githubusercontent.com/10270250/9cf86300-5e4e-11ea-9d4e-e0c5f4e8a7e5', features: ['Virtual DOM', 'Hooks API', 'Concurrent Mode', 'Server Actions'] },
-  { name: 'Tailwind', icon: '/icons/tailwind.png', description: 'Utility-first CSS framework with a JIT compiler, CSS variables, container queries, and dark-mode utilities.', link: 'https://tailwindcss.com/', category: 'Frontend', demoGif: 'https://tailwindcss.com/_next/static/media/social-card-large.a6e71726.jpg', features: ['JIT Compiler', 'Dark Mode', 'Responsive Design', 'Custom Plugins'] },
+  { name: 'TypeScript', icon: '/icons/typescript.png', description: 'Typed superset of JavaScript with compile-time checks, interfaces, and IDE support. It catches type errors before runtime.', link: 'https://www.typescriptlang.org/', category: 'Frontend', features: ['Static Type Checking', 'IntelliSense Support', 'ES6+ Features', 'Interfaces & Generics'] },
+  { name: 'Next.js', icon: '/icons/nextjs.png', description: 'React framework with App Router, Server Components, and Turbopack for server-rendered applications and API routes.', link: 'https://nextjs.org/', category: 'Frontend', features: ['Server Components', 'Turbopack', 'Image Optimization', 'API Routes'] },
+  { name: 'React', icon: '/icons/react.png', description: 'UI library built around components and hooks. React 19 adds useOptimistic and Server Actions.', link: 'https://react.dev/', category: 'Frontend', features: ['Virtual DOM', 'Hooks API', 'Concurrent Mode', 'Server Actions'] },
+  { name: 'Tailwind', icon: '/icons/tailwind.png', description: 'Utility-first CSS framework with a JIT compiler, CSS variables, container queries, and dark-mode utilities.', link: 'https://tailwindcss.com/', category: 'Frontend', features: ['JIT Compiler', 'Dark Mode', 'Responsive Design', 'Custom Plugins'] },
   { name: 'JavaScript', icon: '/icons/javascript.png', description: 'Programming language with ES2024 features such as decorators, the pipeline operator, and pattern matching.', link: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript', category: 'Frontend', features: ['Async/Await', 'Modules', 'Promises', 'Closures'] },
   
   // Backend
@@ -280,19 +279,6 @@ export default function TechCarousel({ embedded = false, compact = false }: Tech
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {selectedTech.demoGif && (
-              <div className="mb-6 rounded-lg overflow-hidden border border-[var(--theme-primary)]/20 relative" style={{ aspectRatio: '16/9' }}>
-                <Image 
-                  src={selectedTech.demoGif} 
-                  alt={`${selectedTech.name} demo`}
-                  fill
-                  className="object-contain"
-                  loading="lazy"
-                  unoptimized
-                />
               </div>
             )}
 

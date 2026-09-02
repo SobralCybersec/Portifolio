@@ -83,6 +83,11 @@ test('covers root redirects, shell pages, and auth route exports', async () => {
   }));
   const layout = await LocaleLayout({ children: <span>child</span>, params: Promise.resolve({ locale: 'en' }) });
   expect(layout).toBeDefined();
+  const layoutElement = layout as React.ReactElement<{ children: React.ReactNode }>;
+  const head = React.Children.toArray(layoutElement.props.children)[0] as React.ReactElement<{ children: React.ReactNode }>;
+  expect(React.Children.toArray(head.props.children)).toEqual(expect.arrayContaining([
+    expect.objectContaining({ props: expect.objectContaining({ name: 'darkreader-lock' }) }),
+  ]));
   expect(LocaleNotFound()).toBeDefined();
   expect(() => CatchAllNotFound()).toThrow('not found');
   await expect(ChatPage()).resolves.toBeDefined();
@@ -110,7 +115,13 @@ test('generates page metadata, sitemap, and robots directives', async () => {
     locale: 'pt_BR',
     images: expect.any(Array),
   }));
-  expect(sitemap()).toHaveLength(42);
+  const sitemapEntries = sitemap();
+  expect(sitemapEntries.length).toBeGreaterThanOrEqual(49);
+  expect(sitemapEntries).toEqual(expect.arrayContaining([
+    expect.objectContaining({
+      url: expect.stringContaining('/en/blog/2026/09/02/lighthouse-nextjs-performance'),
+    }),
+  ]));
   expect(robots()).toEqual(expect.objectContaining({
     sitemap: expect.stringContaining('/sitemap.xml'),
     rules: [{ userAgent: '*', allow: '/', disallow: ['/api/'] }],

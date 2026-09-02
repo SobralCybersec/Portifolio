@@ -22,6 +22,8 @@ export interface ExpertiseGroup {
 interface InteractiveExpertiseGridProps {
   groups: ExpertiseGroup[];
   moduleLabel?: string;
+  selectedSkill?: string | null;
+  onSkillSelect?: (skill: string) => void;
 }
 
 function DeferredDecorativeImage({
@@ -75,7 +77,19 @@ function DeferredDecorativeImage({
   );
 }
 
-function ExpertiseCard({ group, index, moduleLabel }: { group: ExpertiseGroup; index: number; moduleLabel: string }) {
+function ExpertiseCard({
+  group,
+  index,
+  moduleLabel,
+  selectedSkill,
+  onSkillSelect,
+}: {
+  group: ExpertiseGroup;
+  index: number;
+  moduleLabel: string;
+  selectedSkill?: string | null;
+  onSkillSelect?: (skill: string) => void;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const pointerX = useMotionValue(50);
@@ -145,9 +159,15 @@ function ExpertiseCard({ group, index, moduleLabel }: { group: ExpertiseGroup; i
           </h3>
           <div className="mt-5 flex flex-wrap gap-2">
             {group.items.map((item) => (
-              <span key={item} className="border border-[var(--theme-primary)]/25 bg-[var(--theme-primary)]/[0.07] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors duration-300 group-hover:text-[var(--text-primary)]">
+              <button
+                key={item}
+                type="button"
+                aria-pressed={selectedSkill === item}
+                onClick={() => onSkillSelect?.(item)}
+                className="border border-[var(--theme-primary)]/25 bg-[var(--theme-primary)]/[0.07] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors duration-300 hover:border-[var(--theme-primary)] hover:text-[var(--text-primary)] aria-pressed:border-[var(--theme-primary)] aria-pressed:bg-[var(--theme-primary)]/20 aria-pressed:text-[var(--text-primary)]"
+              >
                 {item}
-              </span>
+              </button>
             ))}
           </div>
         </div>
@@ -156,11 +176,23 @@ function ExpertiseCard({ group, index, moduleLabel }: { group: ExpertiseGroup; i
   );
 }
 
-export default function InteractiveExpertiseGrid({ groups, moduleLabel = '/ module' }: InteractiveExpertiseGridProps) {
+export default function InteractiveExpertiseGrid({
+  groups,
+  moduleLabel = '/ module',
+  selectedSkill,
+  onSkillSelect,
+}: InteractiveExpertiseGridProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2" style={{ perspective: '1200px' }}>
       {groups.map((group, index) => (
-        <ExpertiseCard key={group.title} group={group} index={index} moduleLabel={moduleLabel} />
+        <ExpertiseCard
+          key={group.title}
+          group={group}
+          index={index}
+          moduleLabel={moduleLabel}
+          selectedSkill={selectedSkill}
+          onSkillSelect={onSkillSelect}
+        />
       ))}
     </div>
   );

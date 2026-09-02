@@ -39,7 +39,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Live Preview**: Interactive live code preview component
 * **Tech Carousel**: Animated technology carousel
 * **City Map**: Visual repository map rendered from GitHub data
-* **Stack Documentation**: Markdown field notes for TypeScript and React with diagrams, HTML examples, and stack icons
+* **Stack Documentation**: Markdown field notes for TypeScript, React, JSX, CSS, visual effects, testing, QA, and CI with diagrams, examples, and stack icons
 * **Vercel Analytics**: Page-view analytics
 * **CI/CD Pipeline**: GitHub Actions with multi-platform Docker builds, security scanning, and Lighthouse audits
 * **Responsive Design**: Mobile-first approach with Tailwind CSS
@@ -70,7 +70,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Icons**: Lucide React 0.577+
 * **Linting**: ESLint 9.39+ with Next.js flat config
 * **Testing**: Jest 30.5 + React Testing Library 16.3
-* **Runtime**: Node.js 22
+* **Runtime**: Node.js 24
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel configuration
 
@@ -80,7 +80,13 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 | --- | --- |
 | [TypeScript Field Notes](./docs/typescript.md) | Type contracts, runtime boundaries, component APIs, and strict checks. |
 | [React Field Notes](./docs/react.md) | Render flow, component composition, state ownership, and semantic HTML. |
-| [Frontend QA](./docs/testing.md) | Test stack, browser coverage, CI parity, and reviewable evidence. |
+| [JSX Field Notes](./docs/jsx.md) | JSX syntax, typed props, expressions, lists, events, and semantic output. |
+| [CSS Field Notes](./docs/css.md) | Tokens, Tailwind utilities, themes, layout, motion, and visual checks. |
+| [Visual effects Field Notes](./docs/visualeffects.md) | Canvas, SVG, CSS keyframes, route transitions, loading states, reduced motion, and visual evidence. |
+| [Frontend testing](./docs/testing.md) | Runner selection, browser coverage, local commands, and evidence paths. |
+| [QA Field Notes](./docs/qa.md) | Static checks, quality policy, audits, reports, and failure triage. |
+| [CI/CD Field Notes](./docs/ci.md) | Workflow triggers, jobs, runtime parity, artifacts, security, and deployment. |
+| [Full test matrix](./docs/test.md) | Every test family, source path, command, runtime, and output. |
 
 ### Dependency maintenance
 
@@ -387,7 +393,22 @@ npm run test:watch
 npm run test:coverage
 ```
 
-See [test.md](./test.md) for the full test matrix, Mermaid diagrams, screenshots, and video demonstration.
+See [docs/test.md](./docs/test.md) for the full test matrix, Mermaid diagrams, screenshots, and video demonstration.
+
+### Blog workflow
+
+Posts live in `content/blog/YYYY/MM/DD/slug/` and optional media lives in the matching `public/blog/YYYY/MM/DD/slug/` directory. Front matter uses `title`, `description`, ISO `date`, canonical `tags`, and boolean `draft`.
+
+```bash
+pnpm blog:new "Article title"
+pnpm blog:translate lighthouse --stale
+pnpm blog:translate --all --stale
+pnpm blog:validate
+pnpm blog:publish
+pnpm blog:auto
+```
+
+`blog:new` writes portable Typora settings. Blog translation starts and stops local `llama-server` automatically, using Qwen3 GGUF on CUDA. Set `LLAMA_MODEL_PATH` only when model location differs from local default. The translator parses MDX, changes prose and approved labels only, validates structured output, and stores a SHA-256 source hash in `index.en.mdx`. Use `--stale` after changing Portuguese content. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
 
 ### Complexity Review
 

@@ -9,6 +9,7 @@ import { Link, usePathname } from '@/i18n/config/routing';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useHydrated } from '@/hooks/browser/useHydrated';
 
 type NavLink = { href: string; label: string };
 
@@ -293,13 +294,15 @@ export default function Navigation() {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
+  const mounted = useHydrated();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-  const isDark = resolvedTheme !== 'light';
+  const isDark = !mounted || resolvedTheme !== 'light';
   const primary = isDark ? '#a855f7' : '#3b82f6';
   const navLinks: NavLink[] = [
     { href: '/about', label: t('about') },
     { href: '/projects', label: t('projects') },
+    { href: '/blog', label: t('blog') },
     { href: '/certifications', label: t('certifications') },
     { href: '/chat', label: t('chat') },
     { href: '/contact', label: t('contact') },

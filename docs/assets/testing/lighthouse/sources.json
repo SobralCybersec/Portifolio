@@ -1,56 +1,56 @@
 [
   {
     "endpoint": "/en",
-    "report": ".lighthouseci/localhost-en-2026_09_01_18_40_38.report.html",
+    "report": ".lighthouseci/localhost-en-2026_09_02_17_06_07.report.html",
     "output": "docs/assets/testing/lighthouse/homepage-full.png",
     "source": "Lighthouse report HTML opened as file://",
     "capture": "Chromium fullPage screenshot",
     "lighthouseVersion": "12.6.1",
-    "capturedAt": "2026-09-01T18:40:38.574Z"
+    "capturedAt": "2026-09-02T17:06:07.589Z"
   },
   {
     "endpoint": "/en/about",
-    "report": ".lighthouseci/localhost-en_about-2026_09_01_18_41_03.report.html",
+    "report": ".lighthouseci/localhost-en_about-2026_09_02_17_06_30.report.html",
     "output": "docs/assets/testing/lighthouse/about-full.png",
     "source": "Lighthouse report HTML opened as file://",
     "capture": "Chromium fullPage screenshot",
     "lighthouseVersion": "12.6.1",
-    "capturedAt": "2026-09-01T18:41:03.151Z"
+    "capturedAt": "2026-09-02T17:06:30.725Z"
   },
   {
     "endpoint": "/en/projects",
-    "report": ".lighthouseci/localhost-en_projects-2026_09_01_18_41_23.report.html",
+    "report": ".lighthouseci/localhost-en_projects-2026_09_02_17_06_51.report.html",
     "output": "docs/assets/testing/lighthouse/projects-full.png",
     "source": "Lighthouse report HTML opened as file://",
     "capture": "Chromium fullPage screenshot",
     "lighthouseVersion": "12.6.1",
-    "capturedAt": "2026-09-01T18:41:23.526Z"
+    "capturedAt": "2026-09-02T17:06:51.526Z"
   },
   {
     "endpoint": "/en/certifications",
-    "report": ".lighthouseci/localhost-en_certifications-2026_09_01_18_41_44.report.html",
+    "report": ".lighthouseci/localhost-en_certifications-2026_09_02_17_07_11.report.html",
     "output": "docs/assets/testing/lighthouse/certifications-full.png",
     "source": "Lighthouse report HTML opened as file://",
     "capture": "Chromium fullPage screenshot",
     "lighthouseVersion": "12.6.1",
-    "capturedAt": "2026-09-01T18:41:44.138Z"
+    "capturedAt": "2026-09-02T17:07:11.500Z"
   },
   {
     "endpoint": "/en/chat",
-    "report": ".lighthouseci/localhost-en_chat-2026_09_01_18_42_08.report.html",
+    "report": ".lighthouseci/localhost-en_chat-2026_09_02_17_07_40.report.html",
     "output": "docs/assets/testing/lighthouse/chat-full.png",
     "source": "Lighthouse report HTML opened as file://",
     "capture": "Chromium fullPage screenshot",
     "lighthouseVersion": "12.6.1",
-    "capturedAt": "2026-09-01T18:42:08.791Z"
+    "capturedAt": "2026-09-02T17:07:40.236Z"
   },
   {
     "endpoint": "/en/contact",
-    "report": ".lighthouseci/localhost-en_contact-2026_09_01_18_42_28.report.html",
+    "report": ".lighthouseci/localhost-en_contact-2026_09_02_17_08_05.report.html",
     "output": "docs/assets/testing/lighthouse/contact-full.png",
     "source": "Lighthouse report HTML opened as file://",
     "capture": "Chromium fullPage screenshot",
     "lighthouseVersion": "12.6.1",
-    "capturedAt": "2026-09-01T18:42:28.738Z"
+    "capturedAt": "2026-09-02T17:08:05.037Z"
   }
 ]

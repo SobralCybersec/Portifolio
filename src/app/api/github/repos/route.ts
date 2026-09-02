@@ -69,7 +69,9 @@ function extractTechStack(readmeContent: string): string[] {
 }
 
 const VIDEO_EXTENSION_RE = /\.(?:mp4|webm|mov|m4v|ogg)(?:[?#].*)?$/i;
+const IMAGE_EXTENSION_RE = /\.(?:avif|bmp|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i;
 const GITHUB_ATTACHMENT_RE = /^https:\/\/github\.com\/user-attachments\/assets\/[a-z0-9-]+(?:[/?#].*)?$/i;
+const VIDEO_LABEL_RE = /\b(?:video|watch\s+video|play|clip)\b/i;
 
 function normalizeReadmeMediaUrl(value: string, owner: string, repo: string): string {
   const url = value.trim().replace(/^<|>$/g, '').replace(/[),.;]+$/g, '');
@@ -195,7 +197,7 @@ async function fetchReadmeData(
     const mdImgMatches = content.matchAll(/!\[.*?\]\((.*?)\)/g);
     for (const match of mdImgMatches) {
       const url = normalizeReadmeMediaUrl(match[1].split(/\s+/)[0], owner, repo);
-      if (isVideoUrl(url)) {
+      if (VIDEO_EXTENSION_RE.test(url)) {
         videos.push(url);
       } else {
         images.push(url);
@@ -206,8 +208,13 @@ async function fetchReadmeData(
     // URL is not accepted by the renderer as an image.
     for (const match of content.matchAll(/\[([^\]]+)\]\(([^)\s]+)(?:\s+["'][^)]*["'])?\)/g)) {
       const url = normalizeReadmeMediaUrl(match[2], owner, repo);
-      if (isVideoUrl(url) || /\b(?:demo|demonstration|video|preview)\b/i.test(match[1])) {
+      const isImage = IMAGE_EXTENSION_RE.test(url);
+      if (!isImage && (VIDEO_EXTENSION_RE.test(url) || GITHUB_ATTACHMENT_RE.test(url) || VIDEO_LABEL_RE.test(match[1]))) {
         videos.push(url);
+      } else {
+        // Demo/Demonstration labels describe intent, not media type. Image
+        // extensions and image links must stay in the image pipeline.
+        images.push(url);
       }
     }
 

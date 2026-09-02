@@ -12,6 +12,7 @@ import { BackgroundMusic } from '@/components/media/BackgroundMusic';
 import { Analytics } from '@vercel/analytics/react';
 import { OPEN_GRAPH_LOCALES, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
 import { PageTransitionProvider } from '@/components/layout/PageTransition';
+import MatrixBackground from '@/components/effects/MatrixBackground';
 
 const geistSans = localFont({
   src: [
@@ -124,9 +125,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     icons: {
       icon: '/images/favicon/Ahjin.svg',
     },
-    other: {
-      'darkreader': 'NO-DARKREADER-PLUGIN',
-    },
   };
 }
 
@@ -164,6 +162,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        <meta name="darkreader-lock" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <link rel="icon" type="image/svg+xml" href="/images/favicon/Ahjin.svg" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -173,7 +172,10 @@ export default async function LocaleLayout({
           <ThemeProvider>
             <DynamicFavicon />
             <BackgroundMusic autoPlay />
-            <PageTransitionProvider>{children}</PageTransitionProvider>
+            <PageTransitionProvider>
+              <MatrixBackground />
+              {children}
+            </PageTransitionProvider>
             {process.env.VERCEL === '1' && <Analytics />}
           </ThemeProvider>
         </NextIntlClientProvider>

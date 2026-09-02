@@ -8,9 +8,23 @@ import {
 import { useTranslations } from 'next-intl';
 import { Github } from 'lucide-react';
 import SafeImage from '@/components/ui/SafeImage';
+import { shouldRenderVideoPreview } from '@/lib/media/project-preview';
 import ImageSlideshow from './ImageSlideshow';
 import type { ProjectCardColors, Repo } from './project-card-types';
 import { useEffect, useRef, useState } from 'react';
+
+export function getPreviewImages(previewImage: string | undefined): string[] {
+  if (!previewImage) return [];
+
+  try {
+    const parsed = JSON.parse(previewImage);
+    if (Array.isArray(parsed)) return [...new Set<string>(parsed)];
+  } catch {
+    return [previewImage];
+  }
+
+  return [previewImage];
+}
 
 function LazyPreviewVideo({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -77,7 +91,7 @@ function PreviewMedia(props: PreviewMediaProps) {
   const { repo, previewImages, languageFallback, colors: C, isLanguageIcon } = props;
   const t = useTranslations('projects');
 
-  if (repo.isVideo) return <LazyPreviewVideo src={previewImages[0]} />;
+  if (shouldRenderVideoPreview(repo.isVideo, previewImages[0])) return <LazyPreviewVideo src={previewImages[0]} />;
   if (isLanguageIcon) {
     return (
       <div className="flex h-full w-full items-center justify-center p-10">

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Github, ExternalLink, Star, GitFork, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/browser/useHydrated';
+import { shouldRenderVideoPreview } from '@/lib/media/project-preview';
 import Image from 'next/image';
 
 interface Repo {
@@ -475,6 +476,8 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
     return repo.previewImage;
   };
 
+  const selectedPreviewSrc = selectedRepo ? getPreviewSrc(selectedRepo) : null;
+
   return (
     <div className="relative w-full rounded-xl overflow-hidden border border-white/10 bg-black" style={{ height: 700 }}>
       <div ref={containerRef} className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at bottom, #0a0a0a 0%, #000000 100%)' }} />
@@ -583,13 +586,13 @@ export default function CityMap({ repos = [] }: { repos?: Repo[] }) {
 
               {/* Body */}
               <div className="px-6 pb-5 pt-5">
-                {getPreviewSrc(selectedRepo) && (
+                {selectedPreviewSrc && (
                   <div className="relative w-full rounded-lg overflow-hidden mb-4 border" style={{ aspectRatio: '16/9', borderColor: `${isDark ? '#6366f1' : '#3b82f6'}66`, background: isDark ? 'rgba(0,10,30,0.8)' : 'rgba(59,130,246,0.05)' }}>
-                    {selectedRepo.isVideo ? (
-                      <video src={getPreviewSrc(selectedRepo)!} className="w-full h-full object-contain" autoPlay loop muted playsInline />
+                    {shouldRenderVideoPreview(selectedRepo.isVideo, selectedPreviewSrc) ? (
+                      <video src={selectedPreviewSrc} className="w-full h-full object-contain" autoPlay loop muted playsInline />
                     ) : (
                       <Image
-                        src={getPreviewSrc(selectedRepo)!}
+                        src={selectedPreviewSrc}
                         alt={selectedRepo.name}
                         fill
                         className="object-contain"

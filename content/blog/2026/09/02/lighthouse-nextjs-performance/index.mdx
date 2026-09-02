@@ -1,0 +1,58 @@
+---
+title: "Como consegui 100 no Lighthouse"
+description: "Um registro curto das decisões que reduziram JavaScript, evitaram layout shift e deixaram esta página Next.js mais rápida."
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: true
+translationKey: "lighthouse-nextjs-performance"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## O resultado
+
+Performance não veio de um truque isolado. Veio de manter o caminho crítico pequeno: Server Components por padrão, imagens com dimensões conhecidas e efeitos visuais fora do primeiro paint.
+
+<Callout title="Regra de ouro" variant="success">
+  Meça o caminho crítico antes de otimizar detalhes. O usuário sente bytes e espera, não a elegância do código.
+</Callout>
+
+## O que mudou
+
+1. Listas editoriais carregam apenas metadata no servidor.
+2. Conteúdo MDX compila somente na página do artigo.
+3. Vídeo e embeds usam carregamento sob demanda.
+
+### O contrato editorial
+
+| Campo | Papel |
+| --- | --- |
+| `title` | Título da página e do card |
+| `description` | Resumo, SEO, RSS e archive |
+| `date` | Ordenação cronológica |
+| `tags` | Taxonomia controlada |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## Próxima medição
+
+O próximo passo é comparar páginas com conteúdo real, sem transformar o blog em um índice gigante no navegador.
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube.com/embed/Pw0E4OSJQTM"
+  title="Fairy Tail (PT-BR) - Encerramento 1"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
