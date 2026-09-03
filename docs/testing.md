@@ -832,7 +832,7 @@ pnpm run quality:full
 <a id="14--local-and-ci-parity"></a>
 ## 14 / Local and CI parity
 
-Frontend QA uses pnpm frozen installs, Node 24, installed browsers, FFmpeg, build, browser suites, Storybook, and Lighthouse.
+Frontend QA uses pnpm frozen installs, Node 24, installed browsers, FFmpeg, build, browser suites, Storybook, and Lighthouse. Blog E2E coverage also checks locale-aware post rendering, tag navigation, MDX hydration, and missing-article handling; external media requests are blocked in tests so CI 403s do not become false browser failures.
 
 ```mermaid
 flowchart LR
@@ -1369,7 +1369,7 @@ flowchart LR
 ```bash
 npx jest src/components/tests/page-transition.test.tsx --runInBand
 npx tsc --noEmit
-npm run lint
+pnpm run lint
 ```
 
 Run the production smoke test after changing public asset names. A passing jsdom test proves element selection; browser smoke proves requests and runtime paint.

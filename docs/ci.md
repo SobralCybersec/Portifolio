@@ -52,6 +52,7 @@ Workflow triggers, jobs, runtime parity, artifacts, security, and deployment.
 - [15 / Secrets and permissions](#15--secrets-and-permissions)
 - [16 / Local parity](#16--local-parity)
 - [17 / CI review checklist](#17--ci-review-checklist)
+- [18 / Editorial blog publishing](#18--editorial-blog-publishing)
 - [Repository map](#repository-map)
 - [Command matrix](#command-matrix)
 - [Evidence and troubleshooting](#evidence-and-troubleshooting)
@@ -202,7 +203,7 @@ on:
 <a id="03--runtime"></a>
 ## 03 / Runtime
 
-CI sets Node 24. Frontend QA also sets up pnpm 11.9.0 and installs with the frozen pnpm lockfile.
+CI sets Node 24 and uses the pnpm version declared by `package.json` (`pnpm@10.12.4`). Frontend QA installs dependencies with the frozen pnpm lockfile.
 
 ```mermaid
 flowchart LR
@@ -234,7 +235,7 @@ flowchart LR
 env:
   NODE_VERSION: '24'
 
-packageManager: pnpm@11.9.0
+packageManager: pnpm@10.12.4
 ```
 
 ### Decision table
@@ -346,8 +347,8 @@ flowchart LR
 ### Example
 
 ```yaml
-- run: npm run lint
-- run: npx tsc --noEmit
+- run: pnpm run lint
+- run: pnpm exec tsc --noEmit
 ```
 
 ### Decision table
@@ -374,7 +375,7 @@ flowchart LR
 <a id="06--test-job"></a>
 ## 06 / Test job
 
-The main test job installs Chromium, the headless shell, and Firefox, builds the app, then runs npm test.
+The main test job installs Chromium, the headless shell, and Firefox, builds the app, then runs `pnpm test`.
 
 ```mermaid
 flowchart LR
@@ -403,9 +404,9 @@ flowchart LR
 ### Example
 
 ```yaml
-- run: npx playwright install --with-deps chromium chromium-headless-shell firefox
-- run: npm run build
-- run: npm test
+- run: pnpm exec playwright install --with-deps chromium chromium-headless-shell firefox
+- run: pnpm run build
+- run: pnpm test
 ```
 
 ### Decision table
@@ -520,7 +521,7 @@ flowchart LR
 ### Example
 
 ```yaml
-- run: npm run build
+- run: pnpm run build
 - uses: actions/upload-artifact@v4
   with:
     name: nextjs-build
@@ -550,7 +551,7 @@ flowchart LR
 <a id="09--bundle-analysis"></a>
 ## 09 / Bundle analysis
 
-Pull requests run ANALYZE=true npm run build and upload .next/analyze for review.
+Pull requests run `ANALYZE=true pnpm run build` and upload `.next/analyze` for review.
 
 ```mermaid
 flowchart LR
@@ -580,7 +581,7 @@ flowchart LR
 
 ```yaml
 if: github.event_name == 'pull_request'
-run: ANALYZE=true npm run build
+run: ANALYZE=true pnpm run build
 ```
 
 ### Decision table
@@ -636,7 +637,7 @@ flowchart LR
 ### Example
 
 ```bash
-npm run build
+pnpm run build
 lhci autorun
 # output: .lighthouseci
 ```
@@ -869,7 +870,7 @@ flowchart LR
 ### Example
 
 ```bash
-npm run build
+pnpm run build
 vercel pull --yes --environment=production
 vercel build --prod
 vercel deploy --prebuilt --prod
@@ -1068,6 +1069,70 @@ const ciReview = ['trigger', 'runtime', 'install', 'order', 'condition', 'artifa
 - Force the failure branch and confirm it reaches `run result`.
 - Record the command and artifact path shown in this guide.
 
+<a id="18--editorial-blog-publishing"></a>
+## 18 / Editorial blog publishing
+
+Blog content is editorial input, not generated application code. The source is Brazilian Portuguese MDX; each published locale has its own sibling file so Vercel can render the selected language without a runtime translation request.
+
+```mermaid
+flowchart LR
+    PT[content/blog/index.mdx] --> AST[MDX segment parser]
+    AST --> LLM[llama-server + Qwen3 GGUF]
+    LLM --> ZOD[Zod response check]
+    ZOD --> LOCALES[index.locale.mdx files]
+    LOCALES --> VALIDATE[blog:validate]
+    VALIDATE --> PUBLISH[blog:publish]
+```
+
+### Content contract
+
+Bundles use `content/blog/YYYY/MM/DD/slug/`. The source file is `index.mdx`; localized siblings are `index.en.mdx`, `index.de.mdx`, `index.es.mdx`, `index.fr.mdx`, `index.ja.mdx`, and `index.zh.mdx`. Optional media belongs in `public/blog/YYYY/MM/DD/slug/`. Tags must match `data/blog-tags.yml`.
+
+```mermaid
+flowchart TB
+    SOURCE[PT-BR source] --> FRONT[front matter]
+    SOURCE --> BODY[MDX body]
+    FRONT --> HASH[SHA-256 source hash]
+    BODY --> PROTECTED[JSX, code, URL, media protected]
+    BODY --> PROSE[prose and approved labels translated]
+    HASH --> SIBLING[translation metadata]
+    PROTECTED --> SIBLING
+    PROSE --> SIBLING
+```
+
+### Translation boundary
+
+`pnpm blog:translate` starts local `llama-server` automatically, uses Qwen3 GGUF through `http://127.0.0.1:8080`, and stops the owned server after the run. `LLAMA_MODEL_PATH`, `LLAMA_SERVER_BIN`, `LLAMA_SERVER_URL`, `LLAMA_CTX_SIZE`, `LLAMA_GPU_LAYERS`, `LLAMA_DEVICE`, and `LLAMA_PARALLEL` override local defaults. Blog translation has no API key requirement.
+
+The MDX parser translates headings, paragraphs, list/table text, blockquotes, link labels, image alt text, and approved JSX labels. It preserves component names, identifiers, IDs, URLs, image sources, inline code, fenced code, and media references. Structured output is checked with Zod, then a language heuristic catches a wrong-locale response before the file is accepted.
+
+### Commands
+
+```bash
+pnpm blog:new "Article title"
+pnpm blog:translate lighthouse
+pnpm blog:translate --all
+pnpm blog:translate --stale
+pnpm blog:pin lighthouse
+pnpm blog:validate
+pnpm blog:publish
+pnpm blog:auto
+```
+
+`blog:translate` and `blog:validate` repair missing, stale, or language-mismatched locale siblings. A successful translation validates the complete bundle and publishes editorial paths automatically; pass `--no-push` when checking locally. `blog:auto` watches content and media, waits 30 seconds after changes, and runs one operation at a time.
+
+### Deployment boundary
+
+`src/lib/blog/content.ts` selects the requested locale and falls back to `index.mdx` when a sibling is absent. `next.config.mjs` includes `content/blog/**/*` and `data/blog-tags.yml` in server output tracing, which keeps new posts available to Vercel route handlers and server components. Production filters drafts and future-dated posts; development keeps them visible for editing.
+
+### Checks
+
+- `pnpm blog:validate` returns zero issues.
+- `pnpm run docs:check` validates this guide and README links.
+- `pnpm run build` confirms MDX compilation and route generation.
+- `pnpm run test:e2e` covers blog index, tag routes, localized articles, hydration, and 404 behavior.
+- `git diff -- content/blog public/blog data/blog-tags.yml` shows only intended editorial output.
+
 <a id="repository-map"></a>
 <h1 align="center">
   <img src="../public/images/gifs/jinwoo1.gif" width="30" alt="Animated section marker" /> Repository map
@@ -1083,7 +1148,7 @@ The catalog is intentionally concrete. Use it to jump from a concept to the sour
     <tr><td>Application</td><td>`src/app/`</td><td>Routes, layouts, metadata, and API handlers.</td></tr>
     <tr><td>Components</td><td>`src/components/`</td><td>React composition, effects, UI, and project surfaces.</td></tr>
     <tr><td>Tests</td><td>`tests/` and `src/**/tests/`</td><td>Runner-specific behavior and boundary cases.</td></tr>
-    <tr><td>Scripts</td><td>`scripts/tests/` and `scripts/qa/`</td><td>Quality reports, server startup, screenshots, and video conversion.</td></tr>
+    <tr><td>Scripts</td><td>`scripts/blog/`, `scripts/tests/`, and `scripts/qa/`</td><td>Blog publishing, quality reports, server startup, screenshots, and video conversion.</td></tr>
     <tr><td>Automation</td><td>`.github/workflows/`</td><td>CI triggers, jobs, artifacts, and delivery.</td></tr>
   </tbody>
 </table>
@@ -1217,9 +1282,9 @@ The catalog is intentionally concrete. Use it to jump from a concept to the sour
     <tr><th>Command</th><th>Script</th><th>Proof</th></tr>
   </thead>
   <tbody>
-    <tr><td>Main CI</td><td>`npm test`</td><td>Workflow test job</td></tr>
+    <tr><td>Main CI</td><td>`pnpm test`</td><td>Workflow test job</td></tr>
     <tr><td>Frontend QA</td><td>`pnpm run test:playwright:all`</td><td>All browser projects</td></tr>
-    <tr><td>Deploy</td><td>`npm run build`</td><td>Production build job</td></tr>
+    <tr><td>Deploy</td><td>`pnpm run build`</td><td>Production build job</td></tr>
     <tr><td>Container</td><td>`curl --fail /api/health`</td><td>Docker smoke</td></tr>
   </tbody>
 </table>

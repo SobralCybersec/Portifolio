@@ -1342,7 +1342,7 @@ flowchart TB
 
 ### Checks
 
-- Run `npm run lint` and `npx tsc --noEmit`.
+- Run `pnpm run lint` and `pnpm exec tsc --noEmit`.
 - Run shell tests and production Chromium smoke tests.
 - If an extension remains active, reload after the lock tag is present.
 - Record whether the error disappears with extensions disabled and with the app's first render stabilized.

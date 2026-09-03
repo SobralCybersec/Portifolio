@@ -4,7 +4,7 @@
   Shadow Monarch Portfolio
 </h1>
 
-Next.js portfolio with a Solo Leveling theme, multilingual support, real-time chat, GitHub integration, visitor tracking, and animated UI.
+Next.js portfolio with a Solo Leveling-inspired interface, seven localized routes, a local MDX blog translation pipeline, real-time chat, GitHub project intelligence, visitor tracking, and animated UI.
 
 **English**
 
@@ -30,7 +30,8 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Theme System**: Purple gradient (dark) and blue gradient (light) with transitions
 * **Custom Scrollbar**: Purple gradient scrollbar with cross-browser support (webkit + Firefox)
 * **Bleach Animations**: Clip-path animations for Hero section and Skills grid with stagger effects
-* **Multilingual Support**: 7 languages (EN, ES, PT, FR, DE, JA, ZH) with automatic translation via Groq API
+* **Multilingual Support**: 7 locales (EN, ES, PT, FR, DE, JA, ZH) with locale-aware routing, localized UI messages, and translated MDX blog siblings
+* **Localized MDX Blog**: Date-based posts with tag archives, RSS, sitemap entries, pinned posts, chapter navigation, source hashes, stale detection, and automatic translation publishing
 * **Real-time Chat**: Live chat room powered by Pusher + Upstash Redis with rate limiting
 * **Background Music**: Theme-aware music that switches between dark/light modes
 * **Animated Components**: Hexagon grid, particle effects, scroll progress, letter glitch, and page transitions
@@ -44,7 +45,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **CI/CD Pipeline**: GitHub Actions with multi-platform Docker builds, security scanning, and Lighthouse audits
 * **Responsive Design**: Mobile-first approach with Tailwind CSS
 * **SEO Metadata**: Dynamic metadata, sitemap, and Open Graph support
-* **Performance**: Turbopack dev/build cache, dynamic imports, image optimization (AVIF/WebP), and code splitting
+* **Performance**: Turbopack development, filesystem/webpack build cache, dynamic imports, image optimization (AVIF/WebP), and code splitting
 * **Rate Limiting**: Upstash Redis sliding window rate limits on auth (10/min), chat (20/min), and general API (100/min)
 
 ---
@@ -57,19 +58,20 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
   <img src="https://go-skill-icons.vercel.app/api/icons?i=nextjs,react,typescript,tailwind,nodejs,redis&size=64" />
 </p>
 
-* **Framework**: Next.js 16.3.3 (App Router, Turbopack)
+* **Framework**: Next.js 16.3.3 (App Router, Server Components, API routes)
 * **Language**: TypeScript 5.9+
 * **Styling**: Tailwind CSS 3.4+
 * **Animations**: Framer Motion 11+ + CSS clip-path animations (Bleach-style)
 * **i18n**: next-intl 4.14+
-* **Theme**: next-themes 0.4+
+* **Theme**: `@teispace/next-themes` 3.x
 * **Real-time**: Pusher 5.3 / pusher-js 8.6
 * **Cache / Rate Limit**: Upstash Redis 1.38.3 + @upstash/ratelimit 2.0
 * **Auth**: NextAuth.js 5.0 (beta)
-* **AI Translation**: Groq API
+* **Blog Translation**: llama.cpp `llama-server` + Qwen3 8B GGUF + CUDA
+* **Runtime UI Translation**: Groq API with MyMemory fallback
 * **Icons**: Lucide React 0.577+
-* **Linting**: ESLint 9.39+ with Next.js flat config
-* **Testing**: Jest 30.5 + React Testing Library 16.3
+* **Linting**: ESLint 10.9+ with Next.js flat config
+* **Testing**: Jest 30.5 + React Testing Library 16.3 + Vitest 4 + Playwright 1.62
 * **Runtime**: Node.js 24
 * **CI/CD**: GitHub Actions with Docker, Trivy, Snyk, Lighthouse
 * **Deployment**: Vercel configuration
@@ -86,6 +88,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 | [Frontend testing](./docs/testing.md) | Runner selection, browser coverage, local commands, and evidence paths. |
 | [QA Field Notes](./docs/qa.md) | Static checks, quality policy, audits, reports, and failure triage. |
 | [CI/CD Field Notes](./docs/ci.md) | Workflow triggers, jobs, runtime parity, artifacts, security, and deployment. |
+| [Blog platform notes](./docs/ci.md#18--editorial-blog-publishing) | MDX bundles, locale siblings, local translation, validation, and publishing. |
 | [Full test matrix](./docs/test.md) | Every test family, source path, command, runtime, and output. |
 
 ### Dependency maintenance
@@ -120,8 +123,13 @@ Create `.env.local` file (see `.env.local.example` for full reference):
 GITHUB_TOKEN=your_github_token
 GITHUB_USERNAME=SobralCybersec
 
-# Groq API for translations
+# Optional runtime UI translation fallback
 GROQ_API_KEY=your_groq_api_key
+
+# Local blog translation (no API key required)
+LLAMA_MODEL_PATH=/path/to/qwen3-8b.gguf
+LLAMA_SERVER_URL=http://127.0.0.1:8080
+LLAMA_SERVER_BIN=/path/to/llama-server
 
 # Upstash Redis (rate limiting, chat, visitor counter)
 UPSTASH_REDIS_REST_URL=your_upstash_url
@@ -141,7 +149,7 @@ NEXTAUTH_URL=http://localhost:3000
 ### Development
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
@@ -149,24 +157,24 @@ Open [http://localhost:3000](http://localhost:3000)
 ### Production Build
 
 ```bash
-npm run build
-npm start
+pnpm run build
+pnpm start
 ```
 
 ### Testing
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Run every Jest, Vitest, browser, Playwright, and Node test
 pnpm full:tests
 
 # Watch mode
-npm run test:watch
+pnpm run test:watch
 
 # Coverage report
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 ---
@@ -219,6 +227,9 @@ Portifolio/
 ├── 📁 tests/                         # 🧪 API and Docker tests
 │   ├── 📁 api/                       # Health endpoint tests
 │   └── 📁 docker/                    # Docker config tests
+├── 📁 content/blog/                  # 📝 Date-based PT-BR MDX source and locale siblings
+├── 📁 data/blog-tags.yml             # 🏷️ Canonical blog taxonomy
+├── 📁 scripts/blog/                  # ⚙️ Create, translate, validate, pin, publish, watch
 ├── 📁 .github/
 │   └── 📁 workflows/                 # 🔄 CI/CD pipelines
 │       ├── 📄 ci.yml                 # Main CI (lint, test, build)
@@ -236,9 +247,9 @@ Portifolio/
 ├── 📄 Dockerfile                     # 🐳 Multi-stage production build
 ├── 📄 docker-compose.yml             # 🐳 Docker orchestration
 ├── 📄 vercel.json                    # ▲ Vercel configuration
-├── 📄 next.config.mjs                # ⚙️ Next.js + Turbopack configuration
+├── 📄 next.config.mjs                # ⚙️ Next.js, MDX, i18n, image, and cache configuration
 ├── 📄 tailwind.config.ts             # 🎨 Tailwind CSS config
-├── 📄 eslint.config.mjs              # 📏 ESLint 9 flat config
+├── 📄 eslint.config.mjs              # 📏 ESLint 10 flat config
 ├── 📄 jest.config.js                 # 🧪 Test configuration
 ├── 📄 lighthouserc.js                # 🔦 Lighthouse CI config
 └── 📄 package.json                   # 📦 Dependencies
@@ -300,13 +311,15 @@ Clip-path animations inspired by Bleach anime:
 - Pure CSS animations (no JavaScript)
 - Theme-aware timing and easing
 
-### Translation System
+### Translation Systems
 
-Powered by Groq API:
-- Automatic UI translation across 7 languages
-- Retry logic with exponential backoff
-- Fallback to MyMemory API
-- Temperature: 0.1 (deterministic)
+#### Runtime UI localization
+
+The UI uses `next-intl` message catalogs for the seven supported locales. Dynamic text can use Groq when `GROQ_API_KEY` exists, with MyMemory as a network fallback and the source text as the final fallback.
+
+#### Local MDX blog translation
+
+`pnpm blog:translate` starts `llama-server` automatically, loads the local Qwen3 GGUF model on CUDA, and shuts the server down after the run. The pipeline parses MDX with `unified` and `remark`, sends only approved human-readable segments to the model, protects JSX/code/URLs/media, validates structured JSON with Zod, checks target-language markers, writes locale siblings, records a SHA-256 source hash, then validates and publishes editorial changes.
 
 ---
 
@@ -349,7 +362,7 @@ Animated progress bar:
   <img src="https://i.imgur.com/dwyUWDH.gif" width="30"/> Testing & Code Quality
 </h1>
 
-### ESLint 9 Configuration
+### ESLint 10 Configuration
 
 **Flat config** (`eslint.config.mjs`):
 - Next.js 16 core-web-vitals preset
@@ -365,10 +378,10 @@ Animated progress bar:
 
 ```bash
 # Run linting
-npm run lint
+pnpm run lint
 
 # Auto-fix issues
-npm run lint -- --fix
+pnpm run lint -- --fix
 ```
 
 ### Test Suite
@@ -382,13 +395,13 @@ Test coverage includes:
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Watch mode
-npm run test:watch
+pnpm run test:watch
 
 # Coverage report
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 See [docs/test.md](./docs/test.md) for the full test matrix, Mermaid diagrams, screenshots, and video demonstration.
@@ -407,7 +420,7 @@ pnpm blog:publish
 pnpm blog:auto
 ```
 
-`blog:new` writes portable Typora settings. Blog translation starts and stops local `llama-server` automatically, using Qwen3 GGUF on CUDA. Set `LLAMA_MODEL_PATH` only when model location differs from local default. The translator parses MDX, changes prose and approved labels only, validates structured output, creates `index.en.mdx`, `index.de.mdx`, `index.es.mdx`, `index.fr.mdx`, `index.ja.mdx`, and `index.zh.mdx`, stores a SHA-256 source hash in each localized sibling, then validates and publishes translated changes. `blog:validate` automatically repairs stale localized translations. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
+`blog:new` writes portable Typora settings. Blog translation starts and stops local `llama-server` automatically, using Qwen3 GGUF on CUDA and `http://127.0.0.1:8080` by default. Set `LLAMA_MODEL_PATH`, `LLAMA_SERVER_BIN`, or `LLAMA_SERVER_URL` only when local defaults differ. The translator parses MDX, changes prose and approved labels only, validates structured output and target language, creates `index.en.mdx`, `index.de.mdx`, `index.es.mdx`, `index.fr.mdx`, `index.ja.mdx`, and `index.zh.mdx`, stores a SHA-256 source hash in each localized sibling, then validates and publishes translated changes. `blog:validate` automatically repairs stale or mismatched localized translations. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
 
 ### Complexity Review
 
@@ -442,7 +455,7 @@ Additional tests live beside their responsibility:
 ### GitHub Actions Workflows
 
 **Main CI Pipeline** (`.github/workflows/ci.yml`):
-- **Linting**: ESLint 9.39+ with React 19 strict rules
+- **Linting**: ESLint 10.9+ with React 19 strict rules
 - **Type Checking**: TypeScript 5.9+ strict mode
 - Unit and integration tests
 - Security scanning (pnpm audit, Snyk, Trivy)
@@ -542,7 +555,7 @@ Returns:
 * [x] Custom scrollbar with gradient
 * [x] Bleach clip-path animations
 * [x] Multilingual support (7 languages)
-* [x] Auto-translation with Groq API
+* [x] Local MDX translation with llama.cpp, Qwen3 GGUF, CUDA, and Zod validation
 * [x] Background music system
 * [x] GitHub projects integration (dual-account)
 * [x] Image slideshow for projects (3s intervals)
@@ -553,7 +566,7 @@ Returns:
 * [x] Security scanning (Trivy, Snyk)
 * [x] Test suite
 * [x] Vercel deployment configuration
-* [x] ESLint 9 migration with flat config
+* [x] ESLint 10 migration with flat config
 * [x] Next.js Image optimization (AVIF/WebP)
 * [x] Visitor counter with Upstash Redis persistence
 * [x] Vercel Analytics integration
@@ -565,7 +578,7 @@ Returns:
 * [x] City map visualization
 * [x] Certifications page
 * [x] CV/Resume download (EN + PT)
-* [x] Turbopack filesystem cache (dev + build)
+* [x] Next.js filesystem cache and production bundle optimization
 * [ ] Contact form with email integration
 * [ ] Analytics dashboard
 * [ ] Search functionality
@@ -582,7 +595,9 @@ Returns:
 
 <h2 align="center">
   
-**Groq API**: [Groq Documentation](https://console.groq.com/docs)  <img src="https://go-skill-icons.vercel.app/api/icons?i=nodejs&size=32" width="40" />
+**Local blog translation**: llama.cpp `llama-server` and Qwen3 GGUF
+
+**Runtime UI translation fallback**: [Groq Documentation](https://console.groq.com/docs)  <img src="https://go-skill-icons.vercel.app/api/icons?i=nodejs&size=32" width="40" />
 
 </h2>
 
