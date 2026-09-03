@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useHydrated } from '@/hooks/browser/useHydrated';
@@ -16,10 +17,48 @@ const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { 
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
 const KeyboardNav = dynamic(() => import('@/components/ui/KeyboardNav'), { ssr: false });
 const Skills = dynamic(() => import('@/components/home/Skills'), { ssr: false });
-const GitHubProjects = dynamic(() => import('@/components/projects/GitHubProjects'), { ssr: false });
 const Contact = dynamic(() => import('@/components/contact/Contact'), { ssr: false });
 const LivePreview = dynamic(() => import('@/components/projects/LivePreview'), { ssr: false });
 const TechCarousel = dynamic(() => import('@/components/home/TechCarousel'), { ssr: false });
+
+function DeferredSection({
+  children,
+  id,
+  className = 'page-section',
+  rootMargin = '0px 0px 300px',
+}: {
+  children: ReactNode;
+  id: string;
+  className?: string;
+  rootMargin?: string;
+}) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !('IntersectionObserver' in window)) {
+      setReady(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setReady(true);
+        observer.disconnect();
+      }
+    }, { rootMargin });
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [rootMargin]);
+
+  return (
+    <div ref={sectionRef} className={className} id={id}>
+      {ready && children}
+    </div>
+  );
+}
 
 interface Repo {
   id: number;
@@ -55,16 +94,24 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (!skillsReady) return;
+
     fetch('/api/github/repos')
       .then(r => r.json())
       .then(setRepos)
       .catch(() => setRepos([]));
-  }, []);
+  }, [skillsReady]);
 
   useEffect(() => {
     if (!bootComplete) return;
 
-    const timer = window.setTimeout(() => setDecorationsReady(true), 1600);
+    const requestIdleCallback = window.requestIdleCallback;
+    if (typeof requestIdleCallback === 'function') {
+      const idleId = requestIdleCallback(() => setDecorationsReady(true), { timeout: 4000 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timer = window.setTimeout(() => setDecorationsReady(true), 4000);
     return () => window.clearTimeout(timer);
   }, [bootComplete]);
 
@@ -123,18 +170,18 @@ export default function Page() {
           <Hero />
         </div>
 
-        <div className="page-section" id="live">
+        <DeferredSection id="live" className="page-section min-h-[700px]">
           <LivePreview />
-        </div>
+        </DeferredSection>
 
 
         <div ref={skillsRef} data-lazy-load="skills" className="page-section min-h-[900px]" id="skills">
           {skillsReady && <Skills repos={repos} techSignal={<TechCarousel compact />} />}
         </div>
 
-        <div className="page-section" id="contact">
+        <DeferredSection id="contact" className="page-section min-h-[60vh]">
           <Contact />
-        </div>
+        </DeferredSection>
         </main>
       </RouteView>
     </>

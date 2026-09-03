@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useEffect } from 'react';
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { motion, useMotionValue, useReducedMotion, useTransform, animate } from 'framer-motion';
 import { useHydrated } from '@/hooks/browser/useHydrated';
 
 interface TypewriterProps {
@@ -21,12 +21,13 @@ export function Typewriter({
   cursor = true 
 }: TypewriterProps) {
   const isClient = useHydrated();
+  const shouldReduceMotion = useReducedMotion();
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const displayText = useTransform(rounded, (latest) => text.slice(0, latest));
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient || shouldReduceMotion) return;
     const controls = animate(count, text.length, {
       type: 'tween',
       duration,
@@ -34,9 +35,9 @@ export function Typewriter({
       delay,
     });
     return controls.stop;
-  }, [isClient, count, text.length, duration, delay]);
+  }, [isClient, shouldReduceMotion, count, text.length, duration, delay]);
 
-  if (!isClient) {
+  if (!isClient || shouldReduceMotion) {
     return <span className={className}>{text}</span>;
   }
 

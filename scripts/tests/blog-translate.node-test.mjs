@@ -47,11 +47,27 @@ test('MDX translator collects human text and protects syntax', () => {
 test('structured llama.cpp response is validated and mapped by id', async () => {
   const client = {
     list: async () => ({ models: [{ name: 'test-model' }] }),
-    chat: async ({ messages }) => {
+    chat: async ({ messages, response_format }) => {
+      assert.equal(response_format.type, 'json_schema');
+      assert.equal(response_format.schema.type, 'object');
       const request = JSON.parse(messages[1].content);
       return { message: { content: JSON.stringify({ segments: request.segments.map(({ id, text }) => ({ id, text: `Translated ${text}` })) }) } };
     },
   };
   const result = await translateSegments([{ id: 'segment-1', text: 'Olá' }], { client, model: 'test-model', glossary: { preserve: [], terms: {} } });
   assert.equal(result.get('segment-1'), 'Translated Olá');
+});
+
+test('normalizes fenced and nested model responses', async () => {
+  const client = {
+    chat: async () => ({
+      choices: [{
+        message: {
+          content: '```json\n{"response":{"translations":[{"id":"segment-1","translation":"Hello"}]}}\n```',
+        },
+      }],
+    }),
+  };
+  const result = await translateSegments([{ id: 'segment-1', text: 'Olá' }], { client, glossary: { preserve: [], terms: {} } });
+  assert.equal(result.get('segment-1'), 'Hello');
 });

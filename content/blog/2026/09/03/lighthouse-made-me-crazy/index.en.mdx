@@ -1,0 +1,46 @@
+---
+title: "lighthouse made me crazy"
+description: "TODO: write a concrete summary for this article."
+date: "2026-09-03T12:57:59-03:00"
+updated: "2026-09-03T12:57:59-03:00"
+tags: []
+draft: true
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "5b255d1084fc1cd60c8391a68be88b724aac91e4b01224cfe1c74f8a3e73bf01"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/03/lighthouse-made-me-crazy"
+---
+
+## How I had problems optimizing my site with Lighthouse
+
+Never had I seen such a rigid framework before
+
+These days, producing and improving my portfolio while looking for ideas to style, I decided to include Quality Assurance (QA) technologies.
+
+To improve the situation, I reached a point where I was using Jeqt, Vitest, Lighthouse, Playwright, Eslint, Jscpd and Lizard
+
+Producing E2E tests, even inserting Storybook, these totally over-engineered decisions broke my code multiple times, to reach the 100% score on Lighthouse.
+
+Even with several scripts to facilitate automation, I still had the courage to challenge myself
+
+However, currently I have found difficulties to reach 100% again in the results
+
+Reasons I am using Lighthouse: it forces you to optimize your site well, the metrics make sense, however combined with Next.js, a Slop-Generated framework, it turns into chaos
+
+## Analyze my suffering
+
+<img
+  src="https://i.imgur.com/0yHscWH.png"
+/>
+
+---
+
+I ended up with an absurd tick to reach 100 in all scores, but always had something to improve, as any developer would do, I researched and analyzed that my agent and tests were ignoring the Next.js stale cache, who would have thought..
+
+I had to change the layout, pages, images, coverages, typewriter and so on, another day existing thanks to
+
+<img
+  src="/icons/nextjs.png"
+/>

@@ -2,7 +2,7 @@
 
 import { cloneElement, isValidElement } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface InfiniteMarqueeProps {
   items: ReactNode[];
@@ -32,13 +32,15 @@ export function InfiniteMarquee({
   className = '',
   itemClassName = '',
 }: InfiniteMarqueeProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <div className={`relative flex overflow-hidden ${className}`}>
       <motion.div
-        animate={{
+        animate={shouldReduceMotion ? undefined : {
           x: direction === 'left' ? ['0%', '-50%'] : ['-50%', '0%'],
         }}
-        transition={{
+        transition={shouldReduceMotion ? { duration: 0 } : {
           duration: speed,
           ease: 'linear',
           repeat: Infinity,

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { ArrowRight, Briefcase, Code2, Github, Globe, MapPin, GitCommit, Download } from 'lucide-react';
-import { AnimatedText, AnimatedWord, GradientText } from '@/components/texts/AnimatedText';
+import { AnimatedText, GradientText } from '@/components/texts/AnimatedText';
 import { Typewriter } from '@/components/texts/Typewriter';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
@@ -150,9 +150,10 @@ export default function Hero({ animateSection }: HeroProps) {
                       <Image
                         src={badge.src}
                         alt={badge.alt}
-                        fill
+                        width={74}
+                        height={74}
                         className="object-contain"
-                        quality={75}
+                        quality={60}
                         sizes="74px"
                         style={theme === 'light' && i === 0 ? { filter: 'invert(1)' } : undefined}
                       />
@@ -180,14 +181,14 @@ export default function Hero({ animateSection }: HeroProps) {
                     />
                   </div>
                   <Image
-                    src={theme === 'light' ? '/images/JinWoo-BackFacing3-768.avif' : '/images/JinWoo-render-768.avif'}
+                    src={theme === 'light' ? '/images/JinWoo-BackFacing3-288.avif' : '/images/JinWoo-render-288.avif'}
                     alt="Matheus Sobral — Developer"
                     fill
                     className="hero-img"
                     fetchPriority="high"
                     loading="eager"
-                    quality={75}
-                    sizes="(max-width: 768px) 100vw, 448px"
+                    unoptimized
+                    sizes="288px"
                   />
                 </div>
                 <div className="hero-available-badge">

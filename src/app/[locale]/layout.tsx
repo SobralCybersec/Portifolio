@@ -22,6 +22,7 @@ const geistSans = localFont({
   ],
   variable: '--font-geist-sans',
   display: 'swap',
+  preload: false,
 });
 
 const geistMono = localFont({
@@ -32,6 +33,7 @@ const geistMono = localFont({
   ],
   variable: '--font-geist-mono',
   display: 'swap',
+  preload: false,
 });
 
 const soloHeading = localFont({

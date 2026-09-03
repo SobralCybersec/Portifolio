@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import { useReducedMotion } from 'framer-motion';
 
 interface LetterGlitchProps {
   glitchColors?: string[];
@@ -36,6 +37,7 @@ const LetterGlitch = ({
   // Sanitize all color inputs once on entry — never trust prop values downstream
   const safeColors = glitchColors.map(c => sanitizeHexColor(c, '#61dca3'));
   const safeVignetteColor = sanitizeRgbTriplet(vignetteColor, '0,0,0');
+  const shouldReduceMotion = useReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const letters = useRef<
@@ -218,6 +220,8 @@ const LetterGlitch = ({
     let loopId = 0;
 
     const animate = () => {
+      if (shouldReduceMotion) return;
+
       const myId = ++loopId;
       const tick = () => {
         if (loopId !== myId) return; // stale loop — a newer one owns the cycle
@@ -265,7 +269,7 @@ const LetterGlitch = ({
       window.removeEventListener('resize', handleResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [glitchSpeed, smooth, JSON.stringify(glitchColors)]);
+  }, [glitchSpeed, smooth, shouldReduceMotion, JSON.stringify(glitchColors)]);
 
   const containerStyle = {
     position: 'absolute',

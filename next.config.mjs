@@ -66,9 +66,9 @@ const nextConfig = {
     // Reduced image variants = faster builds
     deviceSizes: [640, 828, 1200, 1920],
 
-    imageSizes: [16, 32, 64, 128, 256, 384],
+    imageSizes: [16, 32, 64, 74, 128, 148, 256, 384],
 
-    qualities: [100, 75],
+    qualities: [60, 75, 100],
 
     minimumCacheTTL: 2592000,
 

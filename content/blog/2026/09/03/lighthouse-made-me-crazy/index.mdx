@@ -1,0 +1,44 @@
+---
+title: "lighthouse made me crazy"
+description: "TODO: write a concrete summary for this article."
+date: "2026-09-03T12:57:59-03:00"
+updated: "2026-09-03T12:57:59-03:00"
+tags: []
+draft: true
+pinned: false
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/03/lighthouse-made-me-crazy"
+---
+
+## Como eu tive problemas para otimizar meu site com Lighthouse
+
+Nunca havia visto um framework tão rígido assim
+
+Esses dias produzindo e melhorando meu portifólio enquanto procurava ideias para estilizar, decidi inserir tecnologias de Quality Assurance (QA).
+
+Para melhorar a situação, cheguei em um momento que estava com Jeqt, Vitest, Lighthouse, Playwright, Eslint, Jscpd e Lizard
+
+Produzindo testes E2E, Inserindo até mesmo Storybook, essas decisões totalmente over-engineered quebraram meu código
+diversas e diversas vezes, para chegar a marca de 100% no lighthouse.
+
+Mesmo com diversos scripts para facilitar a automação, ainda tive a coragem de me desafiar
+
+Porém, atualmente encontrei dificuldades para chegar ao 100% novamente nos resultados
+
+Motivos que estou utilizando o lighthouse: exige que você otimize bem seu site, as métricas fazem sentido, porém somado ao Next.js, um framework Slop-Generated se transforma em um caos
+
+## Analise meu sofrimento
+
+<img
+  src="https://i.imgur.com/0yHscWH.png"
+/>
+
+---
+
+Fiquei com um Tick absurdo para chegar a 100 em todos os scores, porém sempre tinha algo para melhorar, como qualquer desenvolvedor faria, pesquisei e analisei que meu agente e testes estavam desconsiderando o cache podre do Next.js, quem diria..
+
+Tive que alterar o layout, páginas, imagens, coverages, typewriter e afins, mais um dia existindo graças aos
+
+<img
+  src="/icons/nextjs.png"
+/>

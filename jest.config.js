@@ -30,7 +30,14 @@ const customJestConfig = {
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
+    '!src/**/*.test.{js,jsx,ts,tsx}',
     '!src/**/*.stories.{js,jsx,ts,tsx}',
+    // Next route entrypoints are covered by the browser/build checks.
+    '!src/app/**/blog/**',
+    // Canvas/GSAP visual effects are covered by browser and visual tests.
+    '!src/components/about/AboutParticleField.tsx',
+    '!src/components/about/AboutScrollStory.tsx',
+    '!src/components/projects/MagneticLibraryGrid.tsx',
     '!src/components/tests/setup.ts',
   ],
 };

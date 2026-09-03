@@ -28,6 +28,7 @@ const PROTECTED_TYPES = new Set(['code', 'inlineCode', 'mdxFlowExpression', 'mdx
 const TranslationResponse = z.object({
   segments: z.array(z.object({ id: z.string().min(1), text: z.string() })),
 });
+const TRANSLATION_SCHEMA = z.toJSONSchema(TranslationResponse);
 
 function processor() {
   return unified().use(remarkParse).use(remarkFrontmatter).use(remarkMdx).use(remarkGfm);
@@ -138,6 +139,53 @@ function translationPrompt(segments, glossary) {
   }, null, 2);
 }
 
+function parseJsonContent(content) {
+  const normalized = content.trim()
+    .replace(/^```(?:json)?\s*/iu, '')
+    .replace(/\s*```$/u, '')
+    .replace(/<think>[\s\S]*?(?:<\/think>|$)/giu, '')
+    .trim();
+  try {
+    return JSON.parse(normalized);
+  } catch {
+    const start = normalized.indexOf('{');
+    const end = normalized.lastIndexOf('}');
+    if (start >= 0 && end > start) return JSON.parse(normalized.slice(start, end + 1));
+    throw new Error('llama-server returned non-JSON message content.');
+  }
+}
+
+function responseSegments(value, expectedIds) {
+  const candidates = [value, value?.response, value?.result, value?.data, value?.output];
+  for (const candidate of candidates) {
+    const collection = candidate?.segments
+      ?? candidate?.translations
+      ?? candidate?.translated_segments
+      ?? candidate?.translatedSegments
+      ?? candidate?.translation
+      ?? candidate;
+    if (Array.isArray(collection)) {
+      return collection.map((segment) => ({
+        id: segment?.id ?? segment?.segmentId ?? segment?.segment_id ?? segment?.key,
+        text: segment?.text
+          ?? segment?.translation
+          ?? segment?.translatedText
+          ?? segment?.translated_text
+          ?? segment?.translated
+          ?? segment?.content
+          ?? segment?.value,
+      }));
+    }
+    if (typeof collection === 'string' && expectedIds.length === 1) {
+      return [{ id: expectedIds[0], text: collection }];
+    }
+    if (collection && typeof collection === 'object' && expectedIds.every((id) => id in collection)) {
+      return expectedIds.map((id) => ({ id, text: collection[id] }));
+    }
+  }
+  return undefined;
+}
+
 async function requestLlamaServer(payload) {
   let response;
   try {
@@ -236,7 +284,7 @@ export async function translateSegments(segments, { client, model = MODEL, gloss
     max_tokens: 4096,
     reasoning_effort: 'none',
     chat_template_kwargs: { enable_thinking: false },
-    response_format: { type: 'json_schema', schema: z.toJSONSchema(TranslationResponse) },
+    response_format: { type: 'json_schema', schema: TRANSLATION_SCHEMA },
     messages,
   };
   const response = client
@@ -246,7 +294,9 @@ export async function translateSegments(segments, { client, model = MODEL, gloss
   if (typeof content !== 'string') throw new Error('llama-server returned no message content.');
   let parsed;
   try {
-    parsed = TranslationResponse.parse(JSON.parse(content));
+    const raw = parseJsonContent(content);
+    const segmentsWithAliases = responseSegments(raw, segments.map((segment) => segment.id));
+    parsed = TranslationResponse.parse(segmentsWithAliases ? { segments: segmentsWithAliases } : raw);
   } catch (error) {
     throw new Error(`Translation response failed schema validation: ${error.message}`);
   }

@@ -6,6 +6,7 @@ jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
+  useReducedMotion: () => false,
 }));
 
 describe('TechCarousel Component', () => {

@@ -195,8 +195,11 @@ export function formatFileSizeReport(
   return lines.join("\n");
 }
 
-export async function main() {
-  const result = await checkFileSizes({ repoRoot: DEFAULT_REPO_ROOT });
+export async function main(argv = process.argv.slice(2)) {
+  const result = await checkFileSizes({
+    repoRoot: DEFAULT_REPO_ROOT,
+    roots: argv.length ? argv : ROOTS,
+  });
   const report = formatFileSizeReport(result);
   (result.oversized.length ? console.error : console.log)(report);
   return result.oversized.length ? 1 : 0;

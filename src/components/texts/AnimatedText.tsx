@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 interface AnimatedTextProps {
@@ -11,11 +11,13 @@ interface AnimatedTextProps {
 }
 
 export function AnimatedText({ children, className = '', delay = 0, critical = false }: AnimatedTextProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={critical ? false : { opacity: 1, y: 20 }}
-      animate={critical ? undefined : { opacity: 1, y: 0 }}
-      transition={critical ? { duration: 0 } : { duration: 0.5, delay }}
+      initial={critical || shouldReduceMotion ? false : { opacity: 1, y: 20 }}
+      animate={critical || shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+      transition={critical || shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay }}
       className={className}
     >
       {children}
@@ -30,6 +32,7 @@ interface AnimatedWordProps {
 }
 
 export function AnimatedWord({ text, className = '', delay = 0 }: AnimatedWordProps) {
+  const shouldReduceMotion = useReducedMotion();
   const words = text.split(' ');
 
   return (
@@ -37,9 +40,9 @@ export function AnimatedWord({ text, className = '', delay = 0 }: AnimatedWordPr
       {words.map((word, index) => (
         <motion.span
           key={`${word}-${index}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: delay + index * 0.1 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5, delay: delay + index * 0.1 }}
           style={{ display: 'inline-block', marginRight: '0.25em' }}
         >
           {word}
@@ -56,6 +59,7 @@ interface AnimatedCharProps {
 }
 
 export function AnimatedChar({ text, className = '', delay = 0 }: AnimatedCharProps) {
+  const shouldReduceMotion = useReducedMotion();
   const chars = text.split('');
 
   return (
@@ -63,9 +67,9 @@ export function AnimatedChar({ text, className = '', delay = 0 }: AnimatedCharPr
       {chars.map((char, index) => (
         <motion.span
           key={`${char}-${index}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: delay + index * 0.03 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: delay + index * 0.03 }}
           style={{ display: 'inline-block' }}
         >
           {char === ' ' ? '\u00A0' : char}
