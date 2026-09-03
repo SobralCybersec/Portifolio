@@ -90,11 +90,9 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 
 ### Dependency maintenance
 
-`package.json`, `package-lock.json`, and `pnpm-lock.yaml` are kept synchronized. CI installs with `npm ci`; local pnpm installs use the frozen lockfile:
+`package.json` and `pnpm-lock.yaml` are the dependency sources of truth. CI and local development use pnpm with the frozen lockfile:
 
 ```bash
-npm ci
-# or
 pnpm install --frozen-lockfile
 ```
 
@@ -110,7 +108,7 @@ Dependency updates must pass type checking, linting, tests, and production build
 ```bash
 git clone https://github.com/yourusername/portfolio.git
 cd portfolio
-npm install
+pnpm install
 ```
 
 ### Environment Variables
@@ -446,7 +444,7 @@ Additional tests live beside their responsibility:
 - **Linting**: ESLint 9.39+ with React 19 strict rules
 - **Type Checking**: TypeScript 5.9+ strict mode
 - Unit and integration tests
-- Security scanning (npm audit, Snyk, Trivy)
+- Security scanning (pnpm audit, Snyk, Trivy)
 - Multi-platform Docker builds (amd64, arm64)
 - SLSA provenance attestation
 - SBOM generation
@@ -490,7 +488,7 @@ git push origin v1.0.0
 - Function configuration (memory, maxDuration)
 
 ```bash
-npm install -g vercel
+pnpm add --global vercel
 vercel
 ```
 

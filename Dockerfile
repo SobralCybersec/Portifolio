@@ -9,7 +9,7 @@ FROM node:${NODE_VERSION} AS dependencies
 
 WORKDIR /app
 
-RUN npm install --global pnpm@11.9.0
+RUN npm install --global pnpm@10.12.4
 
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -33,7 +33,7 @@ FROM node:${NODE_VERSION} AS builder
 
 WORKDIR /app
 
-RUN npm install --global pnpm@11.9.0
+RUN npm install --global pnpm@10.12.4
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .

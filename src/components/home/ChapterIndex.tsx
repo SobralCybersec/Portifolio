@@ -21,6 +21,7 @@ export default function ChapterIndex() {
     { href: '#live', section: 'live', label: 'LIVE', detail: 'SYSTEM PREVIEW' },
     { href: '/about', label: t('about'), detail: 'PROFILE / STACK' },
     { href: '/projects', label: t('projects'), detail: 'SELECTED ARCHIVE' },
+    { href: '/blog', label: t('blog'), detail: 'FIELD NOTES' },
     { href: '/certifications', label: t('certifications'), detail: 'VERIFIED SIGNALS' },
     { href: '#contact', section: 'contact', label: t('contact'), detail: 'OPEN CHANNEL' },
   ], [t]);
@@ -60,7 +61,7 @@ export default function ChapterIndex() {
     >
       <div className="chapter-index__header">
         <span>INDEX</span>
-        <span aria-hidden="true">/ 06</span>
+        <span aria-hidden="true">/ 07</span>
       </div>
       <ol className="chapter-index__list">
         {chapters.map((chapter, index) => {

@@ -657,7 +657,7 @@ pnpm run test:lighthouse:screenshots
 <a id="11--security-checks"></a>
 ## 11 / Security checks
 
-CI uses npm audit, CodeQL, and Trivy in different workflows to inspect dependencies, source patterns, and container images.
+CI uses pnpm audit, CodeQL, and Trivy in different workflows to inspect dependencies, source patterns, and container images.
 
 ```mermaid
 flowchart LR
@@ -686,7 +686,7 @@ flowchart LR
 ### Example
 
 ```bash
-npm audit --audit-level=moderate
+pnpm audit --audit-level=moderate
 # CodeQL: .github/workflows/codeql.yml
 # Trivy: .github/workflows/docker.yml
 ```

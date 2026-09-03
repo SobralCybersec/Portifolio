@@ -8,7 +8,7 @@ echo ""
 echo "[1/3] Verificando Vercel CLI..."
 if ! command -v vercel &> /dev/null; then
     echo "Instalando Vercel CLI..."
-    npm install -g vercel
+    pnpm add --global vercel
 fi
 
 echo "[2/3] Limpando build anterior..."

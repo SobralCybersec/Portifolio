@@ -19,23 +19,26 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Update dependencies
         run: |
-          npm update
-          npm audit fix --audit-level=moderate || true
+          pnpm update
+          pnpm audit --audit-level=moderate || true
 
       - name: Run tests
         run: |
-          npm ci
-          npx playwright install --with-deps chromium chromium-headless-shell firefox
-          npm run build
-          npm test
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium chromium-headless-shell firefox
+          pnpm run build
+          pnpm test
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
@@ -49,7 +52,7 @@ jobs:
             This PR contains automated dependency updates.
             
             ### Changes
-            - Updated npm packages to latest compatible versions
+            - Updated pnpm packages to latest compatible versions
             - Applied security fixes
             
             ### Testing

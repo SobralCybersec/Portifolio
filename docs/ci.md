@@ -27,7 +27,7 @@ Workflow triggers, jobs, runtime parity, artifacts, security, and deployment.
   </thead>
   <tbody>
     <tr><td>Runtime</td><td>Node 24</td><td>All current workflows use the same major runtime.</td></tr>
-    <tr><td>Install</td><td>npm ci or frozen pnpm</td><td>Workflow choice follows its lockfile and cache.</td></tr>
+    <tr><td>Install</td><td>pnpm install --frozen-lockfile</td><td>Every workflow uses the same lockfile and cache.</td></tr>
     <tr><td>Quality</td><td>lint to Lighthouse</td><td>Jobs move from cheap static checks to browser audits.</td></tr>
     <tr><td>Delivery</td><td>Docker + Vercel</td><td>Images, security reports, and production output have separate jobs.</td></tr>
   </tbody>
@@ -261,7 +261,7 @@ packageManager: pnpm@11.9.0
 <a id="04--dependency-install"></a>
 ## 04 / Dependency install
 
-The npm-based workflows use npm ci while frontend QA uses pnpm install --frozen-lockfile.
+All workflows use pnpm install --frozen-lockfile.
 
 ```mermaid
 flowchart LR
@@ -290,7 +290,6 @@ flowchart LR
 ### Example
 
 ```bash
-npm ci
 pnpm install --frozen-lockfile
 ```
 
@@ -756,8 +755,8 @@ flowchart LR
 schedule:
   - cron: '0 4 * * 1'
 
-npm ci
-npm test
+pnpm install --frozen-lockfile
+pnpm test
 ```
 
 ### Decision table
@@ -1306,4 +1305,3 @@ flowchart LR
 </details>
 
 ---
-
