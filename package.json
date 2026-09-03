@@ -119,7 +119,7 @@
     "@types/jest": "^30.0.0",
     "@types/mdx": "^2.0.14",
     "@types/negotiator": "^0.6.5",
-    "@types/node": "^20.19.43",
+    "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@types/three": "0.185.4",
