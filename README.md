@@ -399,14 +399,15 @@ Posts live in `content/blog/YYYY/MM/DD/slug/` and optional media lives in the ma
 
 ```bash
 pnpm blog:new "Article title"
-pnpm blog:translate lighthouse --stale
-pnpm blog:translate --all --stale
+pnpm blog:translate lighthouse
+pnpm blog:translate --all
+pnpm blog:pin lighthouse
 pnpm blog:validate
 pnpm blog:publish
 pnpm blog:auto
 ```
 
-`blog:new` writes portable Typora settings. Blog translation starts and stops local `llama-server` automatically, using Qwen3 GGUF on CUDA. Set `LLAMA_MODEL_PATH` only when model location differs from local default. The translator parses MDX, changes prose and approved labels only, validates structured output, and stores a SHA-256 source hash in `index.en.mdx`. Use `--stale` after changing Portuguese content. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
+`blog:new` writes portable Typora settings. Blog translation starts and stops local `llama-server` automatically, using Qwen3 GGUF on CUDA. Set `LLAMA_MODEL_PATH` only when model location differs from local default. The translator parses MDX, changes prose and approved labels only, validates structured output, creates `index.en.mdx`, `index.de.mdx`, `index.es.mdx`, `index.fr.mdx`, `index.ja.mdx`, and `index.zh.mdx`, stores a SHA-256 source hash in each localized sibling, then validates and publishes translated changes. `blog:validate` automatically repairs stale localized translations. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
 
 ### Complexity Review
 

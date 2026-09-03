@@ -41,3 +41,17 @@ test('filters drafts and future posts, sorts, groups months, and finds chronolog
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('selects localized siblings and falls back to Portuguese', () => {
+  const root = mkdtempSync(join(tmpdir(), 'blog-locale-'));
+  try {
+    writePost(root, '2026-01-02T10:00:00-03:00', 'localized');
+    const directory = join(root, 'blog/2026/01/02/localized');
+    writeFileSync(join(directory, 'index.en.mdx'), readFileSync(join(directory, 'index.mdx'), 'utf8').replace('title: localized', 'title: Localized English'));
+    writeFileSync(join(directory, 'index.de.mdx'), readFileSync(join(directory, 'index.mdx'), 'utf8').replace('title: localized', 'title: Lokalisierter Beitrag'));
+    expect(getAllPosts({ locale: 'de' }, join(root, 'blog'))[0].title).toBe('Lokalisierter Beitrag');
+    expect(getAllPosts({ locale: 'fr' }, join(root, 'blog'))[0].title).toBe('localized');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

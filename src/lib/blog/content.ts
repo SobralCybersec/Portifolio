@@ -5,8 +5,11 @@ import type { BlogMonthGroup, BlogPost, BlogPostMetadata, BlogQuery } from './ty
 
 export const BLOG_CONTENT_ROOT = path.join(/* turbopackIgnore: true */ process.cwd(), 'content', 'blog');
 const BUNDLE_RE = /^(\d{4})\/(\d{2})\/(\d{2})\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+export const BLOG_LOCALES = ['pt', 'en', 'de', 'es', 'fr', 'ja', 'zh'] as const;
+type BlogLocale = typeof BLOG_LOCALES[number];
+const BLOG_FILE_RE = /^index(?:\.[a-z]{2})?\.mdx$/;
 
-type BundleFile = { locale: string; sourcePath: string; metadata: BlogPostMetadata };
+type BundleFile = { locale: BlogLocale; sourcePath: string; metadata: BlogPostMetadata };
 type BlogBundle = {
   year: string;
   month: string;
@@ -31,7 +34,7 @@ function collectBundleDirectories(root: string): string[] {
       if (entry.isDirectory()) pending.push(target);
     }
     const files = fs.readdirSync(/* turbopackIgnore: true */ current);
-    if (files.includes('index.mdx') || files.includes('index.en.mdx')) result.push(current);
+    if (files.some((file) => BLOG_FILE_RE.test(file))) result.push(current);
   }
   return result.sort();
 }
@@ -43,7 +46,8 @@ function parseBundle(bundlePath: string, contentRoot: string): BlogBundle {
 
   const [, year, month, day, slug] = match;
   const files: BundleFile[] = [];
-  for (const [locale, filename] of [['pt', 'index.mdx'], ['en', 'index.en.mdx']] as const) {
+  for (const locale of BLOG_LOCALES) {
+    const filename = locale === 'pt' ? 'index.mdx' : `index.${locale}.mdx`;
     const sourcePath = path.join(/* turbopackIgnore: true */ bundlePath, filename);
     if (!fs.existsSync(/* turbopackIgnore: true */ sourcePath)) continue;
     const { metadata } = parseBlogMetadata(fs.readFileSync(/* turbopackIgnore: true */ sourcePath, 'utf8'));

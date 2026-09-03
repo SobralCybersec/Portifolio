@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import test from 'node:test';
-import { buildTranslatedDocument, collectTranslationSegments, parseArgs, translateSegments } from '../blog/translate.mjs';
+import { buildTranslatedDocument, collectTranslationSegments, parseArgs, TARGET_LOCALES, translateBlog, translateSegments } from '../blog/translate.mjs';
 
 const fixture = `---
 title: "Como medir performance"
@@ -72,6 +75,26 @@ test('normalizes fenced and nested model responses', async () => {
   assert.equal(result.get('segment-1'), 'Hello');
 });
 
+test('retries output when language validation rejects copied source text', async () => {
+  let calls = 0;
+  const client = {
+    chat: async ({ messages }) => {
+      calls += 1;
+      const request = JSON.parse(messages[1].content);
+      const text = calls === 1
+        ? request.segments.map(({ id, text: value }) => ({ id, text: value }))
+        : request.segments.map(({ id }) => ({ id, text: 'El resultado traducido' }));
+      return { message: { content: JSON.stringify({ segments: text }) } };
+    },
+  };
+  const result = await translateSegments([
+    { id: 'segment-1', text: 'O resultado' },
+    { id: 'segment-2', text: 'O conteúdo muda' },
+  ], { client, targetLocale: 'es', glossary: { preserve: [], terms: {} } });
+  assert.equal(calls, 2);
+  assert.equal(result.get('segment-1'), 'El resultado traducido');
+});
+
 test('translation command accepts no-push publish flag', async () => {
   assert.deepEqual(parseArgs(['lighthouse', '--stale', '--no-push']), {
     selectors: ['lighthouse'],
@@ -79,4 +102,32 @@ test('translation command accepts no-push publish flag', async () => {
     stale: true,
     noPush: true,
   });
+});
+
+test('translates every configured locale sibling', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'blog-translate-all-'));
+  try {
+    const directory = join(root, 'content/blog/2026/01/01/localized');
+    mkdirSync(directory, { recursive: true });
+    writeFileSync(join(directory, 'index.mdx'), fixture, 'utf8');
+    const client = {
+      chat: async ({ messages }) => {
+        const request = JSON.parse(messages[1].content);
+        const translated = {
+          English: 'The translated text',
+          German: 'Der übersetzte Text',
+          Spanish: 'El texto traducido',
+          French: 'Le texte traduit',
+          Japanese: '翻訳されたテキスト',
+          'Simplified Chinese': '翻译后的文本',
+        }[request.targetLanguage];
+        return { message: { content: JSON.stringify({ segments: request.segments.map(({ id }) => ({ id, text: translated })) }) } };
+      },
+    };
+    const result = await translateBlog({ root: join(root, 'content/blog'), all: true, client });
+    assert.equal(result.translated, TARGET_LOCALES.length);
+    for (const locale of TARGET_LOCALES) assert.match(readFileSync(join(directory, `index.${locale}.mdx`), 'utf8'), /translation:/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

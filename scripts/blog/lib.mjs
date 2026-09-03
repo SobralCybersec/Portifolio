@@ -12,6 +12,35 @@ export const PUBLIC_ROOT = resolve(ROOT, 'public');
 export const TAXONOMY_PATH = resolve(ROOT, 'data/blog-tags.yml');
 export const EDITORIAL_PATHS = ['content/blog', 'public/blog', 'data/blog-tags.yml'];
 export const DEBOUNCE_MS = 30_000;
+export const BLOG_LOCALES = ['pt', 'en', 'de', 'es', 'fr', 'ja', 'zh'];
+const LANGUAGE_MARKERS = {
+  en: ['the', 'and', 'with', 'from', 'this', 'that', 'is', 'are', 'how', 'what', 'was', 'were', 'you', 'your', 'not'],
+  de: ['der', 'die', 'das', 'und', 'ist', 'mit', 'für', 'ein', 'eine', 'einer', 'den', 'dem', 'nicht', 'ich', 'sie'],
+  es: ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'y', 'es', 'son', 'cómo', 'más', 'sin', 'sobre', 'esta', 'está'],
+  fr: ['le', 'la', 'les', 'des', 'un', 'une', 'et', 'est', 'avec', 'pour', 'sans', 'mais', 'qui', 'cette', 'dans', 'sur'],
+};
+const PORTUGUESE_MARKERS = new Set([
+  'não', 'uma', 'tão', 'estava', 'porém', 'decidi', 'cheguei', 'havia', 'ficar', 'ficou',
+  'ficando', 'meu', 'minha', 'meus', 'minhas', 'portfólio', 'portifólio', 'imagens',
+  'diversas', 'graças', 'louco', 'sofrimento', 'utilizando', 'desconsiderando', 'tive', 'tenho',
+  'veio', 'enquanto', 'qualquer', 'assim', 'atualmente', 'novamente', 'situação',
+  'afins',
+]);
+const BLOG_FILENAMES = BLOG_LOCALES.map((locale) => locale === 'pt' ? 'index.mdx' : `index.${locale}.mdx`);
+const BLOG_FILE_RE = /^index(?:\.[a-z]{2})?\.mdx$/;
+
+export function isLikelyTranslation(text, locale) {
+  if (locale === 'pt' || !BLOG_LOCALES.includes(locale)) return true;
+  const normalized = text.normalize('NFKC').toLocaleLowerCase();
+  if (locale === 'ja') return /[\u3040-\u30ff]/u.test(normalized);
+  if (locale === 'zh') return /[\u4e00-\u9fff]/u.test(normalized) && !/[\u3040-\u30ff]/u.test(normalized);
+  const words = normalized.match(/\p{L}+/gu) ?? [];
+  if (words.length < 3) return true;
+  const markers = new Set(LANGUAGE_MARKERS[locale] ?? []);
+  const matches = words.filter((word) => markers.has(word)).length;
+  const portugueseMatches = words.filter((word) => PORTUGUESE_MARKERS.has(word)).length;
+  return portugueseMatches < 2 && matches >= 2;
+}
 
 const BUNDLE_RE = /^(\d{4})\/(\d{2})\/(\d{2})\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const ISO_RE = /^\d{4}-\d{2}-\d{2}T/;
@@ -40,7 +69,7 @@ function walk(root) {
   while (pending.length) {
     const current = pending.pop();
     const entries = readdirSync(current, { withFileTypes: true });
-    if (entries.some((entry) => entry.isFile() && (entry.name === 'index.mdx' || entry.name === 'index.en.mdx'))) result.push(current);
+    if (entries.some((entry) => entry.isFile() && BLOG_FILE_RE.test(entry.name))) result.push(current);
     for (const entry of entries) if (entry.isDirectory()) pending.push(join(current, entry.name));
   }
   return result.sort();
@@ -97,10 +126,11 @@ export async function validateBlog({ root = ROOT, now = new Date() } = {}) {
     const match = BUNDLE_RE.exec(relativeBundle);
     if (!match) { issues.push({ file: relativeBundle, rule: 'bundle path must be YYYY/MM/DD/slug', value: relativeBundle }); continue; }
     const [, year, month, day, slug] = match;
-    const names = readdirSync(bundlePath).filter((name) => name.startsWith('index') && name.endsWith('.mdx'));
-    if (names.some((name) => !['index.mdx', 'index.en.mdx'].includes(name))) issues.push({ file: relativeBundle, rule: 'bundle may contain only index.mdx and index.en.mdx', value: names });
+    const names = readdirSync(bundlePath).filter((name) => BLOG_FILE_RE.test(name));
+    if (names.some((name) => !BLOG_FILENAMES.includes(name))) issues.push({ file: relativeBundle, rule: `bundle may contain only ${BLOG_FILENAMES.join(', ')}`, value: names });
     const files = [];
-    for (const filename of ['index.mdx', 'index.en.mdx']) {
+    for (const locale of BLOG_LOCALES) {
+      const filename = locale === 'pt' ? 'index.mdx' : `index.${locale}.mdx`;
       const sourcePath = join(bundlePath, filename);
       if (!existsSync(sourcePath)) continue;
       const parsed = parseFile(sourcePath);
@@ -112,17 +142,19 @@ export async function validateBlog({ root = ROOT, now = new Date() } = {}) {
       if (typeof parsed.data.cover === 'string' && parsed.data.cover.startsWith('/')) { const coverPath = resolve(publicRoot, parsed.data.cover.slice(1)); if (!existsSync(coverPath)) issues.push({ file: display, rule: 'declared local cover exists', value: parsed.data.cover }); }
       if (/!\[\s*\]\(/.test(parsed.parsed.content) || /<img\b(?![^>]*\balt\s*=)/i.test(parsed.parsed.content)) issues.push({ file: display, rule: 'content images need alt text', value: 'missing alt' });
       try { await compile(parsed.parsed.content, { remarkPlugins: [remarkGfm] }); } catch (error) { issues.push({ file: display, rule: 'MDX compiles', value: error instanceof Error ? error.message : 'compile error' }); }
-      files.push({ locale: filename === 'index.en.mdx' ? 'en' : 'pt', sourcePath, data: parsed.data });
+      if (locale !== 'pt' && !isLikelyTranslation(`${parsed.data.title}\n${parsed.data.description}\n${parsed.parsed.content}`, locale)) issues.push({ file: display, rule: `${locale} translation language mismatch; run pnpm blog:translate --stale`, value: locale });
+      files.push({ locale, sourcePath, data: parsed.data });
     }
     if (!files.some((file) => file.locale === 'pt')) issues.push({ file: relativeBundle, rule: 'index.mdx exists', value: 'missing' });
-    const english = files.find((file) => file.locale === 'en');
     const portuguese = files.find((file) => file.locale === 'pt');
-    if (english && portuguese) {
-      if (english.data.translationKey !== portuguese.data.translationKey) issues.push({ file: relativeBundle, rule: 'translationKey matches siblings', value: [portuguese.data.translationKey, english.data.translationKey] });
-      const translation = english.data.translation;
+    if (portuguese) {
       const expectedHash = contentHash(portuguese.sourcePath);
-      if (!isRecord(translation) || translation.sourceLocale !== 'pt-BR' || translation.sourceHash !== expectedHash) {
-        issues.push({ file: relativeBundle, rule: 'English translation is stale; run pnpm blog:translate --stale', value: translation?.sourceHash ?? 'missing sourceHash' });
+      for (const localized of files.filter((file) => file.locale !== 'pt')) {
+        if (localized.data.translationKey !== portuguese.data.translationKey) issues.push({ file: relativeBundle, rule: `${localized.locale} translationKey matches source`, value: [portuguese.data.translationKey, localized.data.translationKey] });
+        const translation = localized.data.translation;
+        if (!isRecord(translation) || translation.sourceLocale !== 'pt-BR' || translation.sourceHash !== expectedHash) {
+          issues.push({ file: relativeBundle, rule: `${localized.locale} translation is stale; run pnpm blog:translate --stale`, value: translation?.sourceHash ?? 'missing sourceHash' });
+        }
       }
     }
     bundles.push({ route: `/blog/${relativeBundle}`, slug, year, month, day, files });
