@@ -110,7 +110,7 @@ async function waitForPageEntry(page: Page) {
   });
 
   // Preserve final animation frame before visual and interaction assertions.
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(400);
 }
 
 export async function installStableApiMocks(
