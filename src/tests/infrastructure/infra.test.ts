@@ -28,6 +28,16 @@ const authMock = jest.requireMock('next-auth').default as jest.Mock;
 const pusherMock = jest.requireMock('pusher').default as jest.Mock;
 const redisMock = jest.requireMock('@upstash/redis').Redis as jest.Mock;
 
+beforeAll(() => {
+  process.env.UPSTASH_REDIS_REST_URL = 'https://test.invalid';
+  process.env.UPSTASH_REDIS_REST_TOKEN = 'test-token';
+});
+
+afterAll(() => {
+  delete process.env.UPSTASH_REDIS_REST_URL;
+  delete process.env.UPSTASH_REDIS_REST_TOKEN;
+});
+
 const request = (pathname: string, headers: Record<string, string> = {}) => ({
   nextUrl: { pathname },
   headers: new Headers(headers),

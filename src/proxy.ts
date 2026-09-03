@@ -10,9 +10,9 @@ const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
-const hasRateLimitConfig = Boolean(
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
-);
+function hasRateLimitConfig() {
+  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+}
 
 const authLimit = new Ratelimit({
   redis,
@@ -49,7 +49,7 @@ export async function proxy(request: NextRequest) {
 
   // ── Rate limiting for /api routes (i18n middleware skips these) ──
   if (pathname.startsWith('/api/')) {
-    if (!hasRateLimitConfig) {
+    if (!hasRateLimitConfig()) {
       return NextResponse.next();
     }
 

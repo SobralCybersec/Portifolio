@@ -26,9 +26,21 @@ function markdownFiles() {
     .map((file) => join(DOCS, file));
 }
 
+function stripInlineTags(value) {
+  let result = value;
+  let start = result.indexOf('<');
+  while (start !== -1) {
+    const end = result.indexOf('>', start + 1);
+    result = end === -1
+      ? result.slice(0, start)
+      : `${result.slice(0, start)}${result.slice(end + 1)}`;
+    start = result.indexOf('<');
+  }
+  return result;
+}
+
 function headingSlug(heading) {
-  return heading
-    .replace(/<[^>]+>/g, '')
+  return stripInlineTags(heading)
     .toLowerCase()
     .replace(/[^\w\s-]/gu, '')
     .trim()
