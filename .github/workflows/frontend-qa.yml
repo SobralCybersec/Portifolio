@@ -69,6 +69,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Chromium headless shell
+        run: pnpm exec playwright install --with-deps chromium-headless-shell
+
       - name: Jest and Testing Library
         run: pnpm exec jest --runInBand --no-coverage
 
@@ -244,6 +247,8 @@ jobs:
 
       - name: Lighthouse CI
         run: pnpm exec lhci autorun
+        env:
+          LHCI_GITHUB_TOKEN: ${{ github.token }}
 
       - name: Capture Lighthouse report screenshots
         run: pnpm run test:lighthouse:screenshots

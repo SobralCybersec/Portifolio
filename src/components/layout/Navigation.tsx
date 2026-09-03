@@ -219,7 +219,8 @@ function GithubLink(props: Pick<NavigationContentProps, 'isDark' | 'primary'>) {
       aria-label="GitHub"
       style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid ' + primary + '40', background: isDark ? 'rgba(4,8,16,0.6)' : 'rgba(255,255,255,0.6)', borderRadius: '10px', transition: 'border-color .18s', flexShrink: 0 }}
     >
-      <Github style={{ width: '15px', height: '15px', color: isDark ? '#8fa5bf' : '#5a6b7f' }} />
+      <Github aria-hidden="true" style={{ width: '15px', height: '15px', color: isDark ? '#8fa5bf' : '#5a6b7f' }} />
+      <span className="sr-only">GitHub</span>
     </a>
   );
 }
