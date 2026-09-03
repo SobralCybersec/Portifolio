@@ -85,7 +85,7 @@
     "pusher-js": "8.6.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-dropzone": "^15.0.0",
+    "react-dropzone": "^20.1.1",
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^16.1.1",
     "rehype-raw": "^7.0.0",
