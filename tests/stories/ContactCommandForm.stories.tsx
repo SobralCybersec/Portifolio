@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Github, Linkedin } from 'lucide-react';
-import ContactCommandForm from '@/components/contact/ContactCommandForm';
+import ContactCommandForm from '../../src/components/contact/ContactCommandForm';
 
 const meta = {
   title: 'Contact/ContactCommandForm',

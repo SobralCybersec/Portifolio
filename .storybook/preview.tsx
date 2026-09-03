@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider } from 'next-themes';
-import type { Preview } from '@storybook/nextjs';
+import type { Preview } from '@storybook/nextjs-vite';
 import messages from '../src/i18n/messages/en.json';
 import '../src/app/globals.css';
 

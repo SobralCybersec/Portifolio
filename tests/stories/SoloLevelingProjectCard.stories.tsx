@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import SoloLevelingProjectCard from '@/components/projects/SoloLevelingProjectCard';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import SoloLevelingProjectCard from '../../src/components/projects/SoloLevelingProjectCard';
 
 const meta = {
   title: 'Projects/SoloLevelingProjectCard',
