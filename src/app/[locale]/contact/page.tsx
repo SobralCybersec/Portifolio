@@ -15,13 +15,11 @@ import { useHydrated } from '@/hooks/browser/useHydrated';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
-const AboutParticleField = dynamic(() => import('@/components/about/AboutParticleField'), { ssr: false });
 
 export default function ContactPage() {
   useClickSound();
   const mounted = useHydrated();
   const effectsReady = useDeferredMount();
-  const webglReady = useDeferredMount(2500);
   const { theme } = useTheme();
   const t = useTranslations('contact');
   const isLight = mounted && theme === 'light';
@@ -51,15 +49,6 @@ export default function ContactPage() {
       <main className="relative overflow-hidden pt-20">
         {effectsReady && <ScrollEffect />}
         {effectsReady && <ParticleBackground />}
-        {webglReady && (
-          <AboutParticleField
-            className="z-0 opacity-45"
-            particleColors={isLight ? ['#3b82f6', '#2563eb', '#8b5cf6'] : ['#a855f7', '#8b5cf6', '#3b82f6']}
-            particleCount={110}
-            particleSpread={1.4}
-          />
-        )}
-
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
           <header className="mb-10 max-w-4xl md:mb-12">
             <AnimatedText className="mb-4">
