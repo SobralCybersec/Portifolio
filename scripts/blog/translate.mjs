@@ -13,6 +13,7 @@ import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { visitParents } from 'unist-util-visit-parents';
 import { z } from 'zod';
+import { publishBlog, ROOT } from './lib.mjs';
 
 export const MODEL = process.env.LLAMA_MODEL ?? 'qwen3:8b';
 export const LLAMA_SERVER_URL = process.env.LLAMA_SERVER_URL ?? 'http://127.0.0.1:8080';
@@ -372,9 +373,9 @@ function writeAtomic(path, content) {
   renameSync(temporary, path);
 }
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const selectors = argv.filter((arg) => !arg.startsWith('--'));
-  return { selectors, all: argv.includes('--all'), stale: argv.includes('--stale') };
+  return { selectors, all: argv.includes('--all'), stale: argv.includes('--stale'), noPush: argv.includes('--no-push') };
 }
 
 export async function translateBlog({ root = CONTENT_ROOT, selectors = [], all = false, stale = false, client, model = MODEL } = {}) {
@@ -403,11 +404,17 @@ export async function translateBlog({ root = CONTENT_ROOT, selectors = [], all =
 }
 
 async function main() {
-  const { selectors, all, stale } = parseArgs(process.argv.slice(2));
-  if (!all && !stale && !selectors.length) throw new Error('Usage: pnpm blog:translate <slug> | --all [--stale]');
+  const { selectors, all, stale, noPush } = parseArgs(process.argv.slice(2));
+  if (!all && !stale && !selectors.length) throw new Error('Usage: pnpm blog:translate <slug> | --all [--stale] [--no-push]');
   console.log(`blog:translate using ${MODEL} via llama.cpp at ${LLAMA_SERVER_URL}`);
   const result = await translateBlog({ selectors, all, stale });
   console.log(`blog:translate complete (${result.translated} translated, ${result.skipped} skipped)`);
+  if (result.translated > 0) {
+    const published = await publishBlog({ root: ROOT, push: !noPush });
+    console.log(published.published
+      ? `${published.message}${published.pushed ? ' and pushed' : ' (push skipped)'}`
+      : `Nothing to publish: ${published.reason}`);
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

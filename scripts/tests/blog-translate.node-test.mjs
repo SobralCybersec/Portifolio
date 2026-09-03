@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import test from 'node:test';
-import { buildTranslatedDocument, collectTranslationSegments, translateSegments } from '../blog/translate.mjs';
+import { buildTranslatedDocument, collectTranslationSegments, parseArgs, translateSegments } from '../blog/translate.mjs';
 
 const fixture = `---
 title: "Como medir performance"
@@ -70,4 +70,13 @@ test('normalizes fenced and nested model responses', async () => {
   };
   const result = await translateSegments([{ id: 'segment-1', text: 'Olá' }], { client, glossary: { preserve: [], terms: {} } });
   assert.equal(result.get('segment-1'), 'Hello');
+});
+
+test('translation command accepts no-push publish flag', async () => {
+  assert.deepEqual(parseArgs(['lighthouse', '--stale', '--no-push']), {
+    selectors: ['lighthouse'],
+    all: false,
+    stale: true,
+    noPush: true,
+  });
 });

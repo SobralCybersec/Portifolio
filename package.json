@@ -42,6 +42,7 @@
     "vercel-build": "next build",
     "blog:new": "node scripts/blog/new.mjs",
     "blog:translate": "node scripts/blog/translate.mjs",
+    "blog:pin": "node scripts/blog/pin.mjs",
     "blog:validate": "node scripts/blog/validate.mjs",
     "blog:publish": "node scripts/blog/publish.mjs",
     "blog:auto": "node scripts/blog/auto.mjs"

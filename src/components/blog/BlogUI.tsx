@@ -68,7 +68,7 @@ export function BlogMonthList({ groups, locale }: { groups: BlogMonthGroup[]; lo
       {groups.map((group) => (
         <section key={group.key} className="blog-month-group" aria-labelledby={`month-${group.key}`}>
           <div className="blog-month-heading">
-            <h2 id={`month-${group.key}`}>{group.year} <span>{group.label}</span></h2>
+            <h2 id={`month-${group.key}`}><span>{group.label}</span> <time dateTime={`${group.key}-01`}>{group.year}</time></h2>
             <span>{String(group.posts.length).padStart(2, '0')} POSTS</span>
           </div>
           {group.posts.map((post, index) => <BlogCard key={post.route} post={post} locale={locale} index={index} />)}
