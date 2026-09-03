@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, master, develop]
 
+concurrency:
+  group: frontend-qa-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -13,8 +17,8 @@ env:
   NODE_VERSION: '24'
 
 jobs:
-  frontend-qa:
-    name: Frontend QA suite
+  quality:
+    name: Frontend quality
     runs-on: ubuntu-latest
 
     steps:
@@ -39,17 +43,31 @@ jobs:
       - name: Validate blog content
         run: pnpm run blog:validate
 
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium chromium-headless-shell firefox webkit
-
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y ffmpeg
-
       - name: Lint
         run: pnpm run lint
 
       - name: Type check
         run: pnpm exec tsc --noEmit
+
+  unit:
+    name: Unit and component tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Jest and Testing Library
         run: pnpm exec jest --runInBand --no-coverage
@@ -60,19 +78,169 @@ jobs:
       - name: Vitest Browser Mode
         run: pnpm run test:browser
 
+  build:
+    name: Build browser artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build application
         run: pnpm run build
         env:
           NODE_ENV: production
 
-      - name: Playwright browser suite
-        run: pnpm run test:playwright:all
+      - name: Upload production build
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-qa-build
+          include-hidden-files: true
+          path: |
+            .next
+            public
+          retention-days: 1
+
+  playwright:
+    name: Playwright (${{ matrix.project }})
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - project: chromium
+            browser: chromium chromium-headless-shell
+          - project: chromium-e2e
+            browser: chromium chromium-headless-shell
+          - project: chromium-mobile
+            browser: chromium chromium-headless-shell
+          - project: firefox
+            browser: firefox
+          - project: webkit
+            browser: webkit
+          - project: video
+            browser: chromium
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download production build
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: frontend-qa-build
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Install FFmpeg
+        if: matrix.project == 'video'
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y ffmpeg
+
+      - name: Run Playwright project
+        run: pnpm exec playwright test --project=${{ matrix.project }}
 
       - name: Convert journey video to MP4
+        if: matrix.project == 'video'
         run: pnpm run convert:video
+
+      - name: Upload Playwright artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-qa-playwright-${{ matrix.project }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+  storybook:
+    name: Build Storybook
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Storybook
         run: pnpm run build-storybook
+
+      - name: Upload Storybook artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-qa-storybook
+          path: storybook-static
+          if-no-files-found: ignore
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse QA
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download production build
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: frontend-qa-build
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Lighthouse CI
         run: pnpm exec lhci autorun
@@ -80,16 +248,28 @@ jobs:
       - name: Capture Lighthouse report screenshots
         run: pnpm run test:lighthouse:screenshots
 
-      - name: Upload QA artifacts
+      - name: Upload Lighthouse artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: frontend-qa-artifacts
+          name: frontend-qa-lighthouse
+          include-hidden-files: true
           path: |
-            playwright-report
-            test-results
             .lighthouseci
             docs/assets/testing/lighthouse
-            storybook-static
           if-no-files-found: ignore
           retention-days: 7
+
+  frontend-qa:
+    name: Frontend QA suite
+    if: ${{ always() }}
+    needs: [quality, unit, build, playwright, storybook, lighthouse]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify QA jobs
+        if: ${{ needs.quality.result != 'success' || needs.unit.result != 'success' || needs.build.result != 'success' || needs.playwright.result != 'success' || needs.storybook.result != 'success' || needs.lighthouse.result != 'success' }}
+        run: exit 1
+
+      - name: QA complete
+        run: echo "Frontend QA completed in parallel."

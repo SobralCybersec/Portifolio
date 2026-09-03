@@ -14,6 +14,7 @@ function browserErrors(page: Page) {
 
 test('blog index and tag navigation render without browser errors', async ({ page }) => {
   const errors = browserErrors(page);
+  await page.route('https://www.youtube-nocookie.com/**', (route) => route.abort());
   await page.goto('/en/blog');
   await expect(page.getByRole('heading', { name: 'Field Notes' })).toBeVisible();
   const articleLink = page.locator('a.blog-article-row').filter({ hasText: 'How I got 100 on Lighthouse' });
