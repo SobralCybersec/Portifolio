@@ -1,0 +1,51 @@
+---
+title: "Lighthouse CI machte mich wahnsinnig"
+description: "Ein Bericht über die Probleme, die ich beim Optimieren meines Portfolios und beim Messen seiner Leistung mit Lighthouse hatte."
+date: "2026-09-03T12:57:59-03:00"
+updated: "2026-09-03T12:57:59-03:00"
+tags: 
+ - nextjs
+ - performance
+ - frontend
+draft: false
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "357543f67980c8d2f444547ec4126c0fd0a40f45503048e7ac3208ece1aa7b72"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/03/lighthouse-made-me-crazy"
+---
+
+## Wie ich Probleme beim Optimieren meiner Website mit Lighthouse hatte
+
+Ich hatte noch nie einen so strengen Framework gesehen
+
+Diese Tage, als ich mein Portfolio produzierte und verbesserte und Ideen für das Stilisieren suchte, beschloss ich, Technologien der Quality Assurance (QA) einzusetzen.
+
+Um die Situation zu verbessern, kam ich zu einem Punkt, an dem ich Jeqt, Vitest, Lighthouse, Playwright, Eslint, Jscpd und Lizard verwendete
+
+Bei der Erstellung von E2E-Tests und sogar Storybook, diese vollständig over-engineered Entscheidungen brachen meine Code mehrmals, um die Marke von 100% bei Lighthouse zu erreichen.
+
+Selbst mit verschiedenen Skripten, um die Automatisierung zu erleichtern, hatte ich den Mut, mich selbst zu fordern
+
+Dennoch habe ich derzeit Schwierigkeiten, erneut 100% zu erreichen
+
+Gründe, warum ich Lighthouse verwende: Es erzwingt, dass du deine Website gut optimierst, die Metriken machen Sinn, jedoch zusammen mit Next.js, einem Slop-Generated-Framework, wird es zu einem Chaos
+
+## Analysiere mein Leiden
+
+<img
+  src="https://i.imgur.com/0yHscWH.png"
+  alt="Screenshot"
+/>
+
+---
+
+Ich hatte einen absurden Tick, um 100 in allen Scores zu erreichen, aber immer gab es etwas, was man verbessern konnte, wie jeder Entwickler es tun würde, ich recherchierte und analysierte, dass mein Agent und meine Tests das veraltete Cache des Next.js ignorierten, wer würde es wagen..
+
+Ich musste den Layout, die Seiten, die Bilder, die Coverages, den Typewriter und Ähnliches ändern, noch ein Tag existierend dank der
+
+<img
+  src="/icons/nextjs.png"
+  alt="Next"
+/>

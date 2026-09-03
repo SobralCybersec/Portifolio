@@ -1,0 +1,52 @@
+---
+title: "Lighthouse CI m'a rendu fou"
+description: "Un récit des problèmes que j'ai rencontrés lors de l'optimisation de mon portefeuille et de la mesure de son performance avec Lighthouse."
+date: "2026-09-03T12:57:59-03:00"
+updated: "2026-09-03T12:57:59-03:00"
+tags: 
+ - nextjs
+ - performance
+ - frontend
+draft: false
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "357543f67980c8d2f444547ec4126c0fd0a40f45503048e7ac3208ece1aa7b72"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/03/lighthouse-made-me-crazy"
+---
+
+## Comment j'ai eu des problèmes à optimiser mon site avec Lighthouse
+
+Je n'avais jamais vu un framework aussi rigide que ça
+
+Récemment, en produisant et en améliorant mon portefeuille tout en cherchant des idées pour styliser, j'ai décidé d'intégrer des technologies de Quality Assurance (QA).
+
+Pour améliorer la situation, j'ai atteint un moment où j'utilisais Jeqt, Vitest, Lighthouse, Playwright, Eslint, Jscpd et Lizard
+
+En produisant des tests E2E, en insérant même Storybook, ces décisions totalement over-engineered ont cassé mon code
+plusieurs fois, pour atteindre la marque de 100% dans Lighthouse.
+
+Même avec plusieurs scripts pour faciliter l'automatisation, j'ai eu le courage de me défier
+
+Cependant, actuellement, j'ai eu des difficultés à atteindre à nouveau 100% dans les résultats
+
+Motifs que j'utilise Lighthouse : il exige que vous optimisiez bien votre site, les métriques ont du sens, mais combiné à Next.js, un framework Slop-Generated devient un chaos
+
+## Analysez mon souffrance
+
+<img
+  src="https://i.imgur.com/0yHscWH.png"
+  alt="Print"
+/>
+
+---
+
+J'ai eu un Tick absurde pour atteindre 100 dans tous les scores, mais j'avais toujours quelque chose à améliorer, comme tout développeur le ferait, j'ai recherché et analysé que mon agent et mes tests ignoraient le cache du Next.js, qui dirait...
+
+J'ai dû modifier le layout, les pages, les images, les coverages, le typewriter et affins, un autre jour existant grâce aux
+
+<img
+  src="/icons/nextjs.png"
+  alt="Next"
+/>

@@ -1,0 +1,61 @@
+---
+title: "Wie ich bei Lighthouse eine 100 erzielte"
+description: "Ein kurzer Bericht über die Entscheidungen, die JavaScript reduzierten, Layout Shift verhinderten und diese Next.js-Seite schneller machten."
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: false
+translationKey: "lighthouse-nextjs-performance"
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "2b72d21342755339aa317ea73afc3d1c9c7d47b163a14ab590a7b18e5984adbf"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## Das Ergebnis
+
+Die Leistung kam nicht aus einem einzigen Trick. Sie kam aus dem Halten eines kurzen critical path: Server Components als Standard, Bilder mit bekannten Dimensionen und visuelle Effekte außerhalb des ersten Paints.
+
+<Callout title="Goldenes Regel" variant="success">
+  Mess den critical path, bevor du Details optimierst. Der Nutzer spürt Bytes und wartet, nicht die Eleganz des Codes.
+</Callout>
+
+## Was sich verändert hat
+
+1. Editorial-Listen laden nur Metadaten auf dem Server.
+2. MDX-Inhalt wird nur auf der Artikelseite kompiliert.
+3. Videos und Embeds nutzen on-demand loading.
+
+### Das editorische Vertragswerk
+
+| Feld | Rolle |
+| --- | --- |
+| `title` | Seitentitel und Card-Titel |
+| `description` | Zusammenfassung, SEO, RSS und Archive |
+| `date` | Chronologische Sortierung |
+| `tags` | Kontrollierte Taxonomie |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## Nächste Messung
+
+Der nächste Schritt ist, Seiten mit echinem Inhalt zu vergleichen, ohne den Blog in einen riesigen Index im Browser zu verwandeln.
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube-nocookie.com/embed/Pw0E4OSJQTM"
+  title="Fairy Tail (PT-BR) - Abschluss 1"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>

@@ -1,0 +1,51 @@
+---
+title: "Lighthouse CI が私を狂わせた"
+description: "私のポートフォリオを最適化し、Lighthouseでパフォーマンスを測定する際の問題についての報告。"
+date: "2026-09-03T12:57:59-03:00"
+updated: "2026-09-03T12:57:59-03:00"
+tags: 
+ - nextjs
+ - performance
+ - frontend
+draft: false
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "357543f67980c8d2f444547ec4126c0fd0a40f45503048e7ac3208ece1aa7b72"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/03/lighthouse-made-me-crazy"
+---
+
+## Lighthouseでサイトを最適化する際の問題
+
+これまでで最も厳しいフレームワークを見たことがある
+
+ポートフォリオの制作と改善中にスタイルのアイデアを探していたが、品質保証（QA）の技術を導入することに決めた。
+
+状況を改善するために、JeQt、Vitest、Lighthouse、Playwright、Eslint、Jscpd、Lizardといったツールを使い始めた。
+
+E2Eテストを実装し、Storybookまで導入したが、これらは過度に設計された決定で、コードを複数回破壊し、Lighthouseで100%に達するまでに至った。
+
+複数のスクリプトで自動化を容易にしようとしたが、それでも自分自身に挑戦した。
+
+しかし、現在は再び100%のスコアに達するのに困難を抱えている。
+
+Lighthouseを使う理由は、サイトをよく最適化する必要があること、メトリクスが意味があることだが、Next.jsというフレームワークと組み合わせると、混乱に陥る。
+
+## 私の苦しみを分析してみよう
+
+<img
+  src="https://i.imgur.com/0yHscWH.png"
+  alt="スクリーンショット"
+/>
+
+---
+
+すべてのスコアに100%達成するためのチケットが異常に多く、常に改善点があった。どの開発者もそうするように、私は調査し、分析したが、Next.jsのキャッシュがテストとアーカイブで無視されていたことに気づいた。
+
+レイアウト、ページ、画像、カバレッジ、タイピストなど、また一日を過ごすことができた。これはすべて「Next」のおかげだ。
+
+<img
+  src="/icons/nextjs.png"
+  alt="Next"
+/>

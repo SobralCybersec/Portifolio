@@ -1,0 +1,61 @@
+---
+title: "Cómo logré 100 en Lighthouse"
+description: "Un registro breve de las decisiones que redujeron JavaScript, evitó el layout shift y dejó esta página de Next.js más rápida."
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: false
+translationKey: "lighthouse-nextjs-performance"
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "2b72d21342755339aa317ea73afc3d1c9c7d47b163a14ab590a7b18e5984adbf"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## El resultado
+
+La performance no vino de un truco aislado. Vino de mantener el critical path pequeño: Server Components por defecto, imágenes con dimensiones conocidas y efectos visuales fuera del primer paint.
+
+<Callout title="Regla de oro" variant="success">
+  Mide el critical path antes de optimizar detalles. El usuario siente bytes y espera, no la elegancia del código.
+</Callout>
+
+## Lo que cambió
+
+1. Las listas editoriales cargan solo metadata en el servidor.
+2. El contenido MDX compila solo en la página del artículo.
+3. Videos y embeds usan carga bajo demanda.
+
+### El contrato editorial
+
+| Campo | Papel |
+| --- | --- |
+| `title` | Título de la página y del card |
+| `description` | Resumen, SEO, RSS y archive |
+| `date` | Ordenación cronológica |
+| `tags` | Taxonomía controlada |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## Próxima medición
+
+El siguiente paso es comparar páginas con contenido real, sin transformar el blog en un índice gigante en el navegador.
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube-nocookie.com/embed/Pw0E4OSJQTM"
+  title="Fairy Tail (PT-BR) - Final 1"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>

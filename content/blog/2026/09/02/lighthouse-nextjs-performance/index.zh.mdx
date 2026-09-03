@@ -1,0 +1,61 @@
+---
+title: "如何在Lighthouse中获得100分"
+description: "简要记录一些决策，这些决策减少了JavaScript使用量，避免了布局偏移，并使该Next.js页面更快。"
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: false
+translationKey: "lighthouse-nextjs-performance"
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "2b72d21342755339aa317ea73afc3d1c9c7d47b163a14ab590a7b18e5984adbf"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## 结果
+
+性能并非来自某个孤立的技巧。它来自于保持关键路径（critical path）尽可能小：默认使用Server Components，使用已知尺寸的图片，并将视觉效果移出首次绘制（first paint）之外。
+
+<Callout title="黄金法则" variant="success">
+  在优化细节之前，先衡量关键路径。用户感知的是字节和等待时间，而不是代码的优雅程度。
+</Callout>
+
+## 发生了什么变化
+
+1. 编辑列表仅在服务器端加载元数据。
+2. MDX内容仅在文章页面进行编译。
+3. 视频和嵌入内容使用按需加载。
+
+### 编辑协议
+
+| 字段 | 角色 |
+| --- | --- |
+| `title` | 页面标题和卡片标题 |
+| `description` | 摘要、SEO、RSS和存档 |
+| `date` | 按时间顺序排列 |
+| `tags` | 受控的分类法 |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## 下一次测量
+
+下一步是将实际内容页面进行比较，而不要把博客变成浏览器中的巨型索引。
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube-nocookie.com/embed/Pw0E4OSJQTM"
+  title="Fairy Tail (PT-BR) - 第1集完结"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>

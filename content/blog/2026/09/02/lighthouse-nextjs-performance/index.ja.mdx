@@ -1,0 +1,61 @@
+---
+title: "Lighthouseで100点を達成した方法"
+description: "このページのNext.jsを速くするためにJavaScriptを減らし、レイアウトシフトを避けた、短い記録です。"
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: false
+translationKey: "lighthouse-nextjs-performance"
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "2b72d21342755339aa317ea73afc3d1c9c7d47b163a14ab590a7b18e5984adbf"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## 結果
+
+パフォーマンスは単一のトリックから得られたわけではありません。それは、critical pathを小さく保つことから得られました：デフォルトでServer Componentsを使用し、既知の次元を持つ画像を使用し、最初のペイン外で視覚効果を実行しました。
+
+<Callout title="黄金のルール" variant="success">
+  詳細を最適化する前にcritical pathを測定してください。ユーザーはバイトを感じ、待つだけで、コードのエレガントさを感じません。
+</Callout>
+
+## 変更点
+
+1. 編集リストはサーバーでみにメタデータのみをロードします。
+2. MDXコンテンツは記事ページのみでコンパイルされます。
+3. 動画と埋め込みはon-demand loadingを使用します。
+
+### 編集の契約
+
+| フィールド | 役割 |
+| --- | --- |
+| `title` | ページとカードのタイトル |
+| `description` | サマリー、SEO、RSS、アーカイブ |
+| `date` | 時系列順 |
+| `tags` | 制御されたトクソノミー |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## 次の測定
+
+次のステップは、ブログをブラウザ内の巨大なインデックスに変換することなく、実際のコンテンツを持つページを比較することです。
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube-nocookie.com/embed/Pw0E4OSJQTM"
+  title="フェアリーテール（PT-BR）- 終了1"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>

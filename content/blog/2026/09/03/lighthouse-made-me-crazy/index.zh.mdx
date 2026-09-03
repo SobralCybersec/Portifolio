@@ -1,0 +1,51 @@
+---
+title: "Lighthouse CI 让我发疯"
+description: "一个关于我在优化我的作品集并使用 Lighthouse 测量其性能时遇到的问题的报告。"
+date: "2026-09-03T12:57:59-03:00"
+updated: "2026-09-03T12:57:59-03:00"
+tags: 
+ - nextjs
+ - performance
+ - frontend
+draft: false
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "357543f67980c8d2f444547ec4126c0fd0a40f45503048e7ac3208ece1aa7b72"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/03/lighthouse-made-me-crazy"
+---
+
+## 我如何在使用 Lighthouse 优化我的网站时遇到问题
+
+我从未见过如此严格的框架
+
+这些天在制作和改进我的作品集，同时寻找设计灵感，我决定引入质量保证（QA）技术。
+
+为了改善这种情况，我来到了一个阶段，我正在使用 Jeqt、Vitest、Lighthouse、Playwright、Eslint、Jscpd 和 Lizard
+
+制作端到端测试，甚至引入 Storybook，这些完全过度设计的决定多次破坏了我的代码，以达到 Lighthouse 的 100% 分数。
+
+即使有多个脚本来简化自动化，我仍然有勇气挑战自己
+
+然而，目前我再次难以达到 100% 的分数
+
+我使用 Lighthouse 的原因：它要求你很好地优化你的网站，这些指标有意义，但结合 Next.js，一个 Slop-Generated 框架，就会变成一场混乱
+
+## 分析我的痛苦
+
+<img
+  src="https://i.imgur.com/0yHscWH.png"
+  alt="截图"
+/>
+
+---
+
+我有一个巨大的 Tick 来达到所有分数的 100%，但总是有东西可以改进，就像任何开发人员所做的那样，我研究并分析了我的代理和测试正在忽略 Next.js 的缓存，谁会想到……
+
+我不得不改变布局、页面、图片、覆盖率、打字机等，又一天存在，多亏了
+
+<img
+  src="/icons/nextjs.png"
+  alt="Next"
+/>

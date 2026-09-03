@@ -1,0 +1,61 @@
+---
+title: "Comment j'ai obtenu 100 au Lighthouse"
+description: "Un court résumé des décisions qui ont réduit le JavaScript, évité les déplacements de mise en page et rendu cette page Next.js plus rapide."
+date: "2026-09-02T13:00:00-03:00"
+updated: "2026-09-02T13:00:00-03:00"
+tags:
+  - nextjs
+  - performance
+  - frontend
+draft: false
+pinned: false
+translationKey: "lighthouse-nextjs-performance"
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "2b72d21342755339aa317ea73afc3d1c9c7d47b163a14ab590a7b18e5984adbf"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/02/lighthouse-nextjs-performance"
+---
+
+## Le résultat
+
+La performance n'est pas venue d'un seul truc. Elle est venue de maintenir un chemin critique petit : Server Components par défaut, des images avec des dimensions connues et des effets visuels hors du premier rendu.
+
+<Callout title="Règle d'or" variant="success">
+  Mesurez le chemin critique avant d'optimiser les détails. L'utilisateur ressent les octets et attend, pas l'élégance du code.
+</Callout>
+
+## Ce qui a changé
+
+1. Les listes éditoriales chargent uniquement les métadonnées sur le serveur.
+2. Le contenu MDX compile uniquement sur la page de l'article.
+3. Les vidéos et les embeds utilisent le chargement demandé.
+
+### Le contrat éditorial
+
+| Champ | Rôle |
+| --- | --- |
+| `title` | Titre de la page et du card |
+| `description` | Résumé, SEO, RSS et archive |
+| `date` | Tri chronologique |
+| `tags` | Taxonomie contrôlée |
+
+```ts
+const firstPaint = 'server';
+const clientJavaScript = 'only when interaction exists';
+```
+
+## Prochaine mesure
+
+La prochaine étape est de comparer des pages avec du contenu réel, sans transformer le blog en un index géant dans le navigateur.
+
+<iframe
+  width="686"
+  height="331"
+  src="https://www.youtube-nocookie.com/embed/Pw0E4OSJQTM"
+  title="Fairy Tail (PT-BR) - Fin 1"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
