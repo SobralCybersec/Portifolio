@@ -56,9 +56,46 @@ const TRANSLATABLE_ATTRIBUTES = new Set(['alt', 'caption', 'title']);
 const PROTECTED_TYPES = new Set(['code', 'inlineCode', 'mdxFlowExpression', 'mdxTextExpression', 'mdxjsEsm']);
 const MAX_TRANSLATION_LENGTH = 20_000;
 const UNSAFE_MDX_RE = /(?:^|\n)\s*(?:import|export)\s+|<\/?[A-Za-z][^>]*>|\{(?:[^{}]|\{[^{}]*\})*\}/mu;
+const MARKDOWN_AUTOLINK_RE = /^<(https?:\/\/[^\s>]+)>$/u;
+const PRESERVED_TERM_RE = /^(?:\p{Lu}[\p{L}\p{N}'’.-]*)(?:(?:\s+|\s*[|/&-]\s*)\p{Lu}[\p{L}\p{N}'’.-]*)*[.:]?$/u;
+const PRESERVED_FRAGMENT_RE = /^[\p{L}\p{N}][\p{L}\p{N}'’./_-]*(?:\s+(?:[|/&-]\s*)?[\p{L}\p{N}][\p{L}\p{N}'’./_-]*)*\s*[.:→]?$/u;
+const PORTUGUESE_COMMON_WORDS = new Set(['a', 'ah', 'afins', 'alta', 'ao', 'aos', 'arquivos', 'as', 'até', 'banco', 'bancos', 'bom', 'como', 'com', 'da', 'das', 'de', 'do', 'dos', 'e', 'em', 'eu', 'filas', 'foi', 'imagens', 'mais', 'mas', 'meu', 'minha', 'muitas', 'na', 'nas', 'no', 'nos', 'o', 'olá', 'os', 'para', 'por', 'qualquer', 'que', 'se', 'sem', 'servidores', 'sites', 'simples', 'sua', 'suas', 'tem', 'trabalho', 'um', 'uma', 'vezes', 'voce']);
+const SPANISH_SHARED_WORDS = new Set(['filas', 'servidores']);
 
 function processor() {
   return unified().use(remarkParse).use(remarkFrontmatter).use(remarkMdx).use(remarkGfm);
+}
+
+function markdownProcessor() {
+  return unified().use(remarkParse).use(remarkFrontmatter).use(remarkGfm);
+}
+
+function markdownAutolinks(source) {
+  const ranges = [];
+  const tree = markdownProcessor().parse(source);
+  visitParents(tree, (node) => node.type === 'link', (node) => {
+    if (!node.position) return;
+    const start = node.position.start.offset;
+    const end = node.position.end.offset;
+    const match = MARKDOWN_AUTOLINK_RE.exec(source.slice(start, end));
+    if (match) ranges.push({ start, end, url: match[1] });
+  });
+  return ranges;
+}
+
+function replaceRanges(source, ranges, replacement) {
+  for (const range of [...ranges].sort((a, b) => b.start - a.start)) {
+    source = `${source.slice(0, range.start)}${replacement(range)}${source.slice(range.end)}`;
+  }
+  return source;
+}
+
+function mdxParseSource(source) {
+  return replaceRanges(source, markdownAutolinks(source), ({ url }) => `\`${url.replaceAll('`', ' ')}\``);
+}
+
+function normalizeMdxAutolinks(source) {
+  return replaceRanges(source, markdownAutolinks(source), ({ url }) => `[${url}](${url})`);
 }
 
 function sourceHash(source) {
@@ -98,6 +135,10 @@ function protectedByAncestors(ancestors) {
   return ancestors.some((ancestor) => PROTECTED_TYPES.has(ancestor.type));
 }
 
+function isLinkUrlLabel(node, ancestors) {
+  return ancestors.some((ancestor) => ancestor.type === 'link' && normalizedText(node.value) === normalizedText(ancestor.url));
+}
+
 function jsxAttributeSegment(segments, source, node) {
   if (!TRANSLATABLE_ATTRIBUTES.has(node.name) || typeof node.value !== 'string' || !node.position) return;
   const start = node.position.start.offset;
@@ -122,12 +163,12 @@ function imageAltSegment(segments, source, node) {
 export function collectTranslationSegments(source) {
   const segments = [];
   frontmatterSegments(source, segments);
-  const tree = processor().parse(source);
+  const tree = processor().parse(mdxParseSource(source));
   let textIndex = 0;
 
   visitParents(tree, (node) => node.type === 'text' || node.type === 'image' || node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement', (node, ancestors) => {
     if (node.type === 'text') {
-      if (!node.position || protectedByAncestors(ancestors)) return;
+      if (!node.position || protectedByAncestors(ancestors) || isLinkUrlLabel(node, ancestors)) return;
       const start = node.position.start.offset;
       addSegment(segments, `text-${String(textIndex++).padStart(4, '0')}`, node.value, start, 'text');
       return;
@@ -282,6 +323,31 @@ function normalizedText(value) {
   return value.normalize('NFKC').replace(/\s+/gu, ' ').trim().toLocaleLowerCase();
 }
 
+function isPreservedTerm(segment) {
+  const value = segment.text.trim();
+  const words = normalizedText(value).match(/\p{L}+/gu) ?? [];
+  return value.length <= 80
+    && words.length <= 5
+    && !/[áàâãéêíóôõúç]/iu.test(value)
+    && !words.some((word) => PORTUGUESE_COMMON_WORDS.has(word))
+    && (PRESERVED_TERM_RE.test(value) || PRESERVED_FRAGMENT_RE.test(value));
+}
+
+function isTargetLanguageCopy(segment, targetLocale) {
+  if (targetLocale !== 'es') return false;
+  const value = segment.text.trim();
+  const words = normalizedText(value).match(/\p{L}+/gu) ?? [];
+  const portugueseWords = words.filter((word) => PORTUGUESE_COMMON_WORDS.has(word));
+  return words.length <= 3
+    && !/[ãõâêôç]/iu.test(value)
+    && !portugueseWords.some((word) => !SPANISH_SHARED_WORDS.has(word))
+    && PRESERVED_FRAGMENT_RE.test(value);
+}
+
+function acceptsCopiedSource(segment, targetLocale) {
+  return isPreservedTerm(segment) || isTargetLanguageCopy(segment, targetLocale);
+}
+
 export async function translateSegments(segments, { client, model = MODEL, targetLocale = 'en' } = {}) {
   const language = TARGET_LANGUAGES[targetLocale]?.name ?? targetLocale;
   const validateEachSegment = segments.length === 1;
@@ -303,7 +369,8 @@ export async function translateSegments(segments, { client, model = MODEL, targe
           : await requestLlamaServer(payload);
         const translation = parseTranslationResponse(response, segment);
         const copiedSource = normalizedText(translation) === normalizedText(segment.text);
-        if (!copiedSource && (!validateEachSegment || isLikelyTranslation(translation, targetLocale))) {
+        const copiedTerm = copiedSource && acceptsCopiedSource(segment, targetLocale);
+        if ((copiedTerm || !copiedSource) && (copiedTerm || !validateEachSegment || isLikelyTranslation(translation, targetLocale))) {
           translations.set(segment.id, translation);
           break;
         }
@@ -316,7 +383,10 @@ export async function translateSegments(segments, { client, model = MODEL, targe
     }
     if (!translations.has(segment.id)) throw lastError;
   }
-  if (validateEachSegment && !isLikelyTranslation([...translations.values()].join('\n'), targetLocale)) {
+  const preservedOnly = validateEachSegment
+    && acceptsCopiedSource(segments[0], targetLocale)
+    && normalizedText(translations.get(segments[0].id) ?? '') === normalizedText(segments[0].text);
+  if (validateEachSegment && !preservedOnly && !isLikelyTranslation([...translations.values()].join('\n'), targetLocale)) {
     throw new Error(`Translation response failed language validation for ${language}; source file was left untouched.`);
   }
   return translations;
@@ -356,7 +426,8 @@ function insertTranslationMetadata(source, hash) {
 
 export function buildTranslatedDocument(source, translations) {
   const segments = collectTranslationSegments(source);
-  return insertTranslationMetadata(applyReplacements(source, segments, translations), sourceHash(source));
+  const translated = applyReplacements(source, segments, translations);
+  return insertTranslationMetadata(normalizeMdxAutolinks(translated), sourceHash(source));
 }
 
 function findBundles(root = CONTENT_ROOT) {
@@ -394,6 +465,21 @@ function writeAtomic(path, content) {
   renameSync(temporary, path);
 }
 
+function normalizeSources(bundles) {
+  const sources = new Map();
+  for (const bundle of bundles) {
+    const original = readFileSync(bundle.sourcePath, 'utf8');
+    const source = normalizeMdxAutolinks(original);
+    const changed = source !== original;
+    if (changed) {
+      writeAtomic(bundle.sourcePath, source);
+      console.log(`✓ normalized ${relative(process.cwd(), bundle.sourcePath)} (MDX autolinks)`);
+    }
+    sources.set(bundle.sourcePath, { source, changed });
+  }
+  return sources;
+}
+
 export function parseArgs(argv) {
   const selectors = argv.filter((arg) => !arg.startsWith('--'));
   return { selectors, all: argv.includes('--all'), stale: argv.includes('--stale'), noPush: argv.includes('--no-push') };
@@ -405,15 +491,16 @@ export async function translateBlog({ root = CONTENT_ROOT, selectors = [], all =
     ? bundles
     : bundles.filter((bundle) => selectors.some((selector) => bundle.slug === selector || bundle.slug.startsWith(`${selector}-`) || relative(root, bundle.directory).split(sep).join('/') === selector));
   if (!selected.length) throw new Error(`No blog bundle matched: ${selectors.join(', ') || '(none)'}`);
+  const sources = normalizeSources(selected);
   const candidates = selected.flatMap((bundle) => TARGET_LOCALES
-    .filter((locale) => !existsSync(bundle.targetPaths[locale]) || (stale && isStale(bundle.sourcePath, bundle.targetPaths[locale], locale)))
+    .filter((locale) => !existsSync(bundle.targetPaths[locale]) || ((stale || sources.get(bundle.sourcePath).changed) && isStale(bundle.sourcePath, bundle.targetPaths[locale], locale)))
     .map((locale) => ({ bundle, locale, targetPath: bundle.targetPaths[locale] })));
   if (!candidates.length) return { translated: 0, skipped: selected.length * TARGET_LOCALES.length };
   const server = client ? { process: null, owned: false } : await startLlamaServer();
   let translated = 0;
   try {
     for (const candidate of candidates) {
-      const source = readFileSync(candidate.bundle.sourcePath, 'utf8');
+      const source = sources.get(candidate.bundle.sourcePath).source;
       const segments = collectTranslationSegments(source);
       const result = await translateSegments(segments, { client, model, targetLocale: candidate.locale });
       writeAtomic(candidate.targetPath, buildTranslatedDocument(source, result));

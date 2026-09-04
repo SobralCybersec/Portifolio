@@ -22,7 +22,7 @@ const LANGUAGE_MARKERS = {
 const PORTUGUESE_MARKERS = new Set([
   'não', 'uma', 'tão', 'estava', 'porém', 'decidi', 'cheguei', 'havia', 'ficar', 'ficou',
   'ficando', 'meu', 'minha', 'meus', 'minhas', 'portfólio', 'portifólio', 'imagens',
-  'diversas', 'graças', 'louco', 'sofrimento', 'utilizando', 'desconsiderando', 'tive', 'tenho',
+  'diversas', 'graças', 'louco', 'sofrimento', 'desconsiderando', 'tive', 'tenho',
   'veio', 'enquanto', 'qualquer', 'assim', 'atualmente', 'novamente', 'situação',
   'afins',
 ]);

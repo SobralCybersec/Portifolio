@@ -47,6 +47,19 @@ test('MDX translator collects human text and protects syntax', () => {
   assert.match(output, new RegExp(`sourceHash: "${hash}"`));
 });
 
+test('MDX translator normalizes angle-bracket URLs automatically', () => {
+  const source = `${fixture}\n\`<https://example.com/code>\`\nLink: <https://example.com/docs/>\n`;
+  const segments = collectTranslationSegments(source);
+  assert.equal(segments.some((segment) => segment.text.includes('https://example.com')), false);
+
+  const translations = new Map(segments.map((segment) => [segment.id, `EN: ${segment.text}`]));
+  const output = buildTranslatedDocument(source, translations);
+  assert.match(output, /`<https:\/\/example\.com\/code>`/u);
+  assert.match(output, /\[https:\/\/example\.com\/docs\/\]\(https:\/\/example\.com\/docs\/\)/u);
+  const outputSegments = collectTranslationSegments(output);
+  assert.equal(outputSegments.some((segment) => segment.text.includes('example.com')), false);
+});
+
 test('TranslateGemma receives its exact wrapped prompt per segment', async () => {
   const client = {
     chat: async ({ prompt, stop }) => {
@@ -90,6 +103,86 @@ test('retries output when language validation rejects copied source text', async
   assert.equal(result.get('segment-1'), 'El resultado traducido es correcto');
 });
 
+test('keeps copied brand names without retrying', async () => {
+  let calls = 0;
+  const client = {
+    chat: async () => {
+      calls += 1;
+      return { message: { content: 'Northflank' } };
+    },
+  };
+  const result = await translateSegments([{ id: 'text-0002', text: 'Northflank', kind: 'text' }], { client });
+  assert.equal(calls, 1);
+  assert.equal(result.get('text-0002'), 'Northflank');
+});
+
+test('keeps copied technical fragments without retrying', async () => {
+  let calls = 0;
+  const client = {
+    chat: async () => {
+      calls += 1;
+      return { message: { content: 'Ruby on Rails' } };
+    },
+  };
+  const result = await translateSegments([{ id: 'text-0081', text: 'Ruby on Rails', kind: 'text' }], { client, targetLocale: 'de' });
+  assert.equal(calls, 1);
+  assert.equal(result.get('text-0081'), 'Ruby on Rails');
+});
+
+test('keeps a valid unchanged Spanish word without retrying', async () => {
+  let calls = 0;
+  const client = {
+    chat: async () => {
+      calls += 1;
+      return { message: { content: 'Servidores' } };
+    },
+  };
+  const result = await translateSegments([{ id: 'text-0137', text: 'Servidores', kind: 'text' }], { client, targetLocale: 'es' });
+  assert.equal(calls, 1);
+  assert.equal(result.get('text-0137'), 'Servidores');
+});
+
+test('keeps a valid unchanged Spanish technical fragment without retrying', async () => {
+  let calls = 0;
+  const client = {
+    chat: async () => {
+      calls += 1;
+      return { message: { content: 'Filas HTTP' } };
+    },
+  };
+  const result = await translateSegments([{ id: 'text-0219', text: 'Filas HTTP', kind: 'text' }], { client, targetLocale: 'es' });
+  assert.equal(calls, 1);
+  assert.equal(result.get('text-0219'), 'Filas HTTP');
+});
+
+test('keeps a valid unchanged Spanish accented word without retrying', async () => {
+  let calls = 0;
+  const client = {
+    chat: async () => {
+      calls += 1;
+      return { message: { content: 'Vídeos' } };
+    },
+  };
+  const result = await translateSegments([{ id: 'text-0233', text: 'Vídeos', kind: 'text' }], { client, targetLocale: 'es' });
+  assert.equal(calls, 1);
+  assert.equal(result.get('text-0233'), 'Vídeos');
+});
+
+test('does not keep copied Portuguese words as preserved terms', async () => {
+  let calls = 0;
+  const client = {
+    chat: async () => {
+      calls += 1;
+      return { message: { content: 'Olá' } };
+    },
+  };
+  await assert.rejects(
+    translateSegments([{ id: 'segment-1', text: 'Olá', kind: 'text' }], { client, targetLocale: 'es' }),
+    /copied source text/u,
+  );
+  assert.equal(calls, 2);
+});
+
 test('rejects model output that introduces executable MDX', async () => {
   const client = {
     chat: async () => ({ message: { content: '<Danger />' } }),
@@ -114,7 +207,7 @@ test('translates every configured locale sibling', async () => {
   try {
     const directory = join(root, 'content/blog/2026/01/01/localized');
     mkdirSync(directory, { recursive: true });
-    writeFileSync(join(directory, 'index.mdx'), fixture, 'utf8');
+    writeFileSync(join(directory, 'index.mdx'), `${fixture}\nLink: <https://example.com/docs/>\n`, 'utf8');
     const client = {
       chat: async ({ prompt }) => {
         assert.match(prompt, /<start_of_turn>user\nYou are a professional Portuguese \(pt-BR\) to .+ translator\./u);
@@ -134,7 +227,17 @@ test('translates every configured locale sibling', async () => {
     };
     const result = await translateBlog({ root: join(root, 'content/blog'), all: true, client });
     assert.equal(result.translated, TARGET_LOCALES.length);
+    assert.match(readFileSync(join(directory, 'index.mdx'), 'utf8'), /\[https:\/\/example\.com\/docs\/\]\(https:\/\/example\.com\/docs\/\)/u);
     for (const locale of TARGET_LOCALES) assert.match(readFileSync(join(directory, `index.${locale}.mdx`), 'utf8'), /translation:/);
+
+    let skippedCalls = 0;
+    const skipped = await translateBlog({
+      root: join(root, 'content/blog'),
+      all: true,
+      client: { chat: async () => { skippedCalls += 1; return { message: { content: 'unexpected' } }; } },
+    });
+    assert.deepEqual(skipped, { translated: 0, skipped: TARGET_LOCALES.length });
+    assert.equal(skippedCalls, 0);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
