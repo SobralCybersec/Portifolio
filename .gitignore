@@ -4,7 +4,8 @@
 .pnp.js
 .yarn/install-state.gz
 .claude-token-cleanup-backup-20260825
-resources
+/resources/*
+!/resources/.gitkeep
 # testing
 /coverage
 *.lcov
@@ -15,7 +16,8 @@ resources
 /.lighthouseci/
 /storybook-static/
 
-models/
+/models/*
+!/models/.gitkeep
 
 # next.js
 /.next/
@@ -88,7 +90,8 @@ logs
 .nyc_output
 
 # Generated quality reports
-/reports/
+/reports/*
+!/reports/.gitkeep
 
 # Uploads (keep structure, ignore content)
 public/uploads/*

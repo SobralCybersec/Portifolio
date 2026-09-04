@@ -230,6 +230,9 @@ Portifolio/
 │   └── 📁 docker/                    # Docker config tests
 ├── 📁 content/blog/                  # 📝 Date-based PT-BR MDX source and locale siblings
 ├── 📁 data/blog-tags.yml             # 🏷️ Canonical blog taxonomy
+├── 📁 models/                         # 🧠 Local GGUF models (contents omitted)
+├── 📁 reports/                        # 📊 Generated reports (contents omitted)
+├── 📁 resources/                      # 🧰 Local resources (contents omitted)
 ├── 📁 scripts/blog/                  # ⚙️ Create, translate, validate, pin, publish, watch
 ├── 📁 .github/
 │   └── 📁 workflows/                 # 🔄 CI/CD pipelines
