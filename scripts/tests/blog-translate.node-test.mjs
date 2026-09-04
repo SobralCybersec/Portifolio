@@ -47,27 +47,23 @@ test('MDX translator collects human text and protects syntax', () => {
   assert.match(output, new RegExp(`sourceHash: "${hash}"`));
 });
 
-test('structured llama.cpp response is validated and mapped by id', async () => {
+test('TranslateGemma receives its exact wrapped prompt per segment', async () => {
   const client = {
-    list: async () => ({ models: [{ name: 'test-model' }] }),
-    chat: async ({ messages, response_format }) => {
-      assert.equal(response_format.type, 'json_schema');
-      assert.equal(response_format.schema.type, 'object');
-      const request = JSON.parse(messages[1].content);
-      return { message: { content: JSON.stringify({ segments: request.segments.map(({ id, text }) => ({ id, text: `Translated ${text}` })) }) } };
+    chat: async ({ prompt, stop }) => {
+      assert.equal(prompt, '<start_of_turn>user\nYou are a professional Portuguese (pt-BR) to English (en) translator. Your goal is to accurately convey the meaning and nuances of the original Portuguese text while adhering to English grammar, vocabulary, and cultural sensitivities.\nProduce only the English translation, without any additional explanations or commentary. Please translate the following Portuguese text into English:\n\n\nOlá<end_of_turn>\n<start_of_turn>model\n');
+      assert.deepEqual(stop, ['<end_of_turn>']);
+      return { message: { content: 'Translated Olá' } };
     },
   };
   const result = await translateSegments([{ id: 'segment-1', text: 'Olá' }], { client, model: 'test-model', glossary: { preserve: [], terms: {} } });
   assert.equal(result.get('segment-1'), 'Translated Olá');
 });
 
-test('normalizes fenced and nested model responses', async () => {
+test('trims plain llama-server completion response', async () => {
   const client = {
     chat: async () => ({
       choices: [{
-        message: {
-          content: '```json\n{"response":{"translations":[{"id":"segment-1","translation":"Hello"}]}}\n```',
-        },
+        text: '\nHello\n',
       }],
     }),
   };
@@ -78,21 +74,20 @@ test('normalizes fenced and nested model responses', async () => {
 test('retries output when language validation rejects copied source text', async () => {
   let calls = 0;
   const client = {
-    chat: async ({ messages }) => {
+    chat: async ({ prompt }) => {
       calls += 1;
-      const request = JSON.parse(messages[1].content);
       const text = calls === 1
-        ? request.segments.map(({ id, text: value }) => ({ id, text: value }))
-        : request.segments.map(({ id }) => ({ id, text: 'El resultado traducido' }));
-      return { message: { content: JSON.stringify({ segments: text }) } };
+        ? 'O resultado muda agora'
+        : 'El resultado traducido es correcto';
+      assert.match(prompt, /to Spanish \(es\) translator/u);
+      return { message: { content: text } };
     },
   };
   const result = await translateSegments([
-    { id: 'segment-1', text: 'O resultado' },
-    { id: 'segment-2', text: 'O conteúdo muda' },
+    { id: 'segment-1', text: 'O resultado muda agora' },
   ], { client, targetLocale: 'es', glossary: { preserve: [], terms: {} } });
   assert.equal(calls, 2);
-  assert.equal(result.get('segment-1'), 'El resultado traducido');
+  assert.equal(result.get('segment-1'), 'El resultado traducido es correcto');
 });
 
 test('translation command accepts no-push publish flag', async () => {
@@ -111,17 +106,20 @@ test('translates every configured locale sibling', async () => {
     mkdirSync(directory, { recursive: true });
     writeFileSync(join(directory, 'index.mdx'), fixture, 'utf8');
     const client = {
-      chat: async ({ messages }) => {
-        const request = JSON.parse(messages[1].content);
-        const translated = {
-          English: 'The translated text',
-          German: 'Der übersetzte Text',
-          Spanish: 'El texto traducido',
-          French: 'Le texte traduit',
-          Japanese: '翻訳されたテキスト',
-          'Simplified Chinese': '翻译后的文本',
-        }[request.targetLanguage];
-        return { message: { content: JSON.stringify({ segments: request.segments.map(({ id }) => ({ id, text: translated })) }) } };
+      chat: async ({ prompt }) => {
+        assert.match(prompt, /<start_of_turn>user\nYou are a professional Portuguese \(pt-BR\) to .+ translator\./u);
+        const translated = prompt.includes('to English (en) translator')
+          ? 'The translated text is ready'
+          : prompt.includes('to German (de) translator')
+            ? 'Der übersetzte Text ist bereit'
+            : prompt.includes('to Spanish (es) translator')
+              ? 'El texto traducido es correcto'
+              : prompt.includes('to French (fr) translator')
+                ? 'Le texte traduit est correct'
+                : prompt.includes('to Japanese (ja) translator')
+                  ? '翻訳されたテキスト'
+                  : '翻译后的文本';
+        return { message: { content: translated } };
       },
     };
     const result = await translateBlog({ root: join(root, 'content/blog'), all: true, client });

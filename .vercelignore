@@ -15,6 +15,7 @@ jest.setup.js
 anime-effects-react
 repository
 resources
+models
 
 # Next.js
 .next

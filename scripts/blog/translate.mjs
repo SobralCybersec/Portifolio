@@ -1,7 +1,6 @@
 import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -12,33 +11,27 @@ import remarkMdx from 'remark-mdx';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { visitParents } from 'unist-util-visit-parents';
-import { z } from 'zod';
 import { BLOG_LOCALES, isLikelyTranslation, publishBlog, ROOT } from './lib.mjs';
 
-export const MODEL = process.env.LLAMA_MODEL ?? 'qwen3:8b';
+export const MODEL = process.env.LLAMA_MODEL ?? 'translategemma:4b';
 export const LLAMA_SERVER_URL = process.env.LLAMA_SERVER_URL ?? 'http://127.0.0.1:8080';
 export const LLAMA_SERVER_BIN = process.env.LLAMA_SERVER_BIN ?? '/usr/lib/ollama/llama-server';
 export const LLAMA_BACKEND_PATH = process.env.GGML_BACKEND_PATH ?? '/usr/lib/ollama/cuda_v13/libggml-cuda.so';
-export const LLAMA_MODEL_PATH = process.env.LLAMA_MODEL_PATH ?? join(homedir(), '.ollama/models/blobs/sha256-a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f');
-export const TRANSLATION_GLOSSARY = resolve(process.cwd(), 'data/blog-translation-glossary.yml');
+export const LLAMA_MODEL_PATH = process.env.LLAMA_MODEL_PATH ?? join(process.cwd(), 'models/translategemma-4b-it.Q8_0.gguf');
 export const TARGET_LOCALES = BLOG_LOCALES.filter((locale) => locale !== 'pt');
 const TARGET_LANGUAGES = {
-  en: 'English',
-  de: 'German',
-  es: 'Spanish',
-  fr: 'French',
-  ja: 'Japanese',
-  zh: 'Simplified Chinese',
+  en: { name: 'English', code: 'en' },
+  de: { name: 'German', code: 'de' },
+  es: { name: 'Spanish', code: 'es' },
+  fr: { name: 'French', code: 'fr' },
+  ja: { name: 'Japanese', code: 'ja' },
+  zh: { name: 'Simplified Chinese', code: 'zh-CN' },
 };
 
 const CONTENT_ROOT = resolve(process.cwd(), 'content/blog');
 const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---(?=\r?\n|$)/;
 const TRANSLATABLE_ATTRIBUTES = new Set(['alt', 'caption', 'title']);
 const PROTECTED_TYPES = new Set(['code', 'inlineCode', 'mdxFlowExpression', 'mdxTextExpression', 'mdxjsEsm']);
-const TranslationResponse = z.object({
-  segments: z.array(z.object({ id: z.string().min(1), text: z.string() })),
-});
-const TRANSLATION_SCHEMA = z.toJSONSchema(TranslationResponse);
 
 function processor() {
   return unified().use(remarkParse).use(remarkFrontmatter).use(remarkMdx).use(remarkGfm);
@@ -124,98 +117,21 @@ export function collectTranslationSegments(source) {
   return segments.sort((a, b) => a.start - b.start);
 }
 
-function readGlossary(path = TRANSLATION_GLOSSARY) {
-  if (!existsSync(path)) return { preserve: [], terms: {} };
-  const data = matter(`---\n${readFileSync(path, 'utf8')}\n---`).data;
-  return {
-    preserve: Array.isArray(data.preserve) ? data.preserve.filter((value) => typeof value === 'string') : [],
-    terms: data.terms && typeof data.terms === 'object' ? data.terms : {},
-  };
-}
-
-function translationPrompt(segments, glossary, targetLocale) {
-  return JSON.stringify({
-    sourceLanguage: 'Brazilian Portuguese',
-    targetLanguage: TARGET_LANGUAGES[targetLocale] ?? targetLocale,
-    rules: [
-      'Translate naturally and preserve the author\'s technical tone.',
-      'Do not summarize, add information, or remove meaning.',
-      'Preserve product, project, library, framework, protocol, and person names when appropriate.',
-      'Return every segment exactly once with the same id. Return no extra fields or commentary.',
-      'Keep leading and trailing whitespace out of translated text; the caller preserves source whitespace.',
-    ],
-    glossary,
-    segments: segments.map(({ id, text }) => ({ id, text })),
-  }, null, 2);
-}
-
-function parseJsonContent(content) {
-  const normalized = content.trim()
-    .replace(/^```(?:json)?\s*/iu, '')
-    .replace(/\s*```$/u, '')
-    .replace(/<think>[\s\S]*?(?:<\/think>|$)/giu, '')
-    .trim();
-  try {
-    return JSON.parse(normalized);
-  } catch {
-    const start = normalized.indexOf('{');
-    const end = normalized.lastIndexOf('}');
-    if (start >= 0 && end > start) return JSON.parse(normalized.slice(start, end + 1));
-    throw new Error('llama-server returned non-JSON message content.');
-  }
-}
-
-function responseSegments(value, expectedIds) {
-  const candidates = [value, value?.response, value?.result, value?.data, value?.output];
-  for (const candidate of candidates) {
-    if (typeof candidate === 'string' && /^[{[]/u.test(candidate.trim())) {
-      try {
-        const nested = responseSegments(parseJsonContent(candidate), expectedIds);
-        if (nested) return nested;
-      } catch {
-        // Continue checking other llama.cpp response shapes.
-      }
-      continue;
-    }
-    const collection = candidate?.segments
-      ?? candidate?.translations
-      ?? candidate?.translated_segments
-      ?? candidate?.translatedSegments
-      ?? candidate?.translation
-      ?? candidate;
-    if (Array.isArray(collection)) {
-      return collection.map((segment) => ({
-        id: segment?.id ?? segment?.segmentId ?? segment?.segment_id ?? segment?.key,
-        text: segment?.text
-          ?? segment?.translation
-          ?? segment?.translatedText
-          ?? segment?.translated_text
-          ?? segment?.translated
-          ?? segment?.content
-          ?? segment?.value,
-      }));
-    }
-    if (typeof collection === 'string' && expectedIds.length === 1) {
-      return [{ id: expectedIds[0], text: collection }];
-    }
-    if (collection && typeof collection === 'object') {
-      const mappedIds = expectedIds.filter((id) => Object.prototype.hasOwnProperty.call(collection, id));
-      if (mappedIds.length) return mappedIds.map((id) => ({ id, text: collection[id] }));
-    }
-  }
-  return undefined;
+export function translationPrompt(text, targetLocale) {
+  const target = TARGET_LANGUAGES[targetLocale] ?? { name: targetLocale, code: targetLocale };
+  return `<start_of_turn>user\nYou are a professional Portuguese (pt-BR) to ${target.name} (${target.code}) translator. Your goal is to accurately convey the meaning and nuances of the original Portuguese text while adhering to ${target.name} grammar, vocabulary, and cultural sensitivities.\nProduce only the ${target.name} translation, without any additional explanations or commentary. Please translate the following Portuguese text into ${target.name}:\n\n\n${text.trim()}<end_of_turn>\n<start_of_turn>model\n`;
 }
 
 async function requestLlamaServer(payload) {
   let response;
   try {
-    response = await fetch(`${LLAMA_SERVER_URL}/v1/chat/completions`, {
+    response = await fetch(`${LLAMA_SERVER_URL}/v1/completions`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(payload),
     });
   } catch (error) {
-    throw new Error(`llama-server is unavailable at ${LLAMA_SERVER_URL}. Start it with the CUDA model command. ${error.message}`);
+    throw new Error(`llama-server is unavailable at ${LLAMA_SERVER_URL}. ${error.message}`);
   }
   const body = await response.text();
   if (!response.ok) {
@@ -243,11 +159,22 @@ function serverArguments() {
     '-m', LLAMA_MODEL_PATH,
     '--host', address.hostname,
     '--port', address.port || '8080',
-    '--ctx-size', process.env.LLAMA_CTX_SIZE ?? '8192',
-    '--gpu-layers', process.env.LLAMA_GPU_LAYERS ?? '99',
+    '--ctx-size', process.env.LLAMA_CTX_SIZE ?? '4096',
+    '--batch-size', process.env.LLAMA_BATCH_SIZE ?? '512',
+    '--ubatch-size', process.env.LLAMA_UBATCH_SIZE ?? '512',
+    '--threads', process.env.LLAMA_THREADS ?? '6',
+    '--threads-batch', process.env.LLAMA_THREADS_BATCH ?? '6',
+    '--gpu-layers', process.env.LLAMA_GPU_LAYERS ?? 'all',
+    '--split-mode', process.env.LLAMA_SPLIT_MODE ?? 'none',
     '--device', process.env.LLAMA_DEVICE ?? 'CUDA0',
     '--flash-attn', process.env.LLAMA_FLASH_ATTN ?? 'on',
     '--parallel', process.env.LLAMA_PARALLEL ?? '1',
+    '--fit', process.env.LLAMA_FIT ?? 'on',
+    '--fit-target', process.env.LLAMA_FIT_TARGET ?? '1024',
+    '--kv-offload',
+    '--cont-batching',
+    '--cache-prompt',
+    '--no-jinja',
     '--reasoning', 'off',
     '--no-ui',
   ];
@@ -256,7 +183,7 @@ function serverArguments() {
 async function startLlamaServer() {
   if (await serverIsReady()) return { process: null, owned: false };
   if (!existsSync(LLAMA_MODEL_PATH)) {
-    throw new Error(`Qwen3 GGUF model not found at ${LLAMA_MODEL_PATH}. Set LLAMA_MODEL_PATH to a local GGUF file.`);
+    throw new Error(`TranslateGemma GGUF model not found at ${LLAMA_MODEL_PATH}. Set LLAMA_MODEL_PATH to the installed model file.`);
   }
   const child = spawn(LLAMA_SERVER_BIN, serverArguments(), {
     env: { ...process.env, GGML_BACKEND_PATH: LLAMA_BACKEND_PATH },
@@ -308,60 +235,56 @@ async function stopLlamaServer(child) {
   if (child.exitCode === null) child.kill('SIGKILL');
 }
 
-function parseTranslationResponse(response, segments) {
-  const content = response.choices?.[0]?.message?.content ?? response.message?.content;
+function parseTranslationResponse(response, segment) {
+  const content = response.choices?.[0]?.text ?? response.choices?.[0]?.message?.content ?? response.message?.content;
   if (typeof content !== 'string') throw new Error('llama-server returned no message content.');
-  let parsed;
-  try {
-    const raw = parseJsonContent(content);
-    const segmentsWithAliases = responseSegments(raw, segments.map((segment) => segment.id));
-    parsed = TranslationResponse.parse(segmentsWithAliases ? { segments: segmentsWithAliases } : raw);
-  } catch (error) {
-    throw new Error(`Translation response failed schema validation: ${error.message}; response=${JSON.stringify(content.slice(0, 400))}`);
-  }
-  const expected = new Set(segments.map((segment) => segment.id));
-  const received = new Set(parsed.segments.map((segment) => segment.id));
-  if (received.size !== parsed.segments.length || received.size !== expected.size || [...expected].some((id) => !received.has(id))) {
-    throw new Error('Translation response changed segment ids; source file was left untouched.');
-  }
-  return new Map(parsed.segments.map((segment) => [segment.id, segment.text.trim()]));
+  const translation = content.trim();
+  if (!translation) throw new Error(`llama-server returned an empty translation for ${segment.id}.`);
+  return translation;
 }
 
-export async function translateSegments(segments, { client, model = MODEL, glossary = readGlossary(), targetLocale = 'en' } = {}) {
-  const language = TARGET_LANGUAGES[targetLocale] ?? targetLocale;
-  let lastError;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const messages = [
-      {
-        role: 'system',
-        content: `You translate structured Brazilian Portuguese technical blog segments into ${language}. Translate every human-readable segment into ${language}. Keep only technical and proper names unchanged. Return only the requested JSON.${attempt ? ` The previous response was rejected because it was not written in ${language}. Do not copy Portuguese text.` : ''}`,
-      },
-      { role: 'user', content: translationPrompt(segments, glossary, targetLocale) },
-    ];
-    const payload = {
-      model,
-      stream: false,
-      temperature: 0,
-      max_tokens: 4096,
-      reasoning_effort: 'none',
-      chat_template_kwargs: { enable_thinking: false },
-      response_format: { type: 'json_schema', schema: TRANSLATION_SCHEMA },
-      messages,
-    };
-    const response = client
-      ? await client.chat(payload)
-      : await requestLlamaServer(payload);
-    let translations;
-    try {
-      translations = parseTranslationResponse(response, segments);
-    } catch (error) {
-      lastError = error;
-      continue;
+function normalizedText(value) {
+  return value.normalize('NFKC').replace(/\s+/gu, ' ').trim().toLocaleLowerCase();
+}
+
+export async function translateSegments(segments, { client, model = MODEL, targetLocale = 'en' } = {}) {
+  const language = TARGET_LANGUAGES[targetLocale]?.name ?? targetLocale;
+  const validateEachSegment = segments.length === 1;
+  const translations = new Map();
+  for (const segment of segments) {
+    let lastError;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const payload = {
+        model,
+        stream: false,
+        temperature: 0,
+        max_tokens: 4096,
+        stop: ['<end_of_turn>'],
+        prompt: translationPrompt(segment.text, targetLocale),
+      };
+      try {
+        const response = client
+          ? await client.chat(payload)
+          : await requestLlamaServer(payload);
+        const translation = parseTranslationResponse(response, segment);
+        const copiedSource = normalizedText(translation) === normalizedText(segment.text);
+        if (!copiedSource && (!validateEachSegment || isLikelyTranslation(translation, targetLocale))) {
+          translations.set(segment.id, translation);
+          break;
+        }
+        lastError = new Error(copiedSource
+          ? `Translation response copied source text for ${segment.id}; source file was left untouched.`
+          : `Translation response failed language validation for ${language}; source file was left untouched.`);
+      } catch (error) {
+        lastError = error;
+      }
     }
-    if (isLikelyTranslation([...translations.values()].join('\n'), targetLocale)) return translations;
+    if (!translations.has(segment.id)) throw lastError;
   }
-  if (lastError) throw lastError;
-  throw new Error(`Translation response failed language validation for ${language}; source file was left untouched.`);
+  if (validateEachSegment && !isLikelyTranslation([...translations.values()].join('\n'), targetLocale)) {
+    throw new Error(`Translation response failed language validation for ${language}; source file was left untouched.`);
+  }
+  return translations;
 }
 
 function applyReplacements(source, segments, translations) {

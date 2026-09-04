@@ -67,7 +67,7 @@ https://github.com/user-attachments/assets/9b85d167-0bac-4a16-ab4c-323e11c79761
 * **Real-time**: Pusher 5.3 / pusher-js 8.6
 * **Cache / Rate Limit**: Upstash Redis 1.38.3 + @upstash/ratelimit 2.0
 * **Auth**: NextAuth.js 5.0 (beta)
-* **Blog Translation**: llama.cpp `llama-server` + Qwen3 8B GGUF + CUDA
+* **Blog Translation**: llama.cpp `llama-server` + TranslateGemma 4B GGUF
 * **Runtime UI Translation**: Groq API with MyMemory fallback
 * **Icons**: Lucide React 0.577+
 * **Linting**: ESLint 10.9+ with Next.js flat config
@@ -127,7 +127,8 @@ GITHUB_USERNAME=SobralCybersec
 GROQ_API_KEY=your_groq_api_key
 
 # Local blog translation (no API key required)
-LLAMA_MODEL_PATH=/path/to/qwen3-8b.gguf
+LLAMA_MODEL=translategemma:4b
+LLAMA_MODEL_PATH=models/translategemma-4b-it.Q8_0.gguf
 LLAMA_SERVER_URL=http://127.0.0.1:8080
 LLAMA_SERVER_BIN=/path/to/llama-server
 
@@ -319,7 +320,7 @@ The UI uses `next-intl` message catalogs for the seven supported locales. Dynami
 
 #### Local MDX blog translation
 
-`pnpm blog:translate` starts `llama-server` automatically, loads the local Qwen3 GGUF model on CUDA, and shuts the server down after the run. The pipeline parses MDX with `unified` and `remark`, sends only approved human-readable segments to the model, protects JSX/code/URLs/media, validates structured JSON with Zod, checks target-language markers, writes locale siblings, records a SHA-256 source hash, then validates and publishes editorial changes.
+`pnpm blog:translate` starts `llama-server` automatically, loads the local TranslateGemma 4B GGUF model with CUDA (`CUDA0`, all layers, single-GPU split, 4K context, 512/512 batch, Flash Attention), and shuts the server down after the run. It uses llama.cpp direct completions and sends the single-user prompt with TranslateGemma's required turn markers verbatim. The checked-in Jinja source is `scripts/blog/translategemma-chat-template.jinja`; direct completion avoids llama.cpp OpenAI normalization dropping TranslateGemma language fields. Override `LLAMA_DEVICE`, `LLAMA_GPU_LAYERS`, `LLAMA_CTX_SIZE`, `LLAMA_BATCH_SIZE`, `LLAMA_UBATCH_SIZE`, `LLAMA_THREADS`, `LLAMA_THREADS_BATCH`, or `LLAMA_FLASH_ATTN` only for a different runner. The pipeline parses MDX with `unified` and `remark`, sends only approved human-readable segments to the model, protects JSX/code/URLs/media, checks target-language markers, writes locale siblings, records a SHA-256 source hash, then validates and publishes editorial changes.
 
 ---
 
@@ -420,7 +421,7 @@ pnpm blog:publish
 pnpm blog:auto
 ```
 
-`blog:new` writes portable Typora settings. Blog translation starts and stops local `llama-server` automatically, using Qwen3 GGUF on CUDA and `http://127.0.0.1:8080` by default. Set `LLAMA_MODEL_PATH`, `LLAMA_SERVER_BIN`, or `LLAMA_SERVER_URL` only when local defaults differ. The translator parses MDX, changes prose and approved labels only, validates structured output and target language, creates `index.en.mdx`, `index.de.mdx`, `index.es.mdx`, `index.fr.mdx`, `index.ja.mdx`, and `index.zh.mdx`, stores a SHA-256 source hash in each localized sibling, then validates and publishes translated changes. `blog:validate` automatically repairs stale or mismatched localized translations. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
+`blog:new` writes portable Typora settings. Blog translation uses TranslateGemma 4B through local llama.cpp at `http://127.0.0.1:8080` with CUDA defaults (`CUDA0`, all layers, single-GPU split, 4K context, 512/512 batch, Flash Attention). Place `translategemma-4b-it.Q8_0.gguf` in `models/`; the checked-in Jinja source is `scripts/blog/translategemma-chat-template.jinja`. Set `LLAMA_MODEL_PATH` when using another model file. Set `LLAMA_MODEL`, `LLAMA_SERVER_BIN`, `LLAMA_SERVER_URL`, `LLAMA_DEVICE`, `LLAMA_GPU_LAYERS`, `LLAMA_SPLIT_MODE`, `LLAMA_CTX_SIZE`, `LLAMA_BATCH_SIZE`, `LLAMA_UBATCH_SIZE`, `LLAMA_THREADS`, `LLAMA_THREADS_BATCH`, or `LLAMA_FLASH_ATTN` when local defaults differ. The translator starts and stops its own `llama-server`, sends each segment through direct completion with the exact TranslateGemma turn prompt, parses MDX, changes prose and approved labels only, validates target language, creates `index.en.mdx`, `index.de.mdx`, `index.es.mdx`, `index.fr.mdx`, `index.ja.mdx`, and `index.zh.mdx`, stores a SHA-256 source hash in each localized sibling, then validates and publishes translated changes. `blog:validate` automatically repairs stale or mismatched localized translations. Drafts and future posts render during development only. Publishing stages and commits only `content/blog`, `public/blog`, and `data/blog-tags.yml`; it preserves unrelated Git staging.
 
 ### Complexity Review
 
@@ -555,7 +556,7 @@ Returns:
 * [x] Custom scrollbar with gradient
 * [x] Bleach clip-path animations
 * [x] Multilingual support (7 languages)
-* [x] Local MDX translation with llama.cpp, Qwen3 GGUF, CUDA, and Zod validation
+* [x] Local MDX translation with llama.cpp, TranslateGemma 4B GGUF, and language validation
 * [x] Background music system
 * [x] GitHub projects integration (dual-account)
 * [x] Image slideshow for projects (3s intervals)
@@ -595,7 +596,7 @@ Returns:
 
 <h2 align="center">
   
-**Local blog translation**: llama.cpp `llama-server` and Qwen3 GGUF
+**Local blog translation**: llama.cpp `llama-server` and TranslateGemma 4B GGUF
 
 **Runtime UI translation fallback**: [Groq Documentation](https://console.groq.com/docs)  <img src="https://go-skill-icons.vercel.app/api/icons?i=nodejs&size=32" width="40" />
 

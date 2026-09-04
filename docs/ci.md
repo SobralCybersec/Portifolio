@@ -1077,9 +1077,9 @@ Blog content is editorial input, not generated application code. The source is B
 ```mermaid
 flowchart LR
     PT[content/blog/index.mdx] --> AST[MDX segment parser]
-    AST --> LLM[llama-server + Qwen3 GGUF]
-    LLM --> ZOD[Zod response check]
-    ZOD --> LOCALES[index.locale.mdx files]
+    AST --> LLM[llama-server + TranslateGemma 4B GGUF]
+    LLM --> CHECK[language response check]
+    CHECK --> LOCALES[index.locale.mdx files]
     LOCALES --> VALIDATE[blog:validate]
     VALIDATE --> PUBLISH[blog:publish]
 ```
@@ -1102,9 +1102,9 @@ flowchart TB
 
 ### Translation boundary
 
-`pnpm blog:translate` starts local `llama-server` automatically, uses Qwen3 GGUF through `http://127.0.0.1:8080`, and stops the owned server after the run. `LLAMA_MODEL_PATH`, `LLAMA_SERVER_BIN`, `LLAMA_SERVER_URL`, `LLAMA_CTX_SIZE`, `LLAMA_GPU_LAYERS`, `LLAMA_DEVICE`, and `LLAMA_PARALLEL` override local defaults. Blog translation has no API key requirement.
+`pnpm blog:translate` uses TranslateGemma 4B through local llama.cpp at `http://127.0.0.1:8080` with CUDA defaults (`CUDA0`, all layers, single-GPU split, 4K context, 512/512 batch, Flash Attention). Place `translategemma-4b-it.Q8_0.gguf` in `models/`; the checked-in Jinja source is `scripts/blog/translategemma-chat-template.jinja`. The translator sends direct completions with the exact TranslateGemma turn prompt because llama.cpp OpenAI normalization drops custom language fields from typed content. Set `LLAMA_MODEL`, `LLAMA_MODEL_PATH`, `LLAMA_SERVER_BIN`, `LLAMA_SERVER_URL`, `LLAMA_DEVICE`, `LLAMA_GPU_LAYERS`, `LLAMA_SPLIT_MODE`, `LLAMA_CTX_SIZE`, `LLAMA_BATCH_SIZE`, `LLAMA_UBATCH_SIZE`, `LLAMA_THREADS`, `LLAMA_THREADS_BATCH`, or `LLAMA_FLASH_ATTN` to override local defaults. The command starts and stops its own `llama-server`. Blog translation has no API key requirement.
 
-The MDX parser translates headings, paragraphs, list/table text, blockquotes, link labels, image alt text, and approved JSX labels. It preserves component names, identifiers, IDs, URLs, image sources, inline code, fenced code, and media references. Structured output is checked with Zod, then a language heuristic catches a wrong-locale response before the file is accepted.
+The MDX parser translates headings, paragraphs, list/table text, blockquotes, link labels, image alt text, and approved JSX labels. It preserves component names, identifiers, IDs, URLs, image sources, inline code, fenced code, and media references. Each model response is plain translation text, and a language heuristic catches a wrong-locale response before the file is accepted.
 
 ### Commands
 
