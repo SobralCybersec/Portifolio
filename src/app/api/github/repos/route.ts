@@ -211,9 +211,7 @@ async function fetchReadmeData(
       const isImage = IMAGE_EXTENSION_RE.test(url);
       if (!isImage && (VIDEO_EXTENSION_RE.test(url) || GITHUB_ATTACHMENT_RE.test(url) || VIDEO_LABEL_RE.test(match[1]))) {
         videos.push(url);
-      } else {
-        // Demo/Demonstration labels describe intent, not media type. Image
-        // extensions and image links must stay in the image pipeline.
+      } else if (isImage) {
         images.push(url);
       }
     }

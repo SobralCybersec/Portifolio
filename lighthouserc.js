@@ -17,6 +17,7 @@ module.exports = {
 
       // Measure this local production server without synthetic throttling.
       settings: {
+        preset: 'desktop',
         throttlingMethod: 'simulate',
         chromeFlags: '--force-prefers-reduced-motion',
       },

@@ -21,7 +21,7 @@ const geistSans = localFont({
     { path: '../../../node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2', weight: '700' },
   ],
   variable: '--font-geist-sans',
-  display: 'swap',
+  display: 'optional',
   preload: false,
 });
 
@@ -32,7 +32,7 @@ const geistMono = localFont({
     { path: '../../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2', weight: '700' },
   ],
   variable: '--font-geist-mono',
-  display: 'swap',
+  display: 'optional',
   preload: false,
 });
 
@@ -45,14 +45,14 @@ const soloHeading = localFont({
     { path: '../../../node_modules/@fontsource/rajdhani/files/rajdhani-latin-700-normal.woff2', weight: '700' },
   ],
   variable: '--font-solo-heading',
-  display: 'swap',
+  display: 'optional',
   preload: false,
 });
 
 const eternal = localFont({
   src: '../../../public/fonts/Eternal.ttf',
   variable: '--font-eternal',
-  display: 'swap',
+  display: 'optional',
 });
 
 const codystar = localFont({
@@ -61,7 +61,7 @@ const codystar = localFont({
     { path: '../../../node_modules/@fontsource/codystar/files/codystar-latin-400-normal.woff2', weight: '400' },
   ],
   variable: '--font-codystar',
-  display: 'swap',
+  display: 'optional',
   preload: false,
 });
 
@@ -72,7 +72,7 @@ const displayFont = localFont({
     { path: '../../../node_modules/@fontsource/teko/files/teko-latin-700-normal.woff2', weight: '700' },
   ],
   variable: '--font-teko',
-  display: 'swap',
+  display: 'optional',
   preload: false,
 });
 
