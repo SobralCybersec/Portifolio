@@ -247,7 +247,8 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Lighthouse CI
-        run: pnpm exec lhci autorun
+        # Median-run assertions need multiple samples to absorb runner variance.
+        run: pnpm exec lhci autorun --collect.numberOfRuns=3
         env:
           LHCI_GITHUB_TOKEN: ${{ github.token }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
