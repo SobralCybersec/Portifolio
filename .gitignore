@@ -98,3 +98,9 @@ public/uploads/*
 !public/uploads/.gitkeep
 
 .vercel
+
+# Claude Code
+CLAUDE.md
+AGENTS.md
+.codegraph/
+session_memory.json
