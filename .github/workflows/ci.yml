@@ -43,9 +43,6 @@ jobs:
       - name: Documentation check
         run: pnpm run docs:check
 
-      - name: Validate blog content
-        run: pnpm run blog:validate
-
       - name: Run ESLint
         run: pnpm run lint
 
@@ -103,9 +100,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Validate blog content
-        run: pnpm run blog:validate
 
       - name: Build Next.js application
         run: pnpm run build

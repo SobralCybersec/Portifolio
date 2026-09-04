@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
 import { publishBlog, validateBlog } from '../blog/lib.mjs';
+import { promoteDraft, promoteDrafts } from '../blog/validate.mjs';
 
 const rootDir = resolve(import.meta.dirname, '../..');
 const taxonomy = readFileSync(join(rootDir, 'data/blog-tags.yml'), 'utf8');
@@ -34,6 +35,23 @@ test('blog validator reports unknown tags and date/path mismatch', async () => {
     const result = await validateBlog({ root, now: new Date('2026-03-01T00:00:00Z') });
     assert.ok(result.issues.some((issue) => issue.rule.includes('canonical')));
     assert.ok(result.issues.some((issue) => issue.rule.includes('YYYY/MM/DD')));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('blog validator promotes draft files and is idempotent', () => {
+  const root = mkdtempSync(join(tmpdir(), 'blog-draft-'));
+  try {
+    const file = join(root, 'index.mdx');
+    const source = '---\ntitle: Draft\ndraft: true\n---\n\nBody.\n';
+    writeFileSync(file, source, 'utf8');
+    const result = { bundles: [{ files: [{ sourcePath: file, data: { draft: true } }] }] };
+    assert.equal(promoteDrafts(result), 1);
+    const promoted = readFileSync(file, 'utf8');
+    assert.match(promoted, /^draft: false$/mu);
+    assert.equal(promoteDraft(promoted), promoted);
+    assert.equal(promoteDrafts({ bundles: [{ files: [{ sourcePath: file, data: { draft: false } }] }] }), 0);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
