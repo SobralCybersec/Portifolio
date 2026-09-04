@@ -181,6 +181,15 @@ export async function installStableApiMocks(
     });
   });
 
+  await page.route('**/_next/static/css/**', async (route) => {
+    const response = await route.fetch();
+    const body = await response.text();
+    await route.fulfill({
+      response,
+      body: body.replace(/font-display:\s*optional/gi, 'font-display:swap'),
+    });
+  });
+
   await page.route('**platform.linkedin.com/**', async (route) => {
     await route.fulfill({
       status: 200,
