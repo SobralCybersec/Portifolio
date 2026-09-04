@@ -90,6 +90,16 @@ test('retries output when language validation rejects copied source text', async
   assert.equal(result.get('segment-1'), 'El resultado traducido es correcto');
 });
 
+test('rejects model output that introduces executable MDX', async () => {
+  const client = {
+    chat: async () => ({ message: { content: '<Danger />' } }),
+  };
+  await assert.rejects(
+    translateSegments([{ id: 'segment-1', text: 'Olá' }], { client }),
+    /unsupported MDX syntax/u,
+  );
+});
+
 test('translation command accepts no-push publish flag', async () => {
   assert.deepEqual(parseArgs(['lighthouse', '--stale', '--no-push']), {
     selectors: ['lighthouse'],

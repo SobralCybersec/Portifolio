@@ -14,7 +14,29 @@ import { visitParents } from 'unist-util-visit-parents';
 import { BLOG_LOCALES, isLikelyTranslation, publishBlog, ROOT } from './lib.mjs';
 
 export const MODEL = process.env.LLAMA_MODEL ?? 'translategemma:4b';
-export const LLAMA_SERVER_URL = process.env.LLAMA_SERVER_URL ?? 'http://127.0.0.1:8080';
+const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]']);
+
+function localServerUrl(value) {
+  let address;
+  try {
+    address = new URL(value);
+  } catch {
+    throw new Error('LLAMA_SERVER_URL must be a valid loopback HTTP URL.');
+  }
+  if (
+    address.protocol !== 'http:'
+    || !LOOPBACK_HOSTS.has(address.hostname)
+    || address.username
+    || address.password
+    || address.search
+    || address.hash
+  ) {
+    throw new Error('LLAMA_SERVER_URL must point to a loopback HTTP server.');
+  }
+  return value.replace(/\/+$/u, '');
+}
+
+export const LLAMA_SERVER_URL = localServerUrl(process.env.LLAMA_SERVER_URL ?? 'http://127.0.0.1:8080');
 export const LLAMA_SERVER_BIN = process.env.LLAMA_SERVER_BIN ?? '/usr/lib/ollama/llama-server';
 export const LLAMA_BACKEND_PATH = process.env.GGML_BACKEND_PATH ?? '/usr/lib/ollama/cuda_v13/libggml-cuda.so';
 export const LLAMA_MODEL_PATH = process.env.LLAMA_MODEL_PATH ?? join(process.cwd(), 'models/translategemma-4b-it.Q8_0.gguf');
@@ -32,6 +54,8 @@ const CONTENT_ROOT = resolve(process.cwd(), 'content/blog');
 const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---(?=\r?\n|$)/;
 const TRANSLATABLE_ATTRIBUTES = new Set(['alt', 'caption', 'title']);
 const PROTECTED_TYPES = new Set(['code', 'inlineCode', 'mdxFlowExpression', 'mdxTextExpression', 'mdxjsEsm']);
+const MAX_TRANSLATION_LENGTH = 20_000;
+const UNSAFE_MDX_RE = /(?:^|\n)\s*(?:import|export)\s+|<\/?[A-Za-z][^>]*>|\{(?:[^{}]|\{[^{}]*\})*\}/mu;
 
 function processor() {
   return unified().use(remarkParse).use(remarkFrontmatter).use(remarkMdx).use(remarkGfm);
@@ -128,6 +152,7 @@ async function requestLlamaServer(payload) {
     response = await fetch(`${LLAMA_SERVER_URL}/v1/completions`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
+      // codeql[js/file-access-to-http] Source text is sent only to the loopback llama-server.
       body: JSON.stringify(payload),
     });
   } catch (error) {
@@ -235,10 +260,20 @@ async function stopLlamaServer(child) {
   if (child.exitCode === null) child.kill('SIGKILL');
 }
 
+function validateTranslationText(value, segment) {
+  if (value.length > MAX_TRANSLATION_LENGTH) {
+    throw new Error(`llama-server translation exceeded ${MAX_TRANSLATION_LENGTH} characters for ${segment.id}.`);
+  }
+  if (UNSAFE_MDX_RE.test(value)) {
+    throw new Error(`llama-server translation contains unsupported MDX syntax for ${segment.id}.`);
+  }
+  return value;
+}
+
 function parseTranslationResponse(response, segment) {
   const content = response.choices?.[0]?.text ?? response.choices?.[0]?.message?.content ?? response.message?.content;
   if (typeof content !== 'string') throw new Error('llama-server returned no message content.');
-  const translation = content.trim();
+  const translation = validateTranslationText(content.trim(), segment);
   if (!translation) throw new Error(`llama-server returned an empty translation for ${segment.id}.`);
   return translation;
 }
@@ -354,6 +389,7 @@ function isStale(sourcePath, targetPath, targetLocale) {
 
 function writeAtomic(path, content) {
   const temporary = `${path}.tmp-${process.pid}`;
+  // codeql[js/http-to-file-access] Model output is validated before document assembly and this path is generated under the blog root.
   writeFileSync(temporary, content, 'utf8');
   renameSync(temporary, path);
 }
