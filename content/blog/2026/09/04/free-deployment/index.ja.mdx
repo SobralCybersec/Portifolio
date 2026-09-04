@@ -1,0 +1,445 @@
+---
+title: "インターネットで私が利用できる無料のツール"
+description: "無料のデプロイサービスについて、興味のある方のために、簡単な説明を加えます。"
+date: "2026-09-04T13:06:25-03:00"
+updated: "2026-09-04T13:06:25-03:00"
+tags: []
+draft: true
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "17ca8424edde80c5d749fe9c2511a1bc75c9749d84510ea0816a2058ff29f47f"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/04/free-deployment"
+---
+
+## デプロイメントはうまくいきましたが、ホスティングの料金を支払うのは最悪の日でした。
+
+以前は、ソフトウェアの開発とテストを主にローカル環境で行っていましたが、最近、本番環境でのバグ、テストの難しさ、そして異なる環境への対応の困難さから、その方法をやめることにしました。
+
+## ノースフランク
+
+<a href="https://northflank.com" target="_blank" rel="noopener noreferrer">
+  <img
+    src="https://i.imgur.com/i5pHDIr.png"
+    alt="ウェブサイトのプレビュー"
+    style={{
+      width: "100%",
+      borderRadius: "12px",
+    }}
+  />
+</a>
+
+---
+
+<img
+  src="https://i.imgur.com/286UV2i.png"
+  alt="ダッシュボードのプレビュー"
+/>
+
+---
+
+北岸（Northflank）は、予想以上に興味深いツールでした。試しに、簡単な `index.js` ファイルを作成して、定期的なコミット処理を実行するように設定しました。インターフェースは使いやすく、要素も視覚的に魅力的です。また、クラウド、サポート、ドキュメント、Git、Heroku、Dockerとの連携も可能です。そのため、北岸は非常に有用なツールだと考えています。
+
+おそらく、私が思っていたよりも多くのものをホストできる可能性があります。ただし、このアドバイスを参考にしてください。
+
+リンク： [https://northflank.com/](https://northflank.com/)
+
+## フロントエンドと、一部のバックエンドをVercelで構築
+
+これらのプラットフォームには、AI関連のコンテンツが多数存在しますが、個人のスキルや能力をアピールするために、ポートフォリオを作成することに価値があると思います。具体的には、NestJS、Vite、Angular、Vue、Svelte、Astro、Remix、Qwik、Gatsbyなどを使用することを想定しています。
+
+また、静的なホスティングのみを行うことも可能ですが、もしそうであれば、GitHub Pages が十分な機能を提供してくれると思います。
+
+具体的には、このウェブサイトは、私のブログ、ポートフォリオなどをホストしているウェブサイトと同じものです。
+
+<img
+  src="https://i.imgur.com/Z9piXa0.png"
+  alt="Vercel"
+/>
+
+視覚的に魅力的で、豊富な機能が備わっていますが、もしサービスが非常に重要なものであれば、ホスティングをお勧めしません。なぜなら、最近、データ漏洩などの問題が発生しており、それでもホスティングは可能です。データベース、バックエンドなどもホスティングできます。
+
+<img
+  src="https://i.imgur.com/ODbjt5g.png"
+  alt="Vercelダッシュボード"
+/>
+
+ダッシュボードは、現在のAIエージェントの状況を考えると、ダークモードでの開発も比較的容易であるため、問題ないと思います。
+「Mega Brain」を使用すれば、現在でも簡単にサイトのセキュリティを強化できるはずです。「Mega Brain、私のサイトのセキュリティを修正してください。エラーは一切ありませんように。」
+
+リンク： [https://vercel.com](https://vercel.com)
+
+## レンダリング
+
+<img
+  src="https://i.imgur.com/qFFd7eQ.png"
+  alt="ホームページの表示"
+/>
+
+Renderは興味深いインフラストラクチャを持っていますが、Herokuの後継とは言えません。
+
+しかし、クラウド環境を構築することなく、基本的なデプロイ、Webサービス、プライベートサービス、ワーカー、Cron、データベースといった機能はすべて手軽に利用できます。多くのユーザーがHerokuからRenderに移行し、1TBを超えるサイズのデータベースも簡単に利用できるため、バックエンド開発の経験が向上しています。
+
+OpenAI、Readme、その他のSaaS企業がこのサービスを利用しています。
+
+リンク： [https://render.com/](https://render.com/)
+
+## 鉄道
+
+<img
+  src="https://i.imgur.com/dNy1le9.png"
+  alt="鉄道のホームページ"
+/>
+
+ああ、鉄道、つまり「DevOpsを導入したくない、なぜなら、私は不安を感じるし、面倒くさいから」
+
+これはシンプルで実用的であり、視覚的にアーキテクチャを作成・確認できます。プロトタイプや小規模なバックエンドの開発に適しています。
+
+Blit、PeerList、ShipAidなどのツールは現在も利用されていますが、小規模なバックエンドシステムに適しているという私の提案です。
+
+リンク： [https://railway.com/](https://railway.com/)
+
+## Netlify
+
+<img
+  src="https://i.imgur.com/w4VZvN4.png"
+  alt="Netlify のホームページ"
+/>
+
+Netlifyは、フロントエンドやJamStackの開発において興味深いプラットフォームであるようです。まだ十分に試していませんが、ナイキやマテルなどの企業が利用している可能性があり、複数のウェブサイトの管理などに活用できるかもしれません。
+
+インターフェースのデザインが気に入りました。使いやすく、効果的であるように見えます。いつか試して、ブログで感想を共有したいと思います。
+
+リンク： [https://www.netlify.com/](https://www.netlify.com/)
+
+## Oracle | Oracle クラウド
+
+<img
+  src="https://i.imgur.com/LIJkdWl.png"
+  alt="Oracleのホームページ"
+/>
+
+もし、高い処理能力と仮想マシン、ARMアーキテクチャ、豊富なリソースが必要な場合は、Oracleが最適です。
+Oracleのインフラを利用してサーバーの構築とホスティングを行った経験があり、非常に興味深いものでした。
+Minecraftのサーバーをホストしましたが、無料トライアル期間を利用して、実際に試してみて、とても満足しました。
+
+最新技術ではないものの、処理能力においては最も効率的です。単なるサーバーレス環境ではなく、ご自身のニーズに合った仮想マシンを使用できます。
+
+Zoom、Uber、FedEx、トヨタ、Tim などの企業も、Oracleのインフラを利用し、現在も活用しています。
+
+残念ながら、ドキュメントが依然として難解で、時代遅れであることに変わりありません。
+
+リンク： [https://www.oracle.com/](https://www.oracle.com/)
+
+## Cloudflare
+
+<img
+  src="https://i.imgur.com/K6tDdq0.png"
+  alt="Cloudflare のホームページ"
+/>
+
+Cloudflareは、CDN、WAF、Workers、Queues、R2といった機能を提供するだけでなく、Shopify、Canva、Discordなど、現在多くの企業で使用されているプラットフォームとの連携も可能であるため、私にとって最も魅力的なサービスです。
+
+私は個人的な好みはありませんが、包括的で迅速なシステムを構築するには、Cloudflareが最適な選択肢です。
+
+リンク： [https://www.cloudflare.com/](https://www.cloudflare.com/)
+
+## Upstash
+
+<img
+  src="https://i.imgur.com/j2lNuY4.png"
+  alt="Upstash のホームページ"
+/>
+
+レイテンシ、パフォーマンス、Redis、キャッシュ、パフォーマンス向上のためのソリューションについて。私はUpstashを推奨します。現在、私はシンプルなチャットでの利用もしていますが、このポートフォリオもUpstashを使用しています。パフォーマンスについては確信しています。無料のプランがあり、アプリやウェブサイトのパフォーマンスを向上させたい方には、強く推奨します。ただし、設定にはある程度の知識が必要です。
+
+リンク： [https://www.upstash.com/](https://www.upstash.com/)
+
+## 最終的なリンクと考察
+
+ここに記載されている内容は、私自身の日常的な経験と使用に基づいており、ご同意いただける場合も、そうでない場合も構いません。しかし、この目的は、将来の開発者にとって、よりアクセスしやすい環境を提供するための、無料のソリューションを提供することに焦点を当てています。
+
+良い週末をお過ごしください。また次回の機会に！
+
+## フロントエンドおよびフルスタックのウェブ開発
+
+- Vercel → [https://vercel.com/](https://vercel.com/)
+  - Next.js
+  - React
+  - Vite
+  - Angular
+  - Vue.js
+  - Nuxt
+  - SvelteKit
+  - 天文学
+  - リミックス / リアクティブ・ルーティング
+  - クイック
+  - ゲッツビー
+  - NestJS でのサーバーレスアーキテクチャ
+  - 静的ホスティング
+
+- Netlify → [https://www.netlify.com/](https://www.netlify.com/)
+  - React
+  - Vue.js
+  - 天文学
+  - Svelte
+  - Jamstack (ジェムスタック)
+  - 静的なウェブサイト
+  - サーバーレス関数
+
+- Cloudflare Pages → [https://pages.cloudflare.com/](https://pages.cloudflare.com/)
+  - React/Vite
+  - 天文学
+  - Vue.js
+  - Svelte
+  - HTML/CSS/JavaScript
+  - 静的なウェブサイト
+
+- GitHub Pages → [https://pages.github.com/](https://pages.github.com/)
+  - 静的なウェブサイト
+  - 資料
+  - SSG ブログ
+  - ポートフォリオ
+  - HTML/CSS/JavaScript
+
+## バックエンドとコンテナ
+
+- ノースフランク → [https://northflank.com/](https://northflank.com/)
+  - 錆
+  - Ruby on Rails
+  - Java / Spring Boot
+  - Node.js
+  - NestJS
+  - Python
+  - Docker
+  - 定期的なタスク
+  - 労働者
+  - データベース
+  - 常に利用可能なサービス
+
+- レンダリング → [https://render.com/](https://render.com/)
+  - 錆
+  - Rails
+  - Spring Boot
+  - Node.js
+  - Python
+  - Docker
+  - ウェブサービス
+  - プライベートサービス
+  - 労働者
+  - 定期的なタスク
+
+- コイエブ → [https://www.koyeb.com/](https://www.koyeb.com/)
+  - 錆
+  - Rails
+  - Spring Boot
+  - Node.js
+  - Docker
+  - サーバーレスコンテナ
+  - API (Application Programming Interface)
+  - AIによる推論
+
+- Google Cloud Run → [https://cloud.google.com/run](https://cloud.google.com/run)
+  - 錆
+  - Rails
+  - Spring Boot
+  - NestJS
+  - 行く
+  - Python
+  - Node.js
+  - OCI/Dockerコンテナのいずれか
+  - ゼロに設定
+
+- 鉄道 → [https://railway.com/](https://railway.com/)
+  - Node.js
+  - 錆
+  - Rails
+  - Spring Boot
+  - Python
+  - Docker
+  - 小型のバックエンド
+  - 試作品
+
+- Oracle クラウド → [https://www.oracle.com/cloud/](https://www.oracle.com/cloud/)
+  - Linux仮想マシン
+  - ARM
+  - Docker
+  - Spring Boot
+  - 錆
+  - Rails
+  - サーバー
+  - 常に高い負荷がかかる
+
+## エッジコンピューティング、サーバーレス、および Cloudflare
+
+- Cloudflare Workers → [https://workers.cloudflare.com/](https://workers.cloudflare.com/)
+  - JavaScript
+  - TypeScript
+  - Python
+  - Rust を WASM (WebAssembly) で実行
+  - API (Application Programming Interface)
+  - ミドルウェア
+  - クロノ
+  - エッジ関数
+
+- Cloudflare → [https://www.cloudflare.com/](https://www.cloudflare.com/)
+  - CDN (コンテンツ配信ネットワーク)
+  - WAF (Web Application Firewall)
+  - DDoS（分散型分散サービス妨害）対策
+  - 労働者
+  - 待ち行列
+  - KV
+  - D1
+  - R2
+  - DNS (ドメインネームシステム)
+  - ゼロトラスト
+
+## PostgreSQL と SQL データベース
+
+- ネオン → [https://neon.com/](https://neon.com/)
+  - PostgreSQL 無サーバー環境
+  - ゼロに設定
+  - 分岐
+  - Next.js、Rust、Rails、Spring、NestJS 向けの銀行
+
+- Supabase → [https://supabase.com/](https://supabase.com/)
+  - PostgreSQL
+  - 作成者
+  - 保管
+  - リアルタイム
+  - エッジ関数
+  - API (Application Programming Interface)
+
+- Aiven → [https://aiven.io/](https://aiven.io/)
+  - PostgreSQL
+  - MySQL
+  - ヴァルケイ
+  - カフカ
+  - オープンサーチ
+
+- CockroachDB → [https://www.cockroachlabs.com/](https://www.cockroachlabs.com/)
+  - 分散SQL
+  - PostgreSQLに似た
+  - 多地域対応
+  - 高い可用性
+
+## SQLiteと軽量データベース
+
+- Turso → [https://turso.tech/](https://turso.tech/)
+  - SQLite
+  - libSQL
+  - ローカル中心
+  - 端
+  - ユーザー/プロジェクトごとにデータベースを分離する
+
+- Cloudflare D1 → [https://developers.cloudflare.com/d1/](https://developers.cloudflare.com/d1/)
+  - SQLiteサーバーレス
+  - Cloudflare Workersとの統合
+
+## NoSQL
+
+- MongoDB Atlas → [https://www.mongodb.com/atlas](https://www.mongodb.com/atlas)
+  - MongoDB
+  - 文書管理システム
+  - 検索
+  - ベクター検索
+
+## Redis、キャッシュ、キーバリュー
+
+- Upstash Redis への移行 [https://upstash.com/](https://upstash.com/)
+  - Redis のサーバーレス化
+  - キャッシュ
+  - セッション
+  - リクエスト制限
+  - 鍵
+  - 一時的な状態
+
+- Aiven Valkey → [https://aiven.io/valkey](https://aiven.io/valkey)
+  - Redisとの互換性
+  - キャッシュ
+  - キーと値
+
+- Cloudflare KV → [https://developers.cloudflare.com/kv/](https://developers.cloudflare.com/kv/)
+  - エッジ KV
+  - キャッシュ
+  - 設定
+  - シンプルな状態
+
+## タスク、ジョブ、スケジュール
+
+- Upstash QStash → [https://upstash.com/qstash](https://upstash.com/qstash)
+  - HTTPリクエストのキュー
+  - 遅延が発生している仕事
+  - クロノ
+  - Webhooks（ウェブフック）
+  - バックグラウンド処理
+
+- Cloudflare のキュー → [https://developers.cloudflare.com/queues/](https://developers.cloudflare.com/queues/)
+  - 列
+  - 非同期処理
+  - Workersとの統合
+
+## オブジェクトストレージ、アップロード、およびファイル
+
+- Cloudflare R2 → [https://www.cloudflare.com/developer-platform/products/r2/](https://www.cloudflare.com/developer-platform/products/r2/)
+  - オブジェクトストレージ
+  - S3との互換性
+  - 画像
+  - 動画
+  - ファイル
+  - ダウンロード
+
+- Upstash Blob → [https://upstash.com/](https://upstash.com/)
+  - オブジェクトストレージ
+  - S3互換性
+  - 資産
+  - アップロード
+  - 無料プランでは、ハードキャップ（上限）が適用されます。
+
+- Backblaze B2 → [https://www.backblaze.com/cloud-storage](https://www.backblaze.com/cloud-storage)
+  - オブジェクトストレージ
+  - S3互換性
+  - バックアップ
+  - 動画
+  - 大きなファイル
+  - ダウンロード
+
+- Supabase ストレージ → [https://supabase.com/storage](https://supabase.com/storage)
+  - アップロード
+  - ファイル
+  - 資産
+  - Supabase Auth/Postgresとの統合
+
+## 画像、CDN、メディア最適化
+
+- ImageKit → [https://imagekit.io/](https://imagekit.io/)
+  - 画像のアップロード
+  - CDN (コンテンツ配信ネットワーク)
+  - サイズ変更
+  - WebP
+  - AVIF
+  - 自動最適化
+  - 動画
+
+- Cloudinary → [https://cloudinary.com/](https://cloudinary.com/)
+  - アップロード
+  - CDN (コンテンツ配信ネットワーク)
+  - 画像処理
+  - 動画
+  - 変換
+  - サムネイル
+  - DAM（データ管理システム）
+
+## 汎用的なプロジェクトに適した、私が推奨する無料のスタック
+
+- フロントエンド → [https://vercel.com/](https://vercel.com/)
+- バックエンド → [https://northflank.com/](https://northflank.com/)
+- サーバーレスコンテナ → [https://cloud.google.com/run](https://cloud.google.com/run)
+- エッジ → [https://workers.cloudflare.com/](https://workers.cloudflare.com/)
+- PostgreSQL → [https://neon.com/](https://neon.com/)
+- Redis へのリンク → [https://upstash.com/](https://upstash.com/)
+- 仕事 → [https://upstash.com/qstash](https://upstash.com/qstash)
+- オブジェクトストレージ → [https://www.cloudflare.com/developer-platform/products/r2/](https://www.cloudflare.com/developer-platform/products/r2/)
+- 画像 → [https://imagekit.io/](https://imagekit.io/)
+- VM → [https://www.oracle.com/cloud/](https://www.oracle.com/cloud/)

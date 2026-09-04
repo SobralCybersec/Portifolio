@@ -1,0 +1,446 @@
+---
+title: "我通过互联网发现的免费工具"
+description: "简单介绍一下，对于那些希望免费尝试和开发软件的人，有哪些选择。"
+date: "2026-09-04T13:06:25-03:00"
+updated: "2026-09-04T13:06:25-03:00"
+tags: []
+draft: true
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "17ca8424edde80c5d749fe9c2511a1bc75c9749d84510ea0816a2058ff29f47f"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/04/free-deployment"
+---
+
+## 这是一个适合部署代码的日子，但却是糟糕的日子，因为需要支付服务器费用。
+
+我经常会开发和测试软件，但通常只在本地进行。然而，最近几个月，我决定不再这样做，因为在生产环境、测试环境中，以及处理不同环境时，都遇到了问题。
+
+## 北侧阵地
+
+<a href="https://northflank.com" target="_blank" rel="noopener noreferrer">
+  <img
+    src="https://i.imgur.com/i5pHDIr.png"
+    alt="网站预览"
+    style={{
+      width: "100%",
+      borderRadius: "12px",
+    }}
+  />
+</a>
+
+---
+
+<img
+  src="https://i.imgur.com/286UV2i.png"
+  alt="仪表盘预览"
+/>
+
+---
+
+我没想到 Northflank 这么有趣。好吧，我设置了一个定时任务来测试，只需要一个简单的 index.js 文件即可执行 commit 定时任务。它的界面很有吸引力，元素设计也很出色，并且具有与 Clouds、支持、文档、Git、Heroku、Docker 等的集成功能。因此，我推荐大家尝试一下。
+
+看起来，您可能能够托管更多内容，但请注意以下建议。
+
+链接： [https://northflank.com/](https://northflank.com/)
+
+## 前端和少量后端，使用 Vercel
+
+虽然这些平台上存在大量的AI生成内容，但我认为创建一个作品集，展示您的技能和能力，是有价值的。例如，NestJS、Vite、Angular、Vue、Svelte、Astro、Remix、Qwik、Gastby...
+
+我们也可以只提供静态托管服务，但如果采用这种方式，我认为 GitHub Pages 能够很好地胜任。
+
+因此，我使用的这个网站，也是我用来托管博客、作品集等内容的网站。
+
+<img
+  src="https://i.imgur.com/Z9piXa0.png"
+  alt="Vercel"
+/>
+
+从视觉上来看，功能丰富，但如果您的服务是关键服务，我不会推荐使用。毕竟，最近已经发生过多次故障，包括数据泄露等问题。不过，您仍然可以使用它来托管数据库、后端等。
+
+<img
+  src="https://i.imgur.com/ODbjt5g.png"
+  alt="Vercel 仪表盘"
+/>
+
+仪表盘，我觉得还不错。 鉴于目前人工智能代理的存在方式，现在开发黑暗模式应用相对容易。 “Mega Brain” 在今天应该非常实用。“Mega Brain，请修复我的网站的安全漏洞，确保无错误。”
+
+链接： [https://vercel.com](https://vercel.com)
+
+## 渲染
+
+<img
+  src="https://i.imgur.com/qFFd7eQ.png"
+  alt="渲染主页"
+/>
+
+Render 拥有有趣的架构，它是否可以被视为 Heroku 的精神继承者？ 绝对不是。
+
+然而，它具有简单的部署、Web 服务、私有服务、工作进程、Cron 和数据库等概念，无需搭建云环境。 许多用户从 Heroku 迁移到 Render，甚至迁移了超过 1TB 的数据库，这为后端开发提供了极佳的体验。
+
+OpenAI、Readme、以及其他SaaS服务都使用了该服务。
+
+链接： [https://render.com/](https://render.com/)
+
+## 铁路
+
+<img
+  src="https://i.imgur.com/dNy1le9.png"
+  alt="铁路主页"
+/>
+
+啊，铁路公司，这里经常出现“我不愿意做DevOps，因为我害怕或者懒惰”的情况。
+
+它简单易用，您可以直观地创建和查看架构，非常适合原型设计和小型后端开发。
+
+Blit、PeerList、ShipAid 等项目至今仍在使用这些基础设施，但对于小型后端项目，我推荐使用以下方案。
+
+链接： [https://railway.com/](https://railway.com/)
+
+## Netlify
+
+<img
+  src="https://i.imgur.com/w4VZvN4.png"
+  alt="Netlify 首页"
+/>
+
+Netlify 似乎对前端和 JamStack 很有用，虽然我还没有进行充分的测试，但看起来耐克、马特尔等公司都在使用它，可能可以用于管理多个网站等。
+
+我认为这个界面很漂亮、友好，而且看起来很有用。我打算将来尝试一下，并在博客上发表评论。
+
+链接： [https://www.netlify.com/](https://www.netlify.com/)
+
+## Oracle | Oracle 云
+
+<img
+  src="https://i.imgur.com/LIJkdWl.png"
+  alt="Oracle 首页"
+/>
+
+如果您需要强大的计算能力和虚拟机，并且需要 ARM 架构、大型资源，那么 Oracle 是一个不错的选择。
+
+我曾使用 Oracle 的基础设施来创建和托管服务器，这给我带来了非常有趣的体验。
+
+由于 Oracle 提供了友好的试用版本，我能够测试并非常喜欢使用它来托管 Minecraft 服务器。
+
+虽然不如其他方案那么现代化，但它在性能方面效率更高。与简单的无服务器方案不同，您可以选择您需要的虚拟机。
+
+Zoom、Uber、FedEx、丰田、Tim 等公司都使用过 Oracle 的基础设施，并且至今仍在利用。
+
+很遗憾，文档仍然过于繁琐和过时。
+
+链接： [https://www.oracle.com/](https://www.oracle.com/)
+
+## Cloudflare
+
+<img
+  src="https://i.imgur.com/K6tDdq0.png"
+  alt="Cloudflare 首页"
+/>
+
+Cloudflare无疑对我来说是最有吸引力的，除了其提供的CDN、WAF、Workers、队列、R2等功能之外，它还能在一个统一的生态系统中实现各种功能。Shopify、Canva、Discord等平台目前都在使用Cloudflare。
+
+我没有个人偏好，但对于一个完整的、快速的生态系统，Cloudflare 绝对是一个不错的选择。
+
+链接： [https://www.cloudflare.com/](https://www.cloudflare.com/)
+
+## Upstash
+
+<img
+  src="https://i.imgur.com/j2lNuY4.png"
+  alt="Upstash 首页"
+/>
+
+延迟、性能、Redis、缓存、性能优化解决方案。我推荐 Upstash，我现在主要用于简单的聊天应用，包括这个作品也是使用 Upstash 制作的。我对其性能非常满意，它提供免费层级，对于希望提高应用程序/网站能力的开发者，我强烈推荐。但需要一定的技术知识。
+
+链接： [https://www.upstash.com/](https://www.upstash.com/)
+
+## 总结和后续说明
+
+我所提到的所有内容，都是基于我个人的实际经验和日常使用。您可以同意或不同意，但我的目标仍然是提供一个免费的解决方案，以帮助未来的开发者更好地使用该技术。
+
+祝您周末愉快，下次再见！
+
+## 前端和全栈 Web 开发
+
+- Vercel → [https://vercel.com/](https://vercel.com/)
+  - Next.js
+  - React
+  - Vite
+  - Angular
+  - Vue
+  - Nuxt
+  - SvelteKit
+  - 天体
+  - 混音 / React Router
+  - Qwik
+  - 《加布里埃尔·加茨比》
+  - NestJS 无服务器
+  - 静态托管
+
+- Netlify → [https://www.netlify.com/](https://www.netlify.com/)
+  - React
+  - Vue
+  - 天体
+  - Svelte
+  - Jamstack
+  - 静态网站
+  - 无服务器函数
+
+- Cloudflare Pages → [https://pages.cloudflare.com/](https://pages.cloudflare.com/)
+  - React/Vite
+  - 天体
+  - Vue
+  - Svelte
+  - HTML/CSS/JavaScript
+  - 静态网站
+
+- GitHub Pages → [https://pages.github.com/](https://pages.github.com/)
+  - 静态网站
+  - 文档
+  - SSG 博客
+  - 投资组合
+  - HTML/CSS/JavaScript
+
+## 后端和容器
+
+- 北侧阵地 → [https://northflank.com/](https://northflank.com/)
+  - 锈
+  - Ruby on Rails
+  - Java / Spring Boot
+  - Node.js
+  - NestJS
+  - Python
+  - Docker
+  - 计划任务
+  - 工人
+  - 数据库
+  - 始终在线的服务
+
+- 渲染 → [https://render.com/](https://render.com/)
+  - 锈
+  - Rails
+  - Spring Boot
+  - Node.js
+  - Python
+  - Docker
+  - Web 服务
+  - 私人服务
+  - 工人
+  - 计划任务
+
+- 科耶布 → [https://www.koyeb.com/](https://www.koyeb.com/)
+  - 锈
+  - Rails
+  - Spring Boot
+  - Node.js
+  - Docker
+  - 无服务器容器
+  - API
+  - 人工智能推理
+
+- Google Cloud Run → [https://cloud.google.com/run](https://cloud.google.com/run)
+  - 锈
+  - Rails
+  - Spring Boot
+  - NestJS
+  - 去
+  - Python
+  - Node.js
+  - 任何 OCI/Docker 容器
+  - 将规模降至零
+
+- 铁路 → [https://railway.com/](https://railway.com/)
+  - Node.js
+  - 锈
+  - Rails
+  - Spring Boot
+  - Python
+  - Docker
+  - 小型后端
+  - 原型
+
+- Oracle 云 [https://www.oracle.com/cloud/](https://www.oracle.com/cloud/)
+  - Linux 虚拟机
+  - ARM
+  - Docker
+  - Spring Boot
+  - 锈
+  - Rails
+  - 服务器
+  - 工作任务持续运行
+
+## 边缘计算、无服务器架构和 Cloudflare
+
+- Cloudflare Workers → [https://workers.cloudflare.com/](https://workers.cloudflare.com/)
+  - JavaScript
+  - TypeScript
+  - Python
+  - 使用 WASM 运行 Rust
+  - API
+  - 中间件
+  - 时间表
+  - 边缘功能
+
+- Cloudflare → [https://www.cloudflare.com/](https://www.cloudflare.com/)
+  - CDN
+  - WAF
+  - DDoS 防御
+  - 工人
+  - 排队
+  - KV
+  - D1
+  - R2
+  - DNS
+  - 零信任
+
+## PostgreSQL 和 SQL 数据库
+
+- 霓虹灯 → [https://neon.com/](https://neon.com/)
+  - PostgreSQL 无服务器
+  - 将规模降至零
+  - 分叉
+  - 适用于 Next.js、Rust、Rails、Spring 和 NestJS 的银行
+
+- Supabase → [https://supabase.com/](https://supabase.com/)
+  - PostgreSQL
+  - 授权
+  - 存储
+  - 实时
+  - 边缘功能
+  - API
+
+- Aiven → [https://aiven.io/](https://aiven.io/)
+  - PostgreSQL
+  - MySQL
+  - 瓦尔凯
+  - 卡夫卡
+  - OpenSearch
+
+- CockroachDB → [https://www.cockroachlabs.com/](https://www.cockroachlabs.com/)
+  - 分布式 SQL
+  - 类似于 PostgreSQL
+  - 多区域
+  - 高可用性
+
+## SQLite 和轻量级数据库
+
+- 图尔索 → [https://turso.tech/](https://turso.tech/)
+  - SQLite
+  - libSQL
+  - 以本地为中心
+  - 边缘
+  - 用户/项目专属数据库
+
+- Cloudflare D1 → [https://developers.cloudflare.com/d1/](https://developers.cloudflare.com/d1/)
+  - SQLite 无服务器
+  - 与 Cloudflare Workers 的集成
+
+## NoSQL
+
+- MongoDB Atlas → [https://www.mongodb.com/atlas](https://www.mongodb.com/atlas)
+  - MongoDB
+  - 文件银行
+  - 搜索
+  - 向量搜索
+
+## Redis、缓存和键值对
+
+- Upstash Redis → [https://upstash.com/](https://upstash.com/)
+  - Redis 无服务器
+  - 缓存
+  - 会议
+  - 速率限制
+  - 锁
+  - 临时状态
+
+- Aiven Valkey → [https://aiven.io/valkey](https://aiven.io/valkey)
+  - 与 Redis 兼容
+  - 缓存
+  - 键值对
+
+- Cloudflare KV → [https://developers.cloudflare.com/kv/](https://developers.cloudflare.com/kv/)
+  - 边缘 KV
+  - 缓存
+  - 配置
+  - 简单状态
+
+## 排队、任务和时间表
+
+- Upstash QStash → [https://upstash.com/qstash](https://upstash.com/qstash)
+  - HTTP 队列
+  - 延期的工作
+  - 时间表
+  - Webhooks
+  - 后台处理
+
+- Cloudflare 排队 → [https://developers.cloudflare.com/queues/](https://developers.cloudflare.com/queues/)
+  - 排队
+  - 异步处理
+  - 与“Workers”平台的集成
+
+## 对象存储、上传和文件
+
+- Cloudflare R2 → [https://www.cloudflare.com/developer-platform/products/r2/](https://www.cloudflare.com/developer-platform/products/r2/)
+  - 对象存储
+  - 与S3兼容
+  - 图片
+  - 视频
+  - 文件
+  - 下载
+
+- Upstash 块 → [https://upstash.com/](https://upstash.com/)
+  - 对象存储
+  - 与S3兼容
+  - 资产
+  - 上传
+  - 免费计划中，功能限制
+
+- Backblaze B2 → [https://www.backblaze.com/cloud-storage](https://www.backblaze.com/cloud-storage)
+  - 对象存储
+  - 与S3兼容
+  - 备份
+  - 视频
+  - 大型文件
+  - 下载
+
+- Supabase 存储 → [https://supabase.com/storage](https://supabase.com/storage)
+  - 上传
+  - 文件
+  - 资产
+  - 与 Supabase Auth/Postgres 的集成
+
+## 图像、CDN 和媒体优化
+
+- ImageKit → [https://imagekit.io/](https://imagekit.io/)
+  - 上传图片
+  - CDN
+  - 调整大小
+  - WebP
+  - AVIF
+  - 自动优化
+  - 视频
+
+- Cloudinary → [https://cloudinary.com/](https://cloudinary.com/)
+  - 上传
+  - CDN
+  - 图像转换
+  - 视频
+  - 转码
+  - 缩略图
+  - DAM
+
+## 我推荐的免费工具，适用于各种项目
+
+- 前端 → [https://vercel.com/](https://vercel.com/)
+- 后端 → [https://northflank.com/](https://northflank.com/)
+- 无服务器容器 [https://cloud.google.com/run](https://cloud.google.com/run)
+- 边缘 → [https://workers.cloudflare.com/](https://workers.cloudflare.com/)
+- PostgreSQL → [https://neon.com/](https://neon.com/)
+- Redis → [https://upstash.com/](https://upstash.com/)
+- 工作 → [https://upstash.com/qstash](https://upstash.com/qstash)
+- 对象存储 → [https://www.cloudflare.com/developer-platform/products/r2/](https://www.cloudflare.com/developer-platform/products/r2/)
+- 图片 → [https://imagekit.io/](https://imagekit.io/)
+- VM → [https://www.oracle.com/cloud/](https://www.oracle.com/cloud/)

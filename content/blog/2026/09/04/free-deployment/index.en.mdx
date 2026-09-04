@@ -1,0 +1,445 @@
+---
+title: "Free tools I found online"
+description: "Commenting briefly on free deployment options for those interested in testing and developing their software."
+date: "2026-09-04T13:06:25-03:00"
+updated: "2026-09-04T13:06:25-03:00"
+tags: []
+draft: true
+pinned: false
+translation:
+  sourceLocale: pt-BR
+  sourceHash: "17ca8424edde80c5d749fe9c2511a1bc75c9749d84510ea0816a2058ff29f47f"
+typora-root-url: "../../../../../../public"
+typora-copy-images-to: "../../../../../../public/blog/2026/09/04/free-deployment"
+---
+
+## A good day for deployment, but a terrible day for paying for hosting.
+
+I often used to create and test software locally, but in recent months, I decided to stop doing that due to bugs in production, difficulties with testing, and challenges in managing different environments.
+
+## Northflank
+
+<a href="https://northflank.com" target="_blank" rel="noopener noreferrer">
+  <img
+    src="https://i.imgur.com/i5pHDIr.png"
+    alt="Website preview"
+    style={{
+      width: "100%",
+      borderRadius: "12px",
+    }}
+  />
+</a>
+
+---
+
+<img
+  src="https://i.imgur.com/286UV2i.png"
+  alt="Dashboard preview"
+/>
+
+---
+
+I didn't expect Northflank to be so interesting. Well, I set up a cron job to test it, using a simple index.js file to run a commit cron job. The interface is interesting, the elements are eye-catching, and it offers integration with Clouds, Support, Documentation, Git integration, Heroku, and Docker. So, here's my recommendation.
+
+Apparently, you can host more things than I initially thought, but here's the tip:
+
+Link: [https://northflank.com/](https://northflank.com/)
+
+## Front-end development, with some back-end work, using Vercel.
+
+While there is a lot of AI-generated content on these two platforms, I believe it's worthwhile to create a portfolio to showcase your skills and capabilities. NestJS, Vite, Angular, Vue, Svelte, Astro, Remix, Qwik, Gatsby...
+
+We could also simply host the website statically, but if that's the case, I believe that GitHub Pages would be a good solution.
+
+In fact, the website I'm referring to is the same one I use to host my blog, portfolio, and other related content.
+
+<img
+  src="https://i.imgur.com/Z9piXa0.png"
+  alt="Vercel"
+/>
+
+Visually appealing and feature-rich, but I wouldn't recommend hosting if your service is critical, as there have been several recent incidents involving data leaks and similar issues. However, you can still host databases, back-ends, and other services.
+
+<img
+  src="https://i.imgur.com/ODbjt5g.png"
+  alt="Vercel Dashboard"
+/>
+
+Dashboard – I think it's fine; it's currently easy to develop things in dark mode, given the way AI agents are currently implemented. With "Mega Brain," it should be straightforward to fix the security of my website, without errors.
+
+Link: [https://vercel.com](https://vercel.com)
+
+## Render
+
+<img
+  src="https://i.imgur.com/qFFd7eQ.png"
+  alt="Display the Homepage"
+/>
+
+Render has an interesting infrastructure, but it's not a spiritual successor to Heroku.
+
+However, it has a simple concept of deployment, web services, private services, workers, cron, and databases, all without requiring a cloud infrastructure. Many have migrated from Heroku to Render, even moving databases of 1 TB+ or more, which provides an excellent experience for developing back-end applications.
+
+OpenAI, Readme, and other SaaS companies utilize this service.
+
+Link: [https://render.com/](https://render.com/)
+
+## Train line
+
+<img
+  src="https://i.imgur.com/dNy1le9.png"
+  alt="Homepage of the Railway"
+/>
+
+Ah, Railway, the big "I don't want to do DevOps because I'm afraid or I'm lazy,"
+
+It's simple and practical; you can create and visualize the architecture visually, making it ideal for prototypes and small backends.
+
+Blit, PeerList, and ShipAid still use this infrastructure today, but here's my recommendation for very small backends.
+
+Link: [https://railway.com/](https://railway.com/)
+
+## Netlify
+
+<img
+  src="https://i.imgur.com/w4VZvN4.png"
+  alt="Netlify Homepage"
+/>
+
+Netlify seems interesting for front-end development and Jamstack, although I haven't tested it extensively, it appears that companies like Nike and Mattel, as well as other brands, use it. It may be possible to use it to manage multiple websites and related projects.
+
+I think the interface is beautiful, user-friendly, and it seems promising. I'll try it out sometime and write a review on my blog.
+
+Link: [https://www.netlify.com/](https://www.netlify.com/)
+
+## Oracle | Oracle Cloud
+
+<img
+  src="https://i.imgur.com/LIJkdWl.png"
+  alt="Oracle Homepage"
+/>
+
+If you're looking for raw power and virtual machines, ARM, and significant resources, Oracle is the way to go.
+
+I had a very interesting experience using Oracle's infrastructure to create and host servers.
+I hosted a Minecraft server, and thanks to the user-friendly trial, I was able to test it out and I really liked it.
+
+Although less modern, it is the most efficient in terms of raw power, instead of a simple serverless solution, you can have a VM of your choice.
+
+Companies like Zoom, Uber, FedEx, Toyota, and Tim have all embraced and continue to use Oracle's infrastructure.
+
+It's a shame that the documentation continues to be cumbersome and outdated.
+
+Link: [https://www.oracle.com/](https://www.oracle.com/)
+
+## Cloudflare
+
+<img
+  src="https://i.imgur.com/K6tDdq0.png"
+  alt="Cloudflare Homepage"
+/>
+
+Cloudflare is definitely the most interesting for me, aside from the CDN, WAF, Workers, Queues, and R2 solutions it provides. The ability to do everything within the same ecosystem, with platforms like Shopify, Canva, and Discord currently using it, is a major advantage.
+
+I don't have personal preferences, but for a complete and fast ecosystem, Cloudflare is the ideal solution.
+
+Link: [https://www.cloudflare.com/](https://www.cloudflare.com/)
+
+## Upstash
+
+<img
+  src="https://i.imgur.com/j2lNuY4.png"
+  alt="Upstash Homepage"
+/>
+
+Latency, performance, Redis, caching, performance-focused solutions. I recommend Upstash; I currently use it for simple chat applications, including this one, which is built with Upstash. I'm confident in its performance, as it offers a free tier and I highly recommend it to anyone looking to increase the capacity of their app/website. However, it does require some technical understanding.
+
+Link: [https://www.upstash.com/](https://www.upstash.com/)
+
+## Final Links and Considerations
+
+Everything mentioned here is based on my personal experience and daily use. You may agree or disagree, but the main focus remains on providing a free solution to improve accessibility for future developers in the field.
+
+Have a great weekend, and see you next time!
+
+## Front-End and Full-Stack Web Development
+
+- Vercel → [https://vercel.com/](https://vercel.com/)
+  - Next.js
+  - React
+  - Speed
+  - Angular
+  - Vue
+  - Nuxt
+  - SvelteKit
+  - Astronomy
+  - Remix / React Router
+  - Quick
+  - Gatsby
+  - NestJS serverless
+  - Static hosting
+
+- Netlify → [https://www.netlify.com/](https://www.netlify.com/)
+  - React
+  - Vue
+  - Astronomy
+  - Svelte
+  - Jamstack
+  - Static websites
+  - Serverless Functions
+
+- Cloudflare Pages → [https://pages.cloudflare.com/](https://pages.cloudflare.com/)
+  - React/Vite
+  - Astronomy
+  - Vue
+  - Svelte
+  - HTML/CSS/JavaScript
+  - Static websites
+
+- GitHub Pages → [https://pages.github.com/](https://pages.github.com/)
+  - Static websites
+  - Documentation
+  - SSG Blogs
+  - Portfolios
+  - HTML/CSS/JavaScript
+
+## Back-End and Containers
+
+- Northflank → [https://northflank.com/](https://northflank.com/)
+  - Rust
+  - Ruby on Rails
+  - Java / Spring Boot
+  - Node.js
+  - NestJS
+  - Python
+  - Docker
+  - Scheduled tasks
+  - Employees
+  - Databases
+  - Services that are always available
+
+- Rendering → [https://render.com/](https://render.com/)
+  - Rust
+  - Rails
+  - Spring Boot
+  - Node.js
+  - Python
+  - Docker
+  - Web Services
+  - Private Services
+  - Employees
+  - Scheduled tasks
+
+- Koyeb → [https://www.koyeb.com/](https://www.koyeb.com/)
+  - Rust
+  - Rails
+  - Spring Boot
+  - Node.js
+  - Docker
+  - Serverless containers
+  - APIs
+  - AI inference
+
+- Google Cloud Run → [https://cloud.google.com/run](https://cloud.google.com/run)
+  - Rust
+  - Rails
+  - Spring Boot
+  - NestJS
+  - Go
+  - Python
+  - Node.js
+  - Any OCI/Docker container
+  - Reduce to zero
+
+- Railway [https://railway.com/](https://railway.com/)
+  - Node.js
+  - Rust
+  - Rails
+  - Spring Boot
+  - Python
+  - Docker
+  - Small backends
+  - Prototypes
+
+- Oracle Cloud → [https://www.oracle.com/cloud/](https://www.oracle.com/cloud/)
+  - Linux Virtual Machines
+  - ARM
+  - Docker
+  - Spring Boot
+  - Rust
+  - Rails
+  - Servers
+  - Workloads that are always active.
+
+## Edge, Serverless, and Cloudflare
+
+- Cloudflare Workers → [https://workers.cloudflare.com/](https://workers.cloudflare.com/)
+  - JavaScript
+  - TypeScript
+  - Python
+  - Rust through WASM
+  - APIs
+  - Middleware
+  - Schedule
+  - Edge Functions
+
+- Cloudflare → [https://www.cloudflare.com/](https://www.cloudflare.com/)
+  - CDN
+  - Web Application Firewall
+  - DDoS protection
+  - Employees
+  - Lines
+  - KV
+  - D1
+  - R2
+  - DNS
+  - Zero Trust
+
+## PostgreSQL and SQL Databases
+
+- Neon → [https://neon.com/](https://neon.com/)
+  - PostgreSQL without servers
+  - Reduce to zero
+  - Branching
+  - Banks for Next.js, Rust, Rails, Spring, and NestJS
+
+- Supabase → [https://supabase.com/](https://supabase.com/)
+  - PostgreSQL
+  - Author
+  - Storage
+  - Real-time
+  - Edge Functions
+  - APIs
+
+- Aiven → [https://aiven.io/](https://aiven.io/)
+  - PostgreSQL
+  - MySQL
+  - Valkey
+  - Kafka
+  - OpenSearch
+
+- CockroachDB → [https://www.cockroachlabs.com/](https://www.cockroachlabs.com/)
+  - Distributed SQL
+  - Similar to PostgreSQL
+  - Multi-region
+  - High availability
+
+## SQLite and Lightweight Databases
+
+- Turso → [https://turso.tech/](https://turso.tech/)
+  - SQLite
+  - libSQL
+  - Focus on local resources and needs
+  - Border
+  - Database per user/project
+
+- Cloudflare D1 → [https://developers.cloudflare.com/d1/](https://developers.cloudflare.com/d1/)
+  - SQLite serverless
+  - Integration with Cloudflare Workers
+
+## NoSQL
+
+- MongoDB Atlas → [https://www.mongodb.com/atlas](https://www.mongodb.com/atlas)
+  - MongoDB
+  - Documentary bank
+  - Search
+  - Vector Search
+
+## Redis, Caching, and Key-Value Stores
+
+- Upstash Redis → [https://upstash.com/](https://upstash.com/)
+  - Redis in a serverless environment
+  - Cache
+  - Sessions
+  - Rate limiting
+  - Locks
+  - Temporary status
+
+- Aiven Valkey → [https://aiven.io/valkey](https://aiven.io/valkey)
+  - Compatible with Redis
+  - Cache
+  - Key-value
+
+- Cloudflare KV → [https://developers.cloudflare.com/kv/](https://developers.cloudflare.com/kv/)
+  - Edge KV
+  - Cache
+  - Configuration
+  - Simple state
+
+## Queues, Jobs, and Schedules
+
+- Upstash QStash → [https://upstash.com/qstash](https://upstash.com/qstash)
+  - HTTP queues
+  - Delayed tasks/projects
+  - Schedule
+  - Webhooks
+  - Background processing
+
+- Cloudflare Queues → [https://developers.cloudflare.com/queues/](https://developers.cloudflare.com/queues/)
+  - Queues
+  - Asynchronous processing
+  - Integration with Workers
+
+## Object Storage, Uploads, and Files
+
+- Cloudflare R2 → [https://www.cloudflare.com/developer-platform/products/r2/](https://www.cloudflare.com/developer-platform/products/r2/)
+  - Object storage
+  - Compatible with S3
+  - Images
+  - Videos
+  - Files
+  - Downloads
+
+- Upstash Blob → [https://upstash.com/](https://upstash.com/)
+  - Object storage
+  - Compatible with S3
+  - Assets
+  - Uploads
+  - The "hard cap" is not available in the free plan.
+
+- Backblaze B2 → [https://www.backblaze.com/cloud-storage](https://www.backblaze.com/cloud-storage)
+  - Object storage
+  - Compatible with S3
+  - Backups
+  - Videos
+  - Large files
+  - Downloads
+
+- Supabase Storage → [https://supabase.com/storage](https://supabase.com/storage)
+  - Uploads
+  - Files
+  - Assets
+  - Integration with Supabase Auth/PostgreSQL
+
+## Images, CDN, and Media Optimization
+
+- ImageKit → [https://imagekit.io/](https://imagekit.io/)
+  - Image upload
+  - CDN
+  - Resize
+  - WebP
+  - AVIF
+  - Automatic optimization
+  - Video
+
+- Cloudinary → [https://cloudinary.com/](https://cloudinary.com/)
+  - Upload
+  - CDN
+  - Image transformations
+  - Video
+  - Transcoding
+  - Thumbnails
+  - DAM
+
+## A free stack that I recommend for general projects
+
+- Front-End → [https://vercel.com/](https://vercel.com/)
+- Back-End → [https://northflank.com/](https://northflank.com/)
+- Serverless containers → [https://cloud.google.com/run](https://cloud.google.com/run)
+- Edge → [https://workers.cloudflare.com/](https://workers.cloudflare.com/)
+- PostgreSQL → [https://neon.com/](https://neon.com/)
+- Redis → [https://upstash.com/](https://upstash.com/)
+- Jobs → [https://upstash.com/qstash](https://upstash.com/qstash)
+- Object Storage → [https://www.cloudflare.com/developer-platform/products/r2/](https://www.cloudflare.com/developer-platform/products/r2/)
+- Images → [https://imagekit.io/](https://imagekit.io/)
+- VM → [https://www.oracle.com/cloud/](https://www.oracle.com/cloud/)
