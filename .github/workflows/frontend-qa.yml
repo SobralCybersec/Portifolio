@@ -250,6 +250,7 @@ jobs:
         run: pnpm exec lhci autorun
         env:
           LHCI_GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Capture Lighthouse report screenshots
         run: pnpm run test:lighthouse:screenshots

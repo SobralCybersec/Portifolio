@@ -29,6 +29,7 @@ export function getPreviewImages(previewImage: string | undefined): string[] {
 function LazyPreviewVideo({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (shouldLoad) return;
@@ -53,6 +54,8 @@ function LazyPreviewVideo({ src }: { src: string }) {
     return () => observer.disconnect();
   }, [shouldLoad]);
 
+  if (failed) return null;
+
   return (
     <video
       ref={videoRef}
@@ -64,6 +67,7 @@ function LazyPreviewVideo({ src }: { src: string }) {
       playsInline
       controls
       preload={shouldLoad ? 'metadata' : 'none'}
+      onError={() => setFailed(true)}
     />
   );
 }
