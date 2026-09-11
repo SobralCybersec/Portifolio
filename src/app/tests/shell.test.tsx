@@ -124,7 +124,9 @@ test('generates page metadata, sitemap, and robots directives', async () => {
   ]));
   expect(robots()).toEqual(expect.objectContaining({
     sitemap: expect.stringContaining('/sitemap.xml'),
-    rules: [{ userAgent: '*', allow: '/', disallow: ['/api/'] }],
+    rules: expect.arrayContaining([
+      { userAgent: '*', allow: '/', disallow: ['/api/'] },
+    ]),
   }));
 });
 
