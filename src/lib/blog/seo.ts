@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getBlogRoute } from './content';
 import type { BlogPost } from './types';
-import { OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
+import { OG_IMAGE, PERSON_JSONLD, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
 
 export function getBlogPostMetadata(post: BlogPost, locale: string): Metadata {
   const route = getBlogRoute(post, locale);
@@ -35,7 +35,8 @@ export function getBlogJsonLd(post: BlogPost, locale: string) {
     description: post.description,
     datePublished: post.date,
     dateModified: post.updated ?? post.date,
-    author: { '@type': 'Person', name: 'Matheus Sobral', url: SITE_URL },
+    author: PERSON_JSONLD,
+    publisher: { '@type': 'Person', name: 'Matheus Sobral', url: SITE_URL, logo: { '@type': 'ImageObject', url: `${SITE_URL}/images/og-default.png` } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}${route}` },
     image,
     keywords: post.tags,

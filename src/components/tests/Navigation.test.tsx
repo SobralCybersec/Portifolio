@@ -6,6 +6,7 @@ describe('Navigation', () => {
   it('renders without crashing', () => {
     const { container } = render(<Navigation />);
     expect(container).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com/SobralCybersec');
   });
 
   it('opens mobile menu, handles hover, and closes after navigation', () => {
@@ -15,6 +16,9 @@ describe('Navigation', () => {
     fireEvent.mouseLeave(projects);
     fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
     expect(screen.getByRole('button', { name: 'Close menu' })).toBeInTheDocument();
+    screen.getAllByRole('link', { name: 'GitHub' }).forEach((link) => {
+      expect(link).toHaveAttribute('href', 'https://github.com/SobralCybersec');
+    });
     const mobileProjects = screen.getAllByRole('link', { name: 'projects' }).at(-1)!;
     fireEvent.click(mobileProjects);
     expect(screen.getByRole('button', { name: 'Open menu' })).toBeInTheDocument();

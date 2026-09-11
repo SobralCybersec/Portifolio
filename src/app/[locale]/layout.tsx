@@ -10,7 +10,7 @@ import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import DynamicFavicon from '@/components/layout/DynamicFavicon';
 import { BackgroundMusic } from '@/components/media/BackgroundMusic';
 import { Analytics } from '@vercel/analytics/react';
-import { OPEN_GRAPH_LOCALES, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
+import { OPEN_GRAPH_LOCALES, OG_IMAGE, PERSON_JSONLD, SITE_NAME, SITE_URL } from '@/lib/seo/seo';
 import { PageTransitionProvider } from '@/components/layout/PageTransition';
 import MatrixBackground from '@/components/effects/MatrixBackground';
 
@@ -91,7 +91,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       template: `%s | ${t('title')}`,
     },
     description: t('description'),
-    keywords: ['portfolio', 'developer', 'full-stack', 'TypeScript', 'Next.js', 'React'],
+    keywords: ['Matheus Sobral', 'Matheus Sobral developer', 'Matheus Sobral cybersecurity', 'SobralCybersec', 'Matheus Sobral portfolio', 'portfolio', 'developer', 'full-stack', 'cybersecurity analyst', 'TypeScript', 'Next.js', 'React', 'Java', 'Spring Boot'],
     alternates: {
       canonical: `/${locale}`,
       languages: Object.fromEntries(
@@ -145,21 +145,22 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
   const messages = await getMessages({ locale });
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    mainEntity: {
-      '@type': 'Person',
-      name: 'Matheus Sobral',
-      jobTitle: 'Full-Stack Developer & Cybersecurity Analyst',
-      url: SITE_URL,
-      sameAs: [
-        'https://github.com/SobralCybersec',
-        'https://br.linkedin.com/in/matheusdecyber',
-      ],
-      knowsAbout: ['Cybersecurity', 'Full-Stack Development', 'Java', 'Spring Boot', 'Next.js', 'React', 'AWS', 'Redis'],
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ProfilePage',
+      mainEntity: { ...PERSON_JSONLD },
     },
-  };
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: 'Portfolio of Matheus Sobral — Full-Stack Developer and Cybersecurity Analyst',
+      author: { '@type': 'Person', name: 'Matheus Sobral', url: SITE_URL },
+      inLanguage: ['en', 'pt', 'es', 'fr', 'de', 'ja', 'zh'],
+    },
+  ];
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -167,7 +168,9 @@ export default async function LocaleLayout({
         <meta name="darkreader-lock" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <link rel="icon" type="image/svg+xml" href="/images/favicon/Ahjin.svg" />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {jsonLd.map((schema) => (
+          <script key={schema['@type']} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        ))}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${soloHeading.variable} ${eternal.variable} ${codystar.variable} ${displayFont.variable} antialiased`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>

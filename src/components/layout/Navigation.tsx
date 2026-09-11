@@ -110,7 +110,7 @@ function MobileMenu(props: MobileMenuProps) {
                     }}
                   >
                     <a
-                      href="https://github.com"
+                      href="https://github.com/SobralCybersec"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="nav-icon-button"
@@ -212,7 +212,7 @@ function GithubLink(props: Pick<NavigationContentProps, 'isDark' | 'primary'>) {
   const { isDark, primary } = props;
   return (
     <a
-      href="https://github.com"
+      href="https://github.com/SobralCybersec"
       target="_blank"
       rel="noopener noreferrer"
       className="nav-icon-button hidden md:flex"

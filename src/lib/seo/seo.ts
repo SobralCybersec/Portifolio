@@ -1,8 +1,40 @@
 import type { Metadata } from 'next';
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://sobralcybersec.vercel.app').replace(/\/$/, '');
-export const SITE_NAME = 'M.S Creative Technologist';
+export const SITE_NAME = 'Matheus Sobral | Full-Stack Developer & Cybersecurity Analyst';
 export const OG_IMAGE = '/images/og-default.png';
+
+export const PERSON_JSONLD = {
+  '@type': 'Person',
+  name: 'Matheus Sobral',
+  alternateName: ['SobralCybersec', 'M.S', 'Matheus S.'],
+  description: 'Full-Stack Developer and Cybersecurity Analyst with 2+ years building Java systems with 1M+ downloads in production. Computer Science at UNESA, Cybersecurity at FIAP.',
+  jobTitle: 'Full-Stack Developer & Cybersecurity Analyst',
+  url: SITE_URL,
+  image: `${SITE_URL}/images/og-default.png`,
+  nationality: { '@type': 'Country', name: 'Brazil' },
+  alumniOf: [
+    { '@type': 'CollegeOrUniversity', name: 'UNESA — Universidade Estácio de Sá', department: 'Computer Science' },
+    { '@type': 'CollegeOrUniversity', name: 'FIAP', department: 'Cybersecurity' },
+  ],
+  knowsAbout: [
+    'Cybersecurity',
+    'Full-Stack Development',
+    'Java',
+    'Spring Boot',
+    'Next.js',
+    'React',
+    'TypeScript',
+    'AWS',
+    'Redis',
+    'Penetration Testing',
+    'OWASP',
+    'REST APIs',
+    'Clean Architecture',
+  ],
+  knowsLanguage: ['pt', 'en', 'es'],
+  sameAs: ['https://github.com/SobralCybersec', 'https://br.linkedin.com/in/matheusdecyber'],
+};
 
 export const OPEN_GRAPH_LOCALES: Record<string, string> = {
   en: 'en_US',
