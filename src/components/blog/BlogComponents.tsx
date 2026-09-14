@@ -120,11 +120,24 @@ export const blogMdxComponents: MDXComponents = {
   h2: (props) => <h2 className="blog-mdx-h2" {...props} />,
   h3: (props) => <h3 className="blog-mdx-h3" {...props} />,
   p: (props) => <p className="blog-mdx-p" {...props} />,
+  ul: (props) => <ul className="blog-mdx-ul" {...props} />,
+  ol: (props) => <ol className="blog-mdx-ol" {...props} />,
+  li: (props) => <li className="blog-mdx-li" {...props} />,
+  hr: (props) => <hr className="blog-mdx-hr" {...props} />,
+  strong: (props) => <strong className="blog-mdx-strong" {...props} />,
+  em: (props) => <em className="blog-mdx-em" {...props} />,
+  del: (props) => <del className="blog-mdx-del" {...props} />,
+  mark: (props) => <mark className="blog-mdx-mark" {...props} />,
+  kbd: (props) => <kbd className="blog-mdx-kbd" {...props} />,
+  details: (props) => <details className="blog-mdx-details" {...props} />,
+  summary: (props) => <summary className="blog-mdx-summary" {...props} />,
+  figure: (props) => <figure className="blog-mdx-figure" {...props} />,
+  figcaption: (props) => <figcaption className="blog-mdx-figcaption" {...props} />,
   a: ExternalLink,
   // Inline MDX image dimensions are author-controlled; avoid inventing layout data.
   img: ({ alt = '', loading = 'lazy', ...props }) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img alt={alt} loading={loading} {...props} />;
+    return <img className="blog-mdx-img" alt={alt} loading={loading} {...props} />;
   },
   blockquote: (props) => <blockquote className="blog-mdx-blockquote" {...props} />,
   table: (props) => <div className="blog-mdx-table"><table {...props} /></div>,

@@ -51,6 +51,12 @@ test('covers blog chrome, headers, cards, chronology, and metadata', () => {
   expect(screen.getByText('Performance notes')).toBeInTheDocument();
   expect(screen.getByText('PINNED')).toBeInTheDocument();
   expect(screen.getByText('2 topics')).toBeInTheDocument();
+  const HorizontalRule = blogMdxComponents.hr as React.ComponentType<React.HTMLAttributes<HTMLHRElement>>;
+  render(<HorizontalRule />);
+  expect(document.querySelector('.blog-mdx-hr')).toBeInTheDocument();
+  const Details = blogMdxComponents.details as React.ComponentType<React.DetailsHTMLAttributes<HTMLDetailsElement>>;
+  render(<Details><summary>More</summary><p>Details</p></Details>);
+  expect(document.querySelector('.blog-mdx-details')).toBeInTheDocument();
   render(<BlogChronology current={post} locale="en-US" />);
   render(<BlogChronology current={post} previous={{ ...post, title: 'Older' }} next={{ ...post, title: 'Newer' }} locale="en-US" />);
   expect(screen.getByText('Older')).toBeInTheDocument();
