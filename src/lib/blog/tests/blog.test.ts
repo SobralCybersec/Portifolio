@@ -19,6 +19,11 @@ test('parses valid front matter and body', () => {
   expect(result.body).toContain('## Heading');
 });
 
+test('keeps optional post categories available to the client search', () => {
+  const result = parseBlogMetadata(valid.replace('draft: false', 'categories:\n  - Architecture\ndraft: false'));
+  expect(result.metadata.categories).toEqual(['Architecture']);
+});
+
 test('rejects invalid front matter', () => {
   expect(() => parseBlogMetadata(valid.replace('draft: false', 'draft: yes'))).toThrow(BlogMetadataError);
   expect(() => parseBlogMetadata(valid.replace('date: "2026-01-02T10:00:00-03:00"', 'date: yesterday'))).toThrow('ISO 8601');

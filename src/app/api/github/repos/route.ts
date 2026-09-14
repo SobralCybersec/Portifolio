@@ -6,6 +6,16 @@ const GITHUB_USERNAMES = ['SobralCybersec', 'MatheusSobralCSharp'];
 const SORT_BY = 'updated';
 const REPO_TYPE = 'owner';
 const ENRICH_CONCURRENCY = 12;
+const BUNGOU_STRAY_ERP_PREVIEWS = [
+  'https://i.imgur.com/dGMMzq5.png',
+  'https://i.imgur.com/Of3A37u.png',
+  'https://i.imgur.com/U4WMepM.jpeg',
+  'https://i.imgur.com/jmbFHa1.png',
+  'https://i.imgur.com/UjFY4dF.png',
+  'https://i.imgur.com/c1sOZAM.png',
+  'https://i.imgur.com/q4nSMsB.png',
+  'https://i.imgur.com/zj7XUcn.png',
+];
 
 interface ClientRepo {
   id: number;
@@ -228,9 +238,19 @@ async function fetchReadmeData(
       return { previewImage: JSON.stringify(images), isVideo: false, techStack };
     }
 
+    // The old relative preview pointed to a removed, case-sensitive repo path.
+    // Keep current README media as source of truth instead of emitting that 404.
+    if (repo.toLowerCase() === 'bungoustrayerp' && images.length === 1 && images[0].includes('/main/assets/')) {
+      return { previewImage: JSON.stringify(BUNGOU_STRAY_ERP_PREVIEWS), isVideo: false, techStack };
+    }
+
     // Return single image
     if (images.length === 1) {
       return { previewImage: images[0], isVideo: false, techStack };
+    }
+
+    if (repo.toLowerCase() === 'bungoustrayerp') {
+      return { previewImage: JSON.stringify(BUNGOU_STRAY_ERP_PREVIEWS), isVideo: false, techStack };
     }
 
     return { previewImage: null, isVideo: false, techStack };

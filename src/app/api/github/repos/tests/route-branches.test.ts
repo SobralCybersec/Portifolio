@@ -118,7 +118,7 @@ test('keeps image links labeled Demonstration out of the video pipeline', async 
     .mockResolvedValueOnce(response([]))
     .mockResolvedValueOnce(response('# Demonstration\n[Demonstration](assets/spring-security.png)'))
     .mockResolvedValueOnce(response({ Java: 1 }))
-    .mockResolvedValueOnce(response('# Demonstração\n[Demonstração](assets/erp-screen.webp)'))
+    .mockResolvedValueOnce(response('# Demonstração\n<img src="https://i.imgur.com/dGMMzq5.png">\n<img src="https://i.imgur.com/Of3A37u.png">'))
     .mockResolvedValueOnce(response({ TypeScript: 1 }));
 
   const data = await (await GET({} as any)).json();
@@ -131,9 +131,24 @@ test('keeps image links labeled Demonstration out of the video pipeline', async 
     expect.objectContaining({
       name: 'BungouStrayERP',
       isVideo: false,
-      previewImage: 'https://raw.githubusercontent.com/SobralCybersec/BungouStrayERP/main/assets/erp-screen.webp',
+      previewImage: expect.stringContaining('https://i.imgur.com/dGMMzq5.png'),
     }),
   ]));
+});
+
+test('keeps real project previews when README has no usable media', async () => {
+  global.fetch = jest.fn()
+    .mockResolvedValueOnce(response([repo('BungouStrayERP')]))
+    .mockResolvedValueOnce(response([]))
+    .mockResolvedValueOnce(response('No preview'))
+    .mockResolvedValueOnce(response({ TypeScript: 1 }));
+
+  const data = await (await GET({} as any)).json();
+  expect(JSON.parse(data[0].previewImage)).toEqual(expect.arrayContaining([
+    'https://i.imgur.com/dGMMzq5.png',
+    'https://i.imgur.com/Of3A37u.png',
+  ]));
+  expect(data[0].isVideo).toBe(false);
 });
 
 test('returns unknown error for non-Error top-level failures', async () => {

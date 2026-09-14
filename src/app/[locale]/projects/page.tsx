@@ -15,6 +15,7 @@ import ScrollEffect from '@/components/effects/ScrollEffect';
 import ScrollProgress from '@/components/effects/ScrollProgress';
 import ScrollReveal from '@/components/effects/ScrollReveal';
 import MagneticLibraryGrid from '@/components/projects/MagneticLibraryGrid';
+import { LANGUAGE_FILTERS, TECH_STACK_FILTERS } from '@/lib/github/languageIcon';
 
 const HexagonGrid = dynamic(() => import('@/components/effects/HexagonGrid'), { ssr: false });
 const ParticleBackground = dynamic(() => import('@/components/effects/ParticleBackground'), { ssr: false });
@@ -111,35 +112,12 @@ export default function ProjectsPage() {
 
   const filters = [
     { id: 'all', label: t('filters.allProjects') },
-    { id: 'java', label: 'Java', icon: '/icons/java.png' },
-    { id: 'typescript', label: 'TypeScript', icon: '/icons/typescript.png' },
-    { id: 'javascript', label: 'JavaScript', icon: '/icons/javascript.png' },
-    { id: 'python', label: 'Python', icon: '/icons/python.png' },
-    { id: 'c', label: 'C', icon: '/icons/c.png' },
-    { id: 'c++', label: 'C++', icon: '/icons/cpp.png' },
-    { id: 'c#', label: 'C#', icon: '/icons/csharp.png' },
-    { id: 'php', label: 'PHP', icon: '/icons/php.png' },
-    { id: 'ruby', label: 'Ruby', icon: '/icons/ruby.png' },
-    { id: 'rust', label: 'Rust', icon: '/icons/rust.png' },
-    { id: 'batchfile', label: 'Bash', icon: '/icons/bash.png' },
-    { id: 'assembly', label: 'Assembly', icon: '/icons/assembly.png' },
+    ...LANGUAGE_FILTERS,
   ];
 
   const techFilters = [
     { id: 'all', label: t('filters.allTechnologies') },
-    { id: 'react', label: 'React', icon: '/icons/react.png' },
-    { id: 'nextjs', label: 'Next.js', icon: '/icons/nextjs.png' },
-    { id: 'spring', label: 'Spring', icon: '/icons/spring.png' },
-    { id: 'docker', label: 'Docker', icon: '/icons/docker.png' },
-    { id: 'aws', label: 'AWS', icon: '/icons/aws.png' },
-    { id: 'postgresql', label: 'PostgreSQL', icon: '/icons/postgresql.png' },
-    { id: 'redis', label: 'Redis', icon: '/icons/redis.png' },
-    { id: 'kafka', label: 'Kafka', icon: '/icons/kafka.png' },
-    { id: 'cassandra', label: 'Cassandra', icon: '/icons/cassandra.png' },
-    { id: 'microservice', label: 'Microservices', icon: '/icons/microservice.png' },
-    { id: 'flask', label: 'Flask', icon: '/icons/flask2.png' },
-    { id: 'tailwind', label: 'Tailwind', icon: '/icons/tailwind.png' },
-    { id: 'cuda', label: 'Cuda', icon: '/icons/cuda.png' },
+    ...TECH_STACK_FILTERS,
   ];
 
   const filteredProjects = useMemo(() => projects.filter(project => {

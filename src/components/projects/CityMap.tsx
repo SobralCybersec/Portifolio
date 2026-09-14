@@ -5,6 +5,7 @@ import { Github, ExternalLink, Star, GitFork, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useHydrated } from '@/hooks/browser/useHydrated';
 import { shouldRenderVideoPreview } from '@/lib/media/project-preview';
+import { TECH_ICONS } from '@/lib/github/languageIcon';
 import Image from 'next/image';
 
 interface Repo {
@@ -41,37 +42,6 @@ const LANG_COLORS: Record<string, string> = {
 const DEFAULT_COLOR = '#a855f7';
 
 // ── Tech icon mapping ─────────────────────────────────────────────────────────
-const TECH_ICONS: Record<string, string> = {
-  // Languages
-  typescript: '/icons/typescript.png', javascript: '/icons/javascript.png', python: '/icons/python.png',
-  java: '/icons/java.png', c: '/icons/c.png', 'c++': '/icons/cpp.png', cpp: '/icons/cpp.png',
-  'c#': '/icons/csharp.png', csharp: '/icons/csharp.png', go: '/icons/github.png', rust: '/icons/rust.png',
-  ruby: '/icons/ruby.png', php: '/icons/php.png', assembly: '/icons/assembly.png', bash: '/icons/bash.png',
-  shell: '/icons/bash.png',
-  // Frontend
-  react: '/icons/react.png', nextjs: '/icons/nextjs.png', 'next.js': '/icons/nextjs.png',
-  tailwind: '/icons/tailwind.png', tailwindcss: '/icons/tailwind.png',
-  // Backend
-  flask: '/icons/flask2.png', spring: '/icons/spring.png', 'spring-boot': '/icons/spring.png',
-  // Database
-  postgresql: '/icons/postgresql.png', postgres: '/icons/postgresql.png', redis: '/icons/redis.png',
-  cassandra: '/icons/cassandra.png', kafka: '/icons/kafka.png',
-  // DevOps
-  docker: '/icons/docker.png', aws: '/icons/aws.png', github: '/icons/github.png',
-  'github-actions': '/icons/actions.png', actions: '/icons/actions.png', maven: '/icons/maven.png',
-  jetbrains: '/icons/jetbrains.png', vim: '/icons/vim.png',
-  // Security
-  burp: '/icons/burp.png', 'burp-suite': '/icons/burp.png', bloodhound: '/icons/bloodhound.png',
-  ghidra: '/icons/ghidra.png', gobuster: '/icons/gobuster.png', hashcat: '/icons/hashcat.png',
-  nessus: '/icons/nessus.png', shodan: '/icons/shodan.png', kali: '/icons/kalipurple.png',
-  'kali-linux': '/icons/kalipurple.png', xdbg: '/icons/xdbg.png',
-  // AI
-  gpt: '/icons/gpt.png', openai: '/icons/gpt.png', claude: '/icons/claude.png', gemini: '/icons/gemini.png',
-  // Architecture
-  microservice: '/icons/microservice.png', microservices: '/icons/microservice.png',
-  openapi: '/icons/openapi.png', swagger: '/icons/swagger.png',
-};
-
 function detectTechIcons(repo: Repo): string[] {
   const detected = new Set<string>();
   const check = (text: string | null | undefined) => {

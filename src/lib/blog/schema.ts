@@ -29,6 +29,15 @@ function optionalString(data: Record<string, unknown>, key: string): string | un
   return value.trim();
 }
 
+function optionalStringArray(data: Record<string, unknown>, key: string): string[] | undefined {
+  const value = data[key];
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.some((item) => typeof item !== 'string' || !item.trim())) {
+    throw new BlogMetadataError(`"${key}" must be an array of non-empty strings when provided`);
+  }
+  return value.map((item) => item.trim());
+}
+
 function isoDate(data: Record<string, unknown>, key: string, required: boolean): string | undefined {
   const value = data[key];
   if (value === undefined && !required) return undefined;
@@ -63,6 +72,9 @@ export function parseBlogMetadata(source: string): { metadata: BlogPostMetadata;
   const updated = isoDate(data, 'updated', false);
   const cover = optionalString(data, 'cover');
   const translationKey = optionalString(data, 'translationKey');
+  const categories = optionalStringArray(data, 'categories');
+  const category = optionalString(data, 'category');
+  const normalizedCategories = categories ?? (category ? [category] : undefined);
 
   return {
     metadata: {
@@ -71,6 +83,7 @@ export function parseBlogMetadata(source: string): { metadata: BlogPostMetadata;
       date,
       ...(updated ? { updated } : {}),
       tags: tags.map((tag) => tag.trim()),
+      ...(normalizedCategories ? { categories: normalizedCategories } : {}),
       draft: data.draft,
       ...(data.pinned !== undefined ? { pinned: data.pinned } : {}),
       ...(cover ? { cover } : {}),

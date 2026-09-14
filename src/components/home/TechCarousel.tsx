@@ -6,6 +6,7 @@ import { ArrowUpRight, X } from 'lucide-react';
 import { Link } from '@/i18n/config/routing';
 import { InfiniteMarquee } from '@/components/ui/InfiniteMarquee';
 import { useTranslations } from 'next-intl';
+import { getTechnologyIcon } from '@/lib/github/languageIcon';
 
 interface TechItem {
   name: string;
@@ -75,7 +76,7 @@ const techStack: TechItem[] = [
   { name: 'Microservices', icon: '/icons/microservice.png', description: 'Architecture of independent services connected by APIs or messaging. Each service can deploy and fail separately.', link: 'https://microservices.io/', category: 'Architecture', features: ['Service Independence', 'API Gateway', 'Service Mesh', 'Event-Driven'] },
   { name: 'Assembly', icon: '/icons/assembly.png', description: 'Low-level language with direct hardware control. Used for systems programming and reverse engineering.', link: 'https://en.wikipedia.org/wiki/Assembly_language', category: 'Low-Level', features: ['Direct Hardware Access', 'x86-64 & ARM', 'Reverse Engineering', 'Exploit Development'] },
   { name: 'Omarchy', icon: '/icons/omarchy.png', description: 'Hybrid architecture with a monolithic core and microservice extensions. Supports gradual migration between the two.', link: '#', category: 'Architecture', features: ['Monolithic Core', 'Microservice Extensions', 'Gradual Migration', 'Hybrid Deployment'] },
-];
+].map((tech) => ({ ...tech, icon: getTechnologyIcon(tech.name) ?? tech.icon }));
 
 interface TechCarouselProps {
   /** Render only the reusable track when embedded in another section. */

@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Rss } from 'lucide-react';
+import Image from 'next/image';
 import { Link as LocalizedLink } from '@/i18n/config/routing';
 import type { BlogMonthGroup, BlogPost } from '@/lib/blog/types';
 import Navigation from '@/components/layout/Navigation';
+import { getTechnologyIcon } from '@/lib/github/languageIcon';
 
 export function BlogChrome({ children }: { children: React.ReactNode }) {
   return (
@@ -38,6 +40,7 @@ export function BlogHeader({ locale, title, description, eyebrow = 'FIELD NOTES'
 }
 
 export function BlogCard({ post, locale, index = 0 }: { post: BlogPost; locale: string; index?: number }) {
+  const tags = [...post.tags, ...(post.categories ?? [])];
   return (
     <LocalizedLink
       href={post.route}
@@ -54,11 +57,21 @@ export function BlogCard({ post, locale, index = 0 }: { post: BlogPost; locale: 
         <h2 className="blog-article-title">{post.title}</h2>
         <p className="blog-article-desc">{post.description}</p>
         <div className="blog-article-footer">
-          {post.tags.slice(0, 3).map((tag) => <span className="blog-article-tag" key={tag}>{tag}</span>)}
-          <span className="blog-article-read"><Clock3 size={14} aria-hidden="true" /> {post.tags.length} topics</span>
+          {tags.slice(0, 3).map((tag) => <BlogTag key={tag} label={tag} />)}
+          <span className="blog-article-read"><Clock3 size={14} aria-hidden="true" /> {tags.length} topics</span>
         </div>
       </article>
     </LocalizedLink>
+  );
+}
+
+export function BlogTag({ label, className = 'blog-article-tag' }: { label: string; className?: string }) {
+  const icon = getTechnologyIcon(label);
+  return (
+    <span className={className}>
+      {icon && <Image className="blog-tag-icon" src={icon} alt="" width={16} height={16} aria-hidden="true" />}
+      <span>{label}</span>
+    </span>
   );
 }
 

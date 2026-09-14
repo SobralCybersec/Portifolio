@@ -41,6 +41,32 @@ test('blog index and tag navigation render without browser errors', async ({ pag
   expect(errors).toEqual([]);
 });
 
+test('blog search filters posts in real time', async ({ page }) => {
+  await page.goto('/en/blog');
+  const search = page.getByRole('searchbox', { name: 'Title, summary, tag or post content' });
+
+  await expect(search).toBeVisible();
+  await search.fill('Northflank');
+  await expect(page.getByRole('heading', { name: 'Free tools I found online' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Lighthouse CI made me go crazy' })).toHaveCount(0);
+
+  await search.fill('LIGHTHOUSE CI');
+  await expect(page.getByRole('heading', { name: 'Lighthouse CI made me go crazy' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Free tools I found online' })).toHaveCount(0);
+
+  await search.fill('');
+  const stackFilter = page.locator('.blog-search__row > div').first();
+  await stackFilter.getByRole('button', { name: 'All Technologies' }).click();
+  await expect(stackFilter.getByText('Java', { exact: true })).toBeVisible();
+  await expect(stackFilter.getByText('Rust', { exact: true })).toBeVisible();
+  await stackFilter.getByText('Next.js', { exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Lighthouse CI made me go crazy' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Free tools I found online' })).toHaveCount(0);
+
+  await search.fill('no-such-post');
+  await expect(page.getByText('No posts found for this search.')).toBeVisible();
+});
+
 test('article renders semantic heading, chronology, and no hydration errors', async ({ page }) => {
   const errors = browserErrors(page);
   await blockExternalResources(page);

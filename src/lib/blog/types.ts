@@ -4,6 +4,7 @@ export type BlogPostMetadata = {
   date: string;
   updated?: string;
   tags: string[];
+  categories?: string[];
   draft: boolean;
   pinned?: boolean;
   cover?: string;
@@ -18,6 +19,7 @@ export type BlogPost = BlogPostMetadata & {
   route: string;
   sourcePath: string;
   locale: string;
+  searchText?: string;
 };
 
 export type BlogTag = {

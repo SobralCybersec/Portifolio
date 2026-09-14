@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useMDXComponents } from '../../mdx-components';
 import { BlogBackLink, BlogCard, BlogChronology, BlogChrome, BlogDate, BlogExternalReference, BlogHeader, BlogMonthList } from '../blog/BlogUI';
+import BlogSearch from '../blog/BlogSearch';
 import { Callout, Video, YouTube, blogMdxComponents } from '../blog/BlogComponents';
 import BlogToc from '../blog/BlogToc';
 import { getBlogPostMetadata, getBlogJsonLd } from '../../lib/blog/seo';
@@ -61,6 +62,41 @@ test('covers blog chrome, headers, cards, chronology, and metadata', () => {
   const metadata = getBlogPostMetadata(post, 'en');
   expect(metadata.alternates?.canonical).toBe(getBlogRoute(post, 'en'));
   expect(getBlogJsonLd(post, 'en').dateModified).toBe(post.updated);
+});
+
+test('filters blog posts by title, description, tags, and categories', () => {
+  const secondPost = { ...post, route: '/en/blog/2026/01/03/other', title: 'Other notes', description: 'Architecture journal', tags: ['docker', 'rust'], categories: ['Architecture'], searchText: 'A practical Kubernetes deployment note' };
+  render(<BlogSearch groups={[{ key: '2026-01', year: '2026', month: '01', label: 'January', posts: [post, secondPost] }]} locale="en-US" placeholder="Search" emptyMessage="No results" stackLabel="Stack" allStackLabel="All Technologies" />);
+
+  expect(screen.getByText('Performance notes')).toBeInTheDocument();
+  expect(screen.getByText('Other notes')).toBeInTheDocument();
+  fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'NEXT.JS' } });
+  expect(screen.getByText('Performance notes')).toBeInTheDocument();
+  expect(screen.queryByText('Other notes')).not.toBeInTheDocument();
+  fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'ARCHITECTURE' } });
+  expect(screen.queryByText('Performance notes')).not.toBeInTheDocument();
+  expect(screen.getByText('Other notes')).toBeInTheDocument();
+  fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'KUBERNETES' } });
+  expect(screen.queryByText('Performance notes')).not.toBeInTheDocument();
+  expect(screen.getByText('Other notes')).toBeInTheDocument();
+  fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'not-found' } });
+  expect(screen.getByText('No results')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
+  expect(screen.getByText('Performance notes')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'All Technologies' }));
+  fireEvent.click(screen.getByRole('button', { name: 'RustRust' }));
+  expect(screen.queryByText('Performance notes')).not.toBeInTheDocument();
+  expect(screen.getByText('Other notes')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'RustRust' }));
+  fireEvent.click(screen.getByRole('button', { name: 'DockerDocker' }));
+  expect(screen.queryByText('Performance notes')).not.toBeInTheDocument();
+  expect(screen.getByText('Other notes')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'DockerDocker' }));
+  fireEvent.click(screen.getByText('Next.js', { exact: true }));
+  expect(screen.getByText('Performance notes')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Next.jsNext.js' }));
+  fireEvent.click(screen.getByRole('button', { name: 'All Technologies' }));
+  expect(screen.getByText('Other notes')).toBeInTheDocument();
 });
 
 test('covers MDX components and external-link behavior', () => {
